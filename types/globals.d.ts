@@ -40,5 +40,3 @@ interface MaksoConfig {
   version?: string;
 }
 
-// Guarda `if (typeof module !== 'undefined') module.exports = …` nos scripts clássicos.
-declare var module: { exports: unknown } | undefined;

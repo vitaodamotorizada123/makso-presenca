@@ -145,4 +145,3 @@ var MaksoRules = (function () {
   };
 })();
 
-if (typeof module !== 'undefined') module.exports = MaksoRules;
