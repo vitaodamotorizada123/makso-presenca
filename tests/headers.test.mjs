@@ -1,0 +1,26 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
+import { headersFor } from '../scripts/headers.mjs';
+import { renderYaml } from '../scripts/render-yaml.mjs';
+import { root } from './helpers/load-shared.mjs';
+
+test('render.yaml versionado é igual ao gerado a partir de headers.mjs', () => {
+  assert.equal(readFileSync(path.join(root, 'render.yaml'), 'utf8'), renderYaml());
+});
+
+test('assets com hash são imutáveis e a página não é cacheada', () => {
+  assert.match(headersFor('/assets/app.ab12cd34.js')['Cache-Control'], /immutable/);
+  assert.equal(headersFor('/')['Cache-Control'], 'no-cache');
+  assert.equal(headersFor('/index.html')['Cache-Control'], 'no-cache');
+  assert.equal(headersFor('/event.json')['Cache-Control'], 'no-cache');
+});
+
+test('toda rota tem CSP sem unsafe-inline e noindex', () => {
+  const h = headersFor('/');
+  assert.ok(h['Content-Security-Policy'].includes("script-src 'self'"));
+  assert.ok(!h['Content-Security-Policy'].includes('unsafe-inline'));
+  assert.ok(h['Content-Security-Policy'].includes('connect-src https://script.google.com https://script.googleusercontent.com'));
+  assert.equal(h['X-Robots-Tag'], 'noindex');
+});

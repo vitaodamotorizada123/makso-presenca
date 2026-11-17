@@ -1,0 +1,15 @@
+{
+  "name": "makso-presenca",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Página de confirmação de presença do lançamento maksō — desenvolvido por DIMAK Soluções",
+  "license": "UNLICENSED",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "test:e2e": "node --test --test-concurrency=1 tests/e2e/*.test.mjs",
+    "typecheck": "node /opt/npm-tools/node_modules/typescript/bin/tsc -p jsconfig.json",
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/dev-server.mjs"
+  }
+}

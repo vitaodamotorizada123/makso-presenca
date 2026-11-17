@@ -1,0 +1,91 @@
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: 16px;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: 17px;
+  line-height: 1.47;
+  letter-spacing: -0.374px;
+  color: var(--ink);
+  background: var(--parchment);
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1, h2, h3 { margin: 0; font-weight: 600; text-wrap: balance; }
+p { margin: 0; }
+svg { display: block; }
+
+a { color: inherit; }
+a, button, input, label, textarea { touch-action: manipulation; }
+input, textarea, select, button { font: inherit; letter-spacing: inherit; }
+
+:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0; border: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+[hidden] { display: none !important; }
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 0 28px;
+  border: 0;
+  border-radius: var(--r-pill);
+  font: inherit;
+  letter-spacing: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform var(--t-fast) var(--ease-out), background-color var(--t-base) ease, opacity var(--t-base) ease;
+}
+.button:active { transform: scale(0.97); }
+.button:disabled { cursor: default; opacity: 0.45; transform: none; }
+
+.button--primary { background: var(--ink); color: var(--paper); }
+.button--secondary { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+
+@media (hover: hover) and (pointer: fine) {
+  .button--primary:not(:disabled):hover { background: #3a0a0e; }
+  .button--secondary:hover { background: rgb(27 0 1 / 0.05); }
+}
+
+.demo-badge {
+  position: absolute; /* rola com a página: não cobre o formulário */
+  z-index: 30;
+  top: calc(env(safe-area-inset-top) + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 14px;
+  border-radius: var(--r-pill);
+  background: rgb(255 255 255 / 0.82);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  color: var(--ink);
+  font-size: 12px;
+  letter-spacing: -0.12px;
+  white-space: nowrap;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.06);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  html { scroll-behavior: auto; }
+}
