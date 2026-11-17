@@ -23,6 +23,13 @@ function createSheetStore(sheet) {
     return last < 2 ? [] : sheet.getRange(2, 1, last - 1, width).getValues();
   }
 
+  /** Texto do convidado entra literal: o apóstrofo impede o Sheets de virar
+   *  fórmula (=), hora (21:30), data (10/12), % ou número (0800), e fica oculto. */
+  function asText(v) {
+    var s = v == null ? '' : String(v);
+    return s ? "'" + s : '';
+  }
+
   /** O Sheets pode devolver número (WhatsApp) ou texto com apóstrofo. */
   function text(v) {
     var s = v == null ? '' : String(v);
@@ -75,17 +82,31 @@ function createSheetStore(sheet) {
       var put = function (col, v) { row[h.map[col]] = v; };
       put('Data/hora', rec.createdAt);
       put('Presença', rec.presenca === 'sim' ? 'Vou' : 'Não vou');
-      put('Nome', MaksoRules.sanitizeCell(rec.nome));
-      put('E-mail', MaksoRules.sanitizeCell(rec.email));
-      put('WhatsApp', "'" + rec.whatsapp);
+      put('Nome', asText(rec.nome));
+      put('E-mail', asText(rec.email));
+      put('WhatsApp', asText(rec.whatsapp));
       put('Acompanhante', rec.acompanhante ? 'Sim' : 'Não');
-      put('Nome do acompanhante', MaksoRules.sanitizeCell(rec.acompanhanteNome));
-      put('Restrição alimentar', MaksoRules.sanitizeCell(rec.restricao));
-      put('Observação', MaksoRules.sanitizeCell(rec.observacao));
+      put('Nome do acompanhante', asText(rec.acompanhanteNome));
+      put('Restrição alimentar', asText(rec.restricao));
+      put('Observação', asText(rec.observacao));
       put('E-mail (status)', rec.emailStatus);
       put('E-mail atualizado em', rec.createdAt);
-      put('ID', "'" + rec.id);
+      put('ID', asText(rec.id));
       sheet.appendRow(row);
+    },
+
+    /** Vários status com uma leitura só (a fila não segura o lock por muito tempo). */
+    setEmailStatuses: function (pairs) {
+      if (!pairs.length) return;
+      var h = headerMap();
+      var all = rows(h.width);
+      var index = {};
+      all.forEach(function (row, i) { index[text(row[h.map['ID']])] = i + 2; });
+      var now = new Date();
+      pairs.forEach(function (p) {
+        var at = index[p[0]];
+        if (at) setStatusAt(at, h.map, p[1], now);
+      });
     },
 
     setEmailStatus: function (id, status) {

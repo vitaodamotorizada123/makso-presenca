@@ -54,7 +54,9 @@ function getDeps_() {
     mailer: createMailer(),
     lock: {
       acquire: function (ms) { lock.waitLock(ms); },
-      release: function () { lock.releaseLock(); },
+      // A documentação do Lock pede flush antes de soltar: senão a próxima
+      // execução pode não ver a linha recém-gravada (duplicidade).
+      release: function () { SpreadsheetApp.flush(); lock.releaseLock(); },
     },
     rate: createRate_(CacheService.getScriptCache(), now),
     now: now,
@@ -94,11 +96,6 @@ function setup() {
     sheet.getRange(1, 1, 1, COLUMNS.length).setValues([COLUMNS]).setFontWeight('bold');
     sheet.setFrozenRows(1);
   }
-  var header = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
-  ['WhatsApp', 'ID'].forEach(function (name) {
-    var i = header.indexOf(name);
-    if (i > -1) sheet.getRange(1, i + 1, sheet.getMaxRows(), 1).setNumberFormat('@');
-  });
 
   var resumo = ss.getSheetByName('Resumo') || ss.insertSheet('Resumo');
   SUMMARY.forEach(function (row, i) {

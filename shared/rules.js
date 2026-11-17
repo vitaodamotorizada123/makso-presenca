@@ -48,6 +48,9 @@ var MaksoRules = (function () {
   /** @param {unknown} v string ou número (o Sheets devolve número) */
   function normalizeWhatsapp(v) {
     var digits = String(v == null ? '' : v).replace(/\D+/g, '');
+    if (digits.indexOf('00') === 0) digits = digits.slice(2);            // 0055… (discagem internacional)
+    if (digits.indexOf('550') === 0 && (digits.length === 13 || digits.length === 14)) digits = '55' + digits.slice(3); // +55 031…
+    if (digits.charAt(0) === '0') digits = digits.slice(1);              // 031… (interurbano)
     if (digits.length === 10 || digits.length === 11) return '55' + digits;
     if ((digits.length === 12 || digits.length === 13) && digits.indexOf('55') === 0) return digits;
     return '';

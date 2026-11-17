@@ -8,7 +8,8 @@ import vm from 'node:vm';
  * com apóstrofo na frente (o Sheets guarda como texto e esconde o apóstrofo)
  * ou em coluna com formato '@'. Fórmulas (=...) ficam como { formula }. */
 export class FakeSheet {
-  constructor(name) { this.name = name; this.data = []; this.formats = {}; this.frozen = 0; }
+  constructor(name, gasState) { this.name = name; this.data = []; this.formats = {}; this.frozen = 0; this.reads = 0; this.gas = gasState; }
+  touch() { if (this.gas) this.gas.dirty = true; }
   getName() { return this.name; }
   getLastRow() { return this.data.length; }
   getLastColumn() { return this.data.reduce((m, r) => Math.max(m, r.length), 0); }
@@ -18,10 +19,15 @@ export class FakeSheet {
     if (typeof v !== 'string') return v;
     if (v.startsWith("'")) return v.slice(1);
     if (v.startsWith('=')) return { formula: v };
-    if (/^\d+$/.test(v) && this.formats[col] !== '@') return Number(v);
+    if (this.formats[col] === '@') return v;
+    if (/^\d{1,2}:\d{2}$/.test(v)) return { time: v };
+    if (/^\d{1,2}\/\d{1,2}(\/\d{2,4})?$/.test(v)) return { date: v };
+    if (/^-?\d+([.,]\d+)?%$/.test(v)) return Number(v.replace('%', '').replace(',', '.')) / 100;
+    if (/^(true|false)$/i.test(v)) return v.toLowerCase() === 'true';
+    if (/^-?\d+$/.test(v)) return Number(v);
     return v;
   }
-  appendRow(row) { this.data.push(row.map((v, i) => this.coerce(v, i + 1))); }
+  appendRow(row) { this.touch(); this.data.push(row.map((v, i) => this.coerce(v, i + 1))); }
   insertColumnBefore(col) { this.data.forEach((r) => r.splice(col - 1, 0, '')); }
   getRange(row, col, numRows = 1, numCols = 1) {
     const sheet = this;
@@ -35,13 +41,14 @@ export class FakeSheet {
       return out;
     };
     const put = (r, c, v) => {
+      sheet.touch();
       while (sheet.data.length < r) sheet.data.push([]);
       const line = sheet.data[r - 1];
       while (line.length < c) line.push('');
       line[c - 1] = sheet.coerce(v, c);
     };
     return {
-      getValues: () => cells().map((l) => l.map((v) => (v && typeof v === 'object' && 'formula' in v ? '' : v))),
+      getValues: () => { if (row >= 2) sheet.reads++; return cells().map((l) => l.map((v) => (v && typeof v === 'object' && 'formula' in v ? '' : v))); },
       getValue: () => cells()[0][0],
       setValues(values) { values.forEach((l, r) => l.forEach((v, c) => put(row + r, col + c, v))); return this; },
       setValue(v) { put(row, col, v); return this; },
@@ -62,15 +69,15 @@ export function makeGas({ quota = 10, eventJson = null, fetchThrows = false } = 
   const fetches = [];
   const spreadsheets = new Map();
   const mail = { quota };
-  const lockState = { held: false, waits: 0 };
+  const lockState = { held: false, waits: 0, dirty: false, unflushedReleases: 0 };
 
   class FakeSpreadsheet {
-    constructor(name) { this.name = name; this.id = `ss-${spreadsheets.size + 1}`; this.sheets = [new FakeSheet('Página1')]; this.tz = 'America/New_York'; }
+    constructor(name) { this.name = name; this.id = `ss-${spreadsheets.size + 1}`; this.sheets = [new FakeSheet('Página1', lockState)]; this.tz = 'America/New_York'; }
     getId() { return this.id; }
     getUrl() { return `https://docs.google.com/spreadsheets/d/${this.id}`; }
     getSheets() { return [...this.sheets]; }
     getSheetByName(n) { return this.sheets.find((s) => s.name === n) || null; }
-    insertSheet(n) { const s = new FakeSheet(n); this.sheets.push(s); return s; }
+    insertSheet(n) { const s = new FakeSheet(n, lockState); this.sheets.push(s); return s; }
     deleteSheet(s) { this.sheets = this.sheets.filter((x) => x !== s); }
     setSpreadsheetTimeZone(tz) { this.tz = tz; }
   }
@@ -80,6 +87,7 @@ export function makeGas({ quota = 10, eventJson = null, fetchThrows = false } = 
     SpreadsheetApp: {
       create(name) { const ss = new FakeSpreadsheet(name); spreadsheets.set(ss.id, ss); return ss; },
       openById(id) { const ss = spreadsheets.get(id); if (!ss) throw new Error(`planilha ${id} não existe`); return ss; },
+      flush() { lockState.dirty = false; },
     },
     PropertiesService: { getScriptProperties: () => ({ getProperty: (k) => (props.has(k) ? props.get(k) : null), setProperty: (k, v) => props.set(k, String(v)) }) },
     ScriptApp: {
@@ -90,7 +98,7 @@ export function makeGas({ quota = 10, eventJson = null, fetchThrows = false } = 
         return b;
       },
     },
-    LockService: { getScriptLock: () => ({ waitLock() { lockState.waits++; lockState.held = true; }, releaseLock() { lockState.held = false; } }) },
+    LockService: { getScriptLock: () => ({ waitLock() { lockState.waits++; lockState.held = true; }, releaseLock() { if (lockState.dirty) lockState.unflushedReleases++; lockState.held = false; } }) },
     MailApp: {
       getRemainingDailyQuota: () => mail.quota,
       sendEmail(opts) { if (mail.quota <= 0) throw new Error('Service invoked too many times for one day: email.'); mail.quota--; sent.push(opts); },

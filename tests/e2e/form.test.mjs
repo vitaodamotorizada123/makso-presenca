@@ -154,3 +154,99 @@ for (const viewport of [{ width: 360, height: 640 }, { width: 844, height: 390 }
     } finally { await close(); }
   });
 }
+
+test('[review #2] Enter num campo "next" vai para o próximo campo, sem enviar', async () => {
+  const { page, close } = await startBrowser({ query: '?demo=1' });
+  try {
+    await page.check('input[name=presenca][value=sim]');
+    await page.fill('input[name=nome]', 'Mariana Souza');
+    await page.fill('input[name=email]', 'mariana@gmail.com');
+    await page.fill('input[name=whatsapp]', '(31) 99876-5432');
+    await page.focus('input[name=nome]');
+    await page.keyboard.press('Enter');
+    assert.equal(await page.evaluate(() => document.activeElement?.getAttribute('name')), 'email');
+    await page.focus('input[name=whatsapp]');
+    await page.keyboard.press('Enter');
+    assert.equal(await page.evaluate(() => document.activeElement?.getAttribute('name')), 'restricao');
+    await page.waitForTimeout(200);
+    assert.equal(await page.evaluate(() => window.__maksoSubmitCount || 0), 0);
+    assert.equal(await visible(page, '.rsvp__result'), false);
+    const errs = await page.$$eval('.field__error', (els) => els.filter((e) => e.textContent).length);
+    assert.equal(errs, 0);
+  } finally { await close(); }
+});
+
+test('[review #3] campos restaurados pelo navegador (acompanhante ligado) continuam enviáveis', async () => {
+  const initScript = () => {
+    document.addEventListener('readystatechange', () => {
+      if (document.readyState !== 'interactive') return;
+      document.querySelector('input[name=presenca][value=sim]').checked = true;
+      document.querySelector('input[name=acompanhante]').checked = true;
+    });
+  };
+  const { page, close } = await startBrowser({ query: '?demo=1', initScript });
+  try {
+    assert.ok(await visible(page, '.companion__name'), 'nome do acompanhante deveria aparecer');
+    await page.fill('input[name=nome]', 'Mariana Souza');
+    await page.fill('input[name=email]', 'mariana@gmail.com');
+    await page.fill('input[name=whatsapp]', '(31) 99876-5432');
+    await page.fill('input[name=acompanhanteNome]', 'Ana');
+    await page.click('.rsvp__submit');
+    await resultTitle(page).waitFor({ state: 'visible' });
+    assert.equal(await resultTitle(page).textContent(), 'Presença confirmada, Mariana.');
+  } finally { await close(); }
+});
+
+test('[review #3] "Não vou" restaurado esconde acompanhante e restrição', async () => {
+  const initScript = () => {
+    document.addEventListener('readystatechange', () => {
+      if (document.readyState === 'interactive') document.querySelector('input[name=presenca][value=nao]').checked = true;
+    });
+  };
+  const { page, close } = await startBrowser({ query: '?demo=1', initScript });
+  try {
+    assert.equal(await visible(page, '.companion'), false);
+    assert.equal(await visible(page, '.field--restricao'), false);
+  } finally { await close(); }
+});
+
+test('[review #5] teclado: usa a área visível real (offsetTop) e só rola se o campo sumiu', async () => {
+  const initScript = () => {
+    const vv = new EventTarget();
+    vv.height = innerHeight; vv.offsetTop = 0; vv.width = innerWidth; vv.offsetLeft = 0; vv.scale = 1; vv.pageTop = 0; vv.pageLeft = 0;
+    Object.defineProperty(window, 'visualViewport', { configurable: true, get: () => vv });
+    window.__vv = vv;
+  };
+  const { page, close } = await startBrowser({ query: '?demo=1', initScript });
+  try {
+    // Campo visível dentro de uma área visível deslocada (offsetTop 300, altura 300): não rola.
+    const y0 = await page.evaluate(() => {
+      const el = document.querySelector('input[name=email]');
+      el.scrollIntoView({ block: 'start' });
+      window.scrollBy(0, -350); // campo ~350 px abaixo do topo da janela
+      el.focus({ preventScroll: true });
+      return scrollY;
+    });
+    const r1 = await page.evaluate(() => {
+      const el = document.querySelector('input[name=email]');
+      const r = el.getBoundingClientRect();
+      window.__vv.offsetTop = Math.max(0, r.top - 50); window.__vv.height = 300;
+      window.__vv.dispatchEvent(new Event('resize'));
+      return scrollY;
+    });
+    await page.waitForTimeout(300);
+    assert.equal(await page.evaluate(() => scrollY), y0, 'não deveria rolar um campo já visível');
+    void r1;
+    // Campo atrás do teclado (área visível 0..150): rola até aparecer.
+    await page.evaluate(() => {
+      window.__vv.offsetTop = 0; window.__vv.height = 150;
+      window.__vv.dispatchEvent(new Event('resize'));
+    });
+    await page.waitForTimeout(300);
+    const after = await page.evaluate(() => {
+      const r = document.querySelector('input[name=email]').getBoundingClientRect();
+      return { bottom: r.bottom, top: r.top };
+    });
+    assert.ok(after.bottom <= 150 && after.top >= 0, JSON.stringify(after));
+  } finally { await close(); }
+});

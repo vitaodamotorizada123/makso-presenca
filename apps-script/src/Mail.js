@@ -41,7 +41,7 @@ function processPendingEmails() {
 
   deps.lock.acquire(10000);
   try {
-    results.forEach(function (x) { deps.store.setEmailStatus(x[0], x[1]); });
+    deps.store.setEmailStatuses(results);
   } finally {
     deps.lock.release();
   }

@@ -4,3 +4,4 @@ dist/
 apps-script/dist/
 node_modules/
 .superpowers/
+__pycache__/

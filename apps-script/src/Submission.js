@@ -19,8 +19,11 @@ function handleSubmission(rawBody, deps) {
 
   var statusOf = function (presenca) { return presenca === 'nao' ? 'recusado' : 'confirmado'; };
 
-  // 2. Antispam: responde ok sem gravar, para o robô não aprender.
-  if ((typeof raw.hp === 'string' && raw.hp !== '') || typeof raw.t !== 'number' || raw.t < 3000) {
+  // 2. Antispam: responde ok sem gravar, para o robô não aprender. 800 ms é
+  //    impossível para uma pessoa (rolar até o formulário e preencher); o
+  //    descarte vai para o log com o contato, para dar para recuperar.
+  if ((typeof raw.hp === 'string' && raw.hp !== '') || typeof raw.t !== 'number' || raw.t < 800) {
+    deps.log.warn('antispam: descartado', JSON.stringify({ nome: raw.nome, email: raw.email, whatsapp: raw.whatsapp, t: raw.t, hp: !!raw.hp }));
     return { ok: true, status: statusOf(raw.presenca) };
   }
 

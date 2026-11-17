@@ -39,8 +39,6 @@ test('setup cria as abas, o cabeçalho, o resumo, o fuso e o formato de texto', 
   assert.equal(resumo.getRange(3, 2).getFormula(), '=B1+B2');
   assert.equal(resumo.getRange(1, 2).getFormula(), '=COUNTIF(Respostas!B:B,"Vou")');
   assert.equal(ss.tz, 'America/Sao_Paulo');
-  assert.equal(sheet.formats[5], '@');
-  assert.equal(sheet.formats[12], '@');
   assert.equal(sheet.frozen, 1);
   ctx.setup();
   assert.equal(gas.triggers.filter((t) => t.fn === 'processPendingEmails').length, 1);
@@ -158,4 +156,36 @@ test('appsscript.json: V8, fuso, web app anônimo e escopos mínimos', async () 
     'https://www.googleapis.com/auth/script.send_mail',
     'https://www.googleapis.com/auth/spreadsheets',
   ]);
+});
+
+test('[review #1] toda escrita na planilha é confirmada (flush) antes de soltar o lock', async () => {
+  const { ctx, gas } = await setupCtx({ quota: 0 });
+  post(ctx);
+  post(ctx, { id: UUID(2), email: 'outra@gmail.com', whatsapp: '31 98888-7777' });
+  gas.mail.quota = 5;
+  ctx.processPendingEmails();
+  assert.equal(gas.lockState.unflushedReleases, 0);
+});
+
+test('[review #10] texto livre fica literal na planilha (hora, %, booleano, zero à esquerda)', async () => {
+  const { ctx, sheet } = await setupCtx();
+  post(ctx, { nome: 'TRUE', observacao: '21:30', restricao: '50%', acompanhante: true, acompanhanteNome: '0800' });
+  const row = sheet.data[1];
+  const col = (name) => row[ctx.COLUMNS.indexOf(name)];
+  assert.equal(col('Nome'), 'TRUE');
+  assert.equal(col('Observação'), '21:30');
+  assert.equal(col('Restrição alimentar'), '50%');
+  assert.equal(col('Nome do acompanhante'), '0800');
+  assert.equal(col('WhatsApp'), '5531998765432');
+  assert.equal(typeof col('WhatsApp'), 'string');
+});
+
+test('[review #8] a fila grava os status de uma vez (uma leitura da planilha)', async () => {
+  const { ctx, sheet, gas } = await setupCtx({ quota: 0 });
+  for (let i = 1; i <= 5; i++) post(ctx, { id: UUID(i), email: `p${i}@gmail.com`, whatsapp: `31 9${String(i).repeat(4)}-000${i}` });
+  gas.mail.quota = 10;
+  sheet.reads = 0;
+  ctx.processPendingEmails();
+  assert.ok(sheet.reads <= 3, `${sheet.reads} leituras`);
+  assert.equal(sheet.data.slice(1).filter((r) => r[ctx.COLUMNS.indexOf('E-mail (status)')] === 'enviado').length, 5);
 });

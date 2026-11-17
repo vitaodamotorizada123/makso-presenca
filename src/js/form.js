@@ -178,7 +178,7 @@ var MaksoForm = (function () {
         nome: String(data.get('nome') || ''),
         email: String(data.get('email') || ''),
         whatsapp: String(data.get('whatsapp') || ''),
-        acompanhante: companionSwitch.checked && state.presenca !== 'nao',
+        acompanhante: state.companion && state.presenca !== 'nao',
         acompanhanteNome: String(data.get('acompanhanteNome') || ''),
         restricao: String(data.get('restricao') || ''),
         observacao: String(data.get('observacao') || ''),
@@ -246,16 +246,48 @@ var MaksoForm = (function () {
       if (t.name && state.errors[t.name]) dispatch({ type: 'edit', field: t.name });
     });
 
-    // Teclado virtual: só rola se o campo focado ficou atrás do teclado.
+    // Enter num campo "next": vai para o próximo campo visível em vez de enviar
+    // (enterkeyhint só muda o rótulo da tecla; o envio implícito continuaria).
+    form.addEventListener('keydown', function (e) {
+      var t = /** @type {HTMLElement} */ (e.target);
+      if (e.key !== 'Enter' || e.isComposing || t.tagName !== 'INPUT' || t.getAttribute('enterkeyhint') !== 'next') return;
+      e.preventDefault();
+      var order = Array.prototype.slice.call(form.querySelectorAll('input[enterkeyhint], textarea[enterkeyhint]'));
+      var next = order.slice(order.indexOf(t) + 1).filter(function (el) {
+        return !el.disabled && el.getClientRects().length > 0;
+      })[0];
+      if (next) next.focus();
+    });
+
+    // Teclado virtual: a área visível é [offsetTop, offsetTop + height] (em
+    // coordenadas da janela de layout). Só rola, e só o necessário, se o campo
+    // focado saiu dela.
     if (window.visualViewport) {
       var vv = window.visualViewport;
       vv.addEventListener('resize', function () {
         var el = document.activeElement;
         if (!el || !form.contains(el)) return;
-        if (el.getBoundingClientRect().bottom > vv.height - 16) el.scrollIntoView({ block: 'center' });
+        var r = el.getBoundingClientRect();
+        var top = vv.offsetTop + 16;
+        var bottom = vv.offsetTop + vv.height - 16;
+        if (r.bottom > bottom) window.scrollBy(0, r.bottom - bottom);
+        else if (r.top < top) window.scrollBy(0, r.top - top);
       });
     }
 
+    // O navegador pode restaurar os campos (voltar, aba descartada no Android):
+    // o estado parte do que está marcado, nunca do zero.
+    function syncFromControls() {
+      if (state.phase !== 'editando') return;
+      // Lê tudo antes de despachar: cada render escreve o estado nos controles.
+      var checked = /** @type {HTMLInputElement|null} */ (form.querySelector('input[name=presenca]:checked'));
+      var companionOn = companionSwitch.checked;
+      if (checked) dispatch({ type: 'choose', presenca: checked.value });
+      dispatch({ type: 'toggleCompanion', on: companionOn });
+    }
+    window.addEventListener('pageshow', syncFromControls);
+
+    syncFromControls();
     render();
   }
 

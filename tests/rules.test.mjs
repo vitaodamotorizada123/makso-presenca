@@ -104,3 +104,11 @@ test('sanitizeCell neutraliza fórmulas e mantém texto comum', () => {
 test('utf8Bytes conta bytes UTF-8', () => {
   assert.equal(R.utf8Bytes('ō💼'), 6);
 });
+
+test('[review #11] WhatsApp com 0 de interurbano ou 00 internacional', () => {
+  assert.equal(R.normalizeWhatsapp('031 99876-5432'), '5531998765432');
+  assert.equal(R.normalizeWhatsapp('0 31 99876-5432'), '5531998765432');
+  assert.equal(R.normalizeWhatsapp('0055 31 99876-5432'), '5531998765432');
+  assert.equal(R.normalizeWhatsapp('+55 031 99876-5432'), '5531998765432');
+  assert.equal(R.normalizeWhatsapp('031 3222-1100'), '553132221100');
+});

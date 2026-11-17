@@ -110,3 +110,18 @@ test('lock não sai: erro', () => {
   assert.deepEqual(handleSubmission(body(), deps), { ok: false, code: 'erro' });
   assert.equal(records.length, 0);
 });
+
+test('[review #6] humano rápido (t entre 800 e 3000 ms) é gravado', () => {
+  const { deps, records } = makeDeps();
+  assert.deepEqual(handleSubmission(body({ t: 1500 }), deps), { ok: true, status: 'confirmado' });
+  assert.equal(records.length, 1);
+});
+
+test('[review #6] descarte do antispam fica registrado no log', () => {
+  const { deps, records, log } = makeDeps();
+  handleSubmission(body({ t: 500 }), deps);
+  handleSubmission(body({ id: UUID(3), hp: 'x' }), deps);
+  assert.equal(records.length, 0);
+  assert.equal(log.warns.length, 2);
+  assert.ok(JSON.stringify(log.warns[0]).includes('mariana@gmail.com'));
+});
