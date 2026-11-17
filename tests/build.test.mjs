@@ -48,7 +48,7 @@ test('evento completo: data no HTML, evento.ics e event.json', async () => {
   assert.ok(html.includes('sábado, 12 de dezembro · 20h'));
   assert.ok(existsSync(path.join(outDir, 'evento.ics')));
   const ej = JSON.parse(readFileSync(path.join(outDir, 'event.json'), 'utf8'));
-  assert.equal(ej.event.start, '2026-12-12T20:00:00-03:00');
+  assert.equal(ej.event.start, '2037-12-12T20:00:00-03:00');
   assert.equal(ej.version, res.hash);
   for (const f of ['robots.txt', 'favicon.svg', 'apple-touch-icon.png', 'og.png']) assert.ok(existsSync(path.join(outDir, f)), f);
 });

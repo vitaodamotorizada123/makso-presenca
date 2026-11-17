@@ -64,7 +64,7 @@ input, textarea, select, button { font: inherit; letter-spacing: inherit; }
 }
 
 .demo-badge {
-  position: fixed;
+  position: absolute; /* rola com a página: não cobre o formulário */
   z-index: 30;
   top: calc(env(safe-area-inset-top) + 10px);
   left: 50%;
