@@ -13,6 +13,9 @@ export function renderYaml() {
     '    buildCommand: node scripts/build.mjs',
     '    staticPublishPath: dist',
     '    pullRequestPreviewsEnabled: false',
+    '    envVars:',
+    '      - key: NODE_VERSION',
+    '        value: "22"',
     '    headers:',
   ];
   for (const rule of HEADERS) {

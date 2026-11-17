@@ -7,6 +7,9 @@ services:
     buildCommand: node scripts/build.mjs
     staticPublishPath: dist
     pullRequestPreviewsEnabled: false
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
     headers:
       - path: "/*"
         name: "Content-Security-Policy"
