@@ -8,7 +8,9 @@ Data: 2026-11-17 · Cliente: maksō · Desenvolvido por: DIMAK Soluções · Sta
 
 A maksō é uma marca de bolsas de luxo feitas à mão e vai fazer um evento de lançamento. Cada convidado recebe em casa um convite físico com **um QR code igual para todos**. Ao escanear, a pessoa cai numa página com cara de Apple, confirma (ou recusa) presença e recebe a confirmação. O cliente quer ter a lista de presença organizada sem esforço.
 
-O site é **temporário**: existe só para a lista de presença. A marca ainda não tem identidade visual nem logo. Por isso a página mostra apenas o nome **maksō**, na tipografia da Apple, dentro de um efeito de vidro líquido no estilo da Apple.
+O site é **temporário**: existe só para a lista de presença. A marca ainda não tem identidade visual completa, mas **já tem logo**: o letreiro "MAKSŌ" em serifa, com o A e o K entrelaçados e mácron no Ō, enviado pelo Victor em 2026-11-17 (`assets/brand/makso-logo.svg`). A página mostra essa logo dentro de um efeito de vidro líquido no estilo da Apple. O resto da interface usa a tipografia da Apple.
+
+**A página é feita primeiro para celular.** Quase todo mundo chega escaneando o QR com o telefone; o desktop é secundário (ver seção 8.1).
 
 ## 2. Objetivos, não-objetivos e anti-objetivos
 
@@ -23,7 +25,7 @@ O site é **temporário**: existe só para a lista de presença. A marca ainda n
 - Lista prévia de convidados, QR individual e check-in na porta.
 - Consentimento para marketing (LGPD de novidades): o cliente não quer.
 - Inglês, painel administrativo e avisos a cada confirmação.
-- Identidade visual, logo e fotos de produto.
+- Identidade visual completa e fotos de produto. Da marca, existe só a logo.
 
 **Anti-objetivos (seria um fracasso mesmo funcionando)**
 - A página parecer um formulário genérico do Google ou um "template de evento".
@@ -70,9 +72,9 @@ Convite físico ──QR──▶ makso.com.br (site estático no Render)
 ┌──────────────────────────────────┐
 │ ░░ fundo quase-preto, luz em  ░░ │  HERO (≈ 1 tela)
 │ ░░ tons de couro se movendo   ░░ │
-│        ╭────────────────╮        │
-│        │     maksō      │        │  ← cápsula de vidro líquido
-│        ╰────────────────╯        │
+│      ╭────────────────────╮      │
+│      │      M A K S Ō     │      │  ← logo (SVG branco) na
+│      ╰────────────────────╯      │    cápsula de vidro líquido
 │   Você está convidado para o     │
 │   lançamento.                    │
 │   12 dez · 20h · Belo Horizonte  │
@@ -199,15 +201,37 @@ Base: `design-md/apple/DESIGN.md` (voltagent/awesome-design-md). Mantemos:
 
 ### Desvios conscientes do DESIGN.md
 
-- **Sem o azul da Apple.** A marca não tem cor, e azul de tecnologia briga com couro. As ações são monocromáticas: pill branca com texto `#1d1d1f` no escuro e pill `#1d1d1f` com texto branco no claro. O foco do teclado usa anel de 2px com offset, na cor do texto.
+- **Sem o azul da Apple; a cor de ação é a cor da logo.** A logo vem num quase-preto avermelhado (`#1b0001`, cor de couro escuro), que vira a cor da marca. Ela substitui o `#1d1d1f` da Apple como cor do texto principal e das ações no claro: pill `#1b0001` com texto branco. No escuro, a pill é branca com texto `#1b0001`. O foco do teclado usa anel de 2px com offset, na cor do texto.
+- **Logo em serifa + interface em SF Pro.** A logo é o único elemento em serifa; títulos, textos e campos seguem a tipografia da Apple. Esse contraste é comum em marcas de luxo e deixa a logo como protagonista.
 - **Um campo de luz no fundo do hero.** A Apple proíbe degradê decorativo porque a atmosfera vem da fotografia; como não temos fotos, a luz em movimento cumpre esse papel. Ela também é o que dá ao vidro algo para refratar.
+
+### 8.1 Mobile primeiro (requisito do Victor)
+
+O desenho e o código partem do celular em pé; telas maiores são melhorias progressivas (`min-width`).
+
+| Ponto | Regra |
+|---|---|
+| Larguras-alvo | 360, 375, 390, 414 e 430px em pé; celular deitado; tablet; desktop. Nenhuma pode ter rolagem horizontal |
+| Altura do hero | `100svh` (fallback `100vh`), para a barra do Safari/Chrome não fazer o hero "pular" ao rolar |
+| Áreas seguras | `viewport-fit=cover` + `env(safe-area-inset-*)` no hero, no rodapé e nas laterais (notch / Dynamic Island / barra de gestos) |
+| Barra de status | `<meta name="theme-color" content="#000000">` |
+| Coluna | Uma coluna até 734px. Formulário com largura total menos 20px de margem por lado e máx. 560px centralizado no desktop |
+| Escolha "Vou / Não vou" | Dois chips lado a lado, 50/50, com 52px de altura |
+| Teclado virtual | `enterkeyhint="next"` nos campos e `"send"` no último; o campo focado entra na tela (`scrollIntoView({block: "center"})`); nada fixo que o teclado cubra |
+| Toque | Alvos ≥ 44px (botões principais 52px), `touch-action: manipulation`, sem dependência de hover, `-webkit-tap-highlight-color: transparent` com estado de toque próprio |
+| Títulos | 34px no celular → 48px no desktop (hero); o tamanho da logo é definido pela largura, não pelo texto |
+| Depois do envio | O resultado (obrigado / erro) é rolado para o centro da tela, com foco no título |
+| Peso | ≤ 120 KB transferidos antes de interagir (sem a fonte Inter). Logo inline (~4 KB); JS sem framework; WebGL só depois do primeiro paint |
+| 4G | Primeira renderização útil (logo + convite + botão) em < 2 s numa conexão 4G simulada |
 
 ### Hero e vidro líquido
 
-- Um `<canvas>` WebGL de tela cheia desenha o fundo: 3–4 manchas de luz suaves em tons de couro (champanhe, conhaque, marrom profundo) sobre quase-preto, movendo-se devagar (ciclos de 20–30 s).
+- Um `<canvas>` WebGL de tela cheia desenha o fundo: 3–4 manchas de luz suaves em tons de couro que conversam com o `#1b0001` da logo (vinho/bordô, conhaque e um toque de champanhe) sobre quase-preto, movendo-se devagar (ciclos de 20–30 s).
 - O mesmo shader desenha a **cápsula de vidro**. Dentro dela, o fundo é amostrado com deslocamento de lente (refração maior perto da borda), um leve aumento e brilho, um realce especular fino na borda superior e uma sombra interna sutil.
   - Como o fundo é nosso (procedural), a refração funciona **igual no iPhone, Android e desktop**, coisa que o CSS não consegue.
-- O nome **maksō** é texto HTML (`<h1>`) por cima, nítido e legível por leitor de tela. A posição e o tamanho da cápsula vêm do `getBoundingClientRect()` do `<h1>` a cada resize.
+- A **logo** fica por cima do canvas, como SVG inline branco (`fill="currentColor"`) dentro do `<h1>`, nítida em qualquer tela. O `<title>` "maksō" serve ao leitor de tela.
+  - A logo tem proporção ≈ 3,9 : 1. No celular, ocupa ~70% da largura da tela (máx. 520px no desktop), e a cápsula a envolve com folga.
+  - A posição e o tamanho da cápsula vêm do `getBoundingClientRect()` do `<h1>` a cada resize.
 - **Desempenho**:
   - DPR limitado a 1.5;
   - pausa quando o hero sai da tela (IntersectionObserver) ou a aba some (`visibilitychange`);
@@ -220,7 +244,7 @@ Base: `design-md/apple/DESIGN.md` (voltagent/awesome-design-md). Mantemos:
 
 | Uso | Valor |
 |---|---|
-| Texto | `#1d1d1f` |
+| Texto e ações (cor da marca, da logo) | `#1b0001` |
 | Fundo claro / parchment | `#ffffff` / `#f5f5f7` |
 | Hero | `#000000` → `#272729` |
 | Texto secundário | `#7a7a7a` (no escuro: `#cccccc`) |
@@ -249,7 +273,8 @@ Base: `design-md/apple/DESIGN.md` (voltagent/awesome-design-md). Mantemos:
 - **Fonte única da verdade**: `config.json`, com dados do evento, prazo, URL do Apps Script e domínio.
 - **QR**: SVG + PNG de alta resolução, estático, apontando para a URL pública do Render (`https://{serviço}.onrender.com/`). Decisão do Victor: sem domínio próprio. **Para o QR nunca morrer, o static site no Render nunca pode ser apagado nem renomeado.** Um domínio próprio pode ser adicionado depois, mas a URL `onrender.com` continua respondendo. O QR final só é gerado depois do primeiro deploy, com o nome do serviço já fixado.
 - **Depois do evento**: a página mostra o estado "evento passado". Mais tarde, o domínio pode apontar para o próximo site da marca, e os convites continuam funcionando.
-- **SEO**: `noindex` (evento privado, não deve aparecer no Google). Tags Open Graph com imagem simples (nome sobre fundo escuro) para o caso de alguém mandar o link no WhatsApp.
+- **SEO**: `noindex` (evento privado, não deve aparecer no Google). Tags Open Graph com imagem simples (a logo em branco sobre fundo escuro) para o caso de alguém mandar o link no WhatsApp.
+- **Logo**: vem do PDF do Illustrator (`makso-alta.pdf`). Convertida para SVG vetorial, com corte justo e `fill="currentColor"`, em `assets/brand/makso-logo.svg`. Ícones (favicon e apple-touch-icon) usam o Ō da logo.
 - **Apps Script**: implantado como web app ("Executar como: eu", "Acesso: qualquer pessoa") na conta do cliente. O README traz o passo a passo; `clasp` é opcional.
 
 ## 10. Testes e verificação
@@ -260,8 +285,9 @@ Base: `design-md/apple/DESIGN.md` (voltagent/awesome-design-md). Mantemos:
   - estados por data (aberto/encerrado/passado);
   - URL do Google Agenda e conteúdo do `.ics`.
 - A lógica do `doPost` é testada em Node com dublês de `SpreadsheetApp`, `LockService` e `MailApp`.
+- Verificação visual automatizada no navegador (Chromium headless), com capturas de tela em 360, 390 e 430px em pé, 844×390 deitado e 1440px, checando que não há rolagem horizontal.
 - Verificação manual depois do deploy:
-  - iPhone Safari, Android Chrome e desktop;
+  - iPhone Safari (principal), Android Chrome e desktop;
   - envio duplicado e envio com a rede caindo;
   - e-mail chegando com `.ics`;
   - planilha e resumo corretos;
@@ -274,7 +300,7 @@ Base: `design-md/apple/DESIGN.md` (voltagent/awesome-design-md). Mantemos:
 3. **No máximo 1 acompanhante**, com nome obrigatório.
 4. Duplicidade = **mesmo e-mail ou mesmo WhatsApp**.
 5. **Prazo de confirmação** configurável; padrão de 3 dias antes do evento.
-6. Visual **monocromático** (sem o azul da Apple), com **luz em tons de couro** atrás do vidro.
+6. Sem o azul da Apple: a **cor de ação é a cor da logo** (`#1b0001`), com **luz em tons de couro/vinho** atrás do vidro.
 7. **Vidro líquido em WebGL**, para a refração aparecer também no iPhone; vidro fosco como plano B.
 8. Página **só em português** e **fora do Google** (`noindex`).
 9. Respostas na **planilha com aba Resumo**; sem aviso a cada confirmação.
