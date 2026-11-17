@@ -1,7 +1,7 @@
 // Build do site (dist/) a partir de config.json. Sem dependências.
 // Uso: node scripts/build.mjs [--config caminho] [--out pasta]
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync, copyFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync, copyFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import vm from 'node:vm';
@@ -160,13 +160,37 @@ export async function build({ root = ROOT, configPath = path.join(root, 'config.
   write(stylesCss, css);
   write('event.json', JSON.stringify({ ...pub, version: hash }, null, 2) + '\n');
   write('robots.txt', 'User-agent: *\nDisallow: /\n');
-  const ics = cal.buildIcs(pub.event, { uid: `lancamento-${hash8(String(pub.event.start))}@makso`, now: new Date() });
+  const ics = cal.buildIcs(pub.event, { uid: cal.eventUid(pub.event) || 'lancamento@makso', now: new Date() });
   if (ics) write('evento.ics', ics);
   copy('assets/icons/favicon.svg', 'favicon.svg');
   copy('assets/icons/apple-touch-icon.png', 'apple-touch-icon.png');
   copy('assets/og.png', 'og.png');
 
   return { files, hash, outDir: out };
+}
+
+/**
+ * Pacote do Apps Script: config embutida (reserva) + regras compartilhadas + src.
+ * Colar estes arquivos no editor do Apps Script (ver README).
+ * @param {{root?: string, configPath?: string, outDir?: string, version: string}} o
+ */
+export async function buildAppsScript({ root = ROOT, configPath = path.join(root, 'config.json'), outDir = path.join(root, 'apps-script', 'dist'), version }) {
+  const out = assertSafeOutDir(root, outDir);
+  const cfg = JSON.parse(readFileSync(configPath, 'utf8'));
+  const problems = validateConfig(cfg);
+  if (problems.length) throw new Error(`config inválida (${configPath}):\n- ${problems.join('\n- ')}`);
+  rmSync(out, { recursive: true, force: true });
+  mkdirSync(out, { recursive: true });
+  const files = [];
+  const write = (rel, content) => { writeFileSync(path.join(out, rel), content); files.push(rel); };
+  write('Config.js', `/* Gerado por scripts/build.mjs — reserva usada quando o site não responde. */\nvar MAKSO_CONFIG = ${JSON.stringify({ ...publicConfig(cfg), version }, null, 2)};\n`);
+  const shared = { 'Rules.js': 'shared/rules.js', 'EventState.js': 'shared/event-state.js', 'Calendar.js': 'shared/calendar.js' };
+  for (const [name, from] of Object.entries(shared)) write(name, readFileSync(path.join(root, from), 'utf8'));
+  for (const f of readdirSync(path.join(root, 'apps-script', 'src')).filter((n) => n.endsWith('.js')).sort()) {
+    write(f, readFileSync(path.join(root, 'apps-script', 'src', f), 'utf8'));
+  }
+  write('appsscript.json', readFileSync(path.join(root, 'apps-script', 'appsscript.json'), 'utf8'));
+  return { files, outDir: out };
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
@@ -177,6 +201,10 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const configPath = arg('--config') ? path.resolve(arg('--config')) : undefined;
   const outDir = arg('--out') ? path.resolve(arg('--out')) : undefined;
   build({ configPath, outDir })
-    .then((r) => console.log(`build ok → ${r.outDir} (${r.files.length} arquivos, versão ${r.hash})`))
+    .then(async (r) => {
+      console.log(`build ok → ${r.outDir} (${r.files.length} arquivos, versão ${r.hash})`);
+      const gas = await buildAppsScript({ configPath, version: r.hash });
+      console.log(`apps script → ${gas.outDir} (${gas.files.length} arquivos)`);
+    })
     .catch((e) => { console.error(e.message); process.exit(1); });
 }

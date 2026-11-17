@@ -64,3 +64,8 @@ test('buildIcs dobra linhas em até 75 bytes sem partir caracteres', () => {
 test('buildIcs: sem início, null', () => {
   assert.equal(C.buildIcs(ev({ start: null }), { uid: 'x', now }), null);
 });
+
+test('eventUid é o mesmo para o .ics do site e o do e-mail', () => {
+  assert.equal(C.eventUid(ev()), 'lancamento-20261212T230000Z@makso');
+  assert.equal(C.eventUid(ev({ start: null })), null);
+});

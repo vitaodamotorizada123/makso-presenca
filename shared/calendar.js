@@ -98,6 +98,12 @@ var MaksoCalendar = (function () {
     return out.join('\r\n');
   }
 
+  /** UID estável do evento (igual no .ics do site e no do e-mail). @param {MaksoEvent} event */
+  function eventUid(event) {
+    var start = MaksoEventState.parseDate(event.start);
+    return start ? 'lancamento-' + utcStamp(start) + '@makso' : null;
+  }
+
   /** @param {MaksoEvent} event @param {{uid: string, now: Date}} o @returns {string|null} */
   function buildIcs(event, o) {
     var r = range(event);
@@ -128,6 +134,7 @@ var MaksoCalendar = (function () {
     formatWhen: formatWhen,
     googleCalendarUrl: googleCalendarUrl,
     buildIcs: buildIcs,
+    eventUid: eventUid,
     placeLine: placeLine,
   };
 })();
