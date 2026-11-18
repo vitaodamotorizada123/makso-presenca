@@ -323,3 +323,18 @@ O desenho e o código partem do celular em pé; telas maiores são melhorias pro
 - Cores exatas das manchas de luz, intensidade da refração e tamanho do nome, dentro dos tokens acima. O hero é mostrado ao Victor como primeiro ponto de checagem antes do resto.
 - Máscara do WhatsApp, favicon e imagem Open Graph.
 - Estrutura de pastas e nomes de arquivos.
+
+## 14. Revisão de 2026-11-18 (pedido do Victor)
+
+Substitui o que as seções 8 e 8.1 dizem sobre o hero e as cores.
+
+- **Sem cápsula (pílula) e sem vidro líquido.** O WebGL saiu: não há mais `canvas`, `glass.js` nem fundo animado.
+- **Logo flutuando.** Animação CSS: sobe e desce `10px` (`14px` no desktop, `6px` no celular deitado) em 6 s, `ease-in-out`, infinita. Uma sombra elíptica suave no "chão" encolhe quando a logo sobe. Com `prefers-reduced-motion`, a logo fica parada. A entrada (uma vez por sessão) continua.
+- **Fundo do site inteiro em `#24151F`** (tema escuro):
+  - texto `#ffffff` e secundário `#b3a6ae` (contraste 7,5:1);
+  - linhas `rgb(255 255 255 / 12%)`;
+  - campos com fundo `rgb(255 255 255 / 6%)` e contorno `rgb(255 255 255 / 35%)` (3,2:1);
+  - ações em pílula branca com texto `#24151F`;
+  - erro `#ff6b78` (6,3:1);
+  - `theme-color` e `color-scheme: dark`.
+- **Ícones e OG** em `#24151F` com a logo/Ō em branco.

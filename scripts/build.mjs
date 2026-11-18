@@ -18,7 +18,6 @@ export const BUNDLE = [
   'src/js/api.js',
   'src/js/form-state.js',
   'src/js/form.js',
-  'src/js/glass.js',
   'src/js/main.js',
 ];
 

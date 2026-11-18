@@ -11,7 +11,7 @@ Convite (QR) ──▶ site estático no Render ──▶ Apps Script (conta Goo
                                               └─ envia e-mail com .ics ──▶ convidado
 ```
 
-- **Design:** padrão Apple (`design-md/apple` do voltagent/awesome-design-md), com a logo num vidro líquido em WebGL. Ver `docs/specs/2026-11-17-makso-presenca-design.md`.
+- **Design:** padrão Apple (`design-md/apple` do voltagent/awesome-design-md), tema escuro em `#24151F` com a logo flutuando. Ver `docs/specs/2026-11-17-makso-presenca-design.md` (seção 14).
 - **Sem dependências:** HTML/CSS/JS puros + Node 22 para o build.
 
 ---
@@ -40,7 +40,7 @@ O `?demo=1` também funciona no site publicado, com o selo "Demonstração — n
 ```bash
 npm test               # regras, agenda, build, Apps Script (com dublês do Google), QR
 npm run typecheck      # tipos via JSDoc (tsc)
-npm run test:e2e       # navegador real (Chrome + Playwright): layout mobile, vidro, formulário
+npm run test:e2e       # navegador real (Chrome + Playwright): layout mobile, logo, formulário
 ```
 
 ---

@@ -29,7 +29,7 @@
     ? demoInfo.scenario
     : MaksoEventState.getRsvpState({ now: new Date(), cfg: cfg, hasEndpoint: hasEndpoint });
 
-  // 3. Hero com vidro líquido.
+  // 3. Hero: entrada da logo (uma vez por sessão). A flutuação é só CSS.
   var hero = /** @type {HTMLElement|null} */ (document.querySelector('.hero'));
   if (hero) {
     var store = MaksoStorage.session();
@@ -41,13 +41,6 @@
     var intro = !reduced && !store.get('makso-intro') && !alreadyPainted;
     store.set('makso-intro', '1');
     if (intro) hero.classList.add('is-intro');
-    MaksoGlass.mount({
-      hero: hero,
-      canvas: /** @type {HTMLCanvasElement} */ (hero.querySelector('.hero__glass')),
-      target: /** @type {HTMLElement} */ (hero.querySelector('.hero__logo')),
-      reducedMotion: reduced,
-      intro: intro,
-    });
   }
 
   // 4. Formulário.

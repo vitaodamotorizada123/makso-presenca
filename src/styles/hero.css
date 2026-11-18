@@ -1,6 +1,5 @@
 .hero {
   position: relative;
-  isolation: isolate;
   display: grid;
   place-items: center;
   min-height: 100vh;
@@ -11,37 +10,10 @@
     calc(env(safe-area-inset-bottom) + 48px)
     var(--gutter-l);
   overflow: hidden;
-  background: var(--black);
-  color: var(--paper);
+  background: var(--bg);
+  color: var(--text);
   text-align: center;
-  -webkit-font-smoothing: antialiased;
 }
-
-/* Fundo de reserva (sem WebGL): luz em tons de couro/vinho. */
-.hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-  background:
-    radial-gradient(60% 42% at 28% 34%, #5a0f1a 0%, transparent 70%),
-    radial-gradient(58% 40% at 74% 62%, #5a2a12 0%, transparent 72%),
-    radial-gradient(34% 26% at 58% 28%, #c9a27a33 0%, transparent 70%),
-    radial-gradient(70% 50% at 50% 100%, #3a0610 0%, transparent 70%),
-    var(--black);
-}
-
-.hero__glass {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  transition: opacity 400ms var(--ease-out);
-  pointer-events: none;
-}
-.hero[data-glass="webgl"] .hero__glass { opacity: 1; }
 
 .hero__content {
   display: flex;
@@ -53,32 +25,41 @@
 
 .hero__logo {
   position: relative;
-  z-index: 0;
   width: var(--logo-w);
-  margin: calc(var(--logo-h) * 0.5) 0 calc(var(--logo-h) * 0.55 + 28px);
+  margin: calc(var(--logo-h) * 0.2) 0 calc(var(--logo-h) * 0.55 + 24px);
   line-height: 0;
   user-select: none;
   -webkit-user-select: none;
 }
-.hero__logo .logo { width: 100%; height: auto; color: var(--paper); }
 
-/* Cápsula de vidro de reserva (o WebGL desenha a de verdade). */
-.hero__logo::before {
+/* Logo flutuando: sobe e desce devagar; a sombra no "chão" encolhe quando ela sobe. */
+.hero__logo .logo {
+  width: 100%;
+  height: auto;
+  color: var(--text);
+  animation: makso-float 6s ease-in-out infinite;
+  will-change: transform;
+}
+.hero__logo::after {
   content: "";
   position: absolute;
-  inset: -35% -5.6%;
-  z-index: -1;
-  border-radius: var(--r-pill);
-  background: rgb(255 255 255 / 0.06);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  backdrop-filter: blur(20px) saturate(180%);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.35),
-    inset 0 -1px 0 rgb(255 255 255 / 0.08),
-    inset 0 0 0 1px rgb(255 255 255 / 0.10);
-  transition: opacity 400ms var(--ease-out);
+  left: 18%;
+  right: 18%;
+  bottom: calc(var(--logo-h) * -0.42);
+  height: calc(var(--logo-h) * 0.16);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(0 0 0 / 0.45), transparent);
+  animation: makso-shadow 6s ease-in-out infinite;
+  pointer-events: none;
 }
-.hero[data-glass="webgl"] .hero__logo::before { opacity: 0; }
+@keyframes makso-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(calc(var(--float) * -1)); }
+}
+@keyframes makso-shadow {
+  0%, 100% { transform: scaleX(1); opacity: 0.9; }
+  50% { transform: scaleX(0.82); opacity: 0.5; }
+}
 
 .hero__invite {
   max-width: 18ch;
@@ -91,7 +72,7 @@
 
 .hero__when {
   margin-top: 12px;
-  color: var(--muted-dark);
+  color: var(--text-muted);
   font-size: 17px;
 }
 
@@ -103,35 +84,39 @@
   margin-top: 32px;
   padding: 0 30px;
   border-radius: var(--r-pill);
-  background: var(--paper);
-  color: var(--ink);
+  background: var(--accent);
+  color: var(--on-accent);
   font-size: 17px;
   text-decoration: none;
   transition: transform var(--t-fast) var(--ease-out), background-color var(--t-base) ease;
 }
 .hero__cta:active { transform: scale(0.97); }
-.hero__cta:focus-visible { outline-color: var(--paper); }
 
 @media (hover: hover) and (pointer: fine) {
-  .hero__cta:hover { background: var(--parchment); }
+  .hero__cta:hover { background: #efe7ec; }
 }
 
 /* Entrada (uma vez por sessão; o JS adiciona .is-intro). */
 .hero.is-intro .hero__logo {
-  animation: makso-intro 600ms var(--ease-out) both;
+  animation: makso-intro 700ms var(--ease-out) both;
 }
 .hero.is-intro .hero__invite,
 .hero.is-intro .hero__when,
 .hero.is-intro .hero__cta {
-  animation: makso-fade 500ms var(--ease-out) 180ms both;
+  animation: makso-fade 500ms var(--ease-out) 200ms both;
 }
 @keyframes makso-intro {
-  from { opacity: 0; transform: scale(0.96); }
-  to { opacity: 1; transform: scale(1); }
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to { opacity: 1; transform: none; }
 }
 @keyframes makso-fade {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__logo .logo,
+  .hero__logo::after { animation: none; }
 }
 
 @media (min-width: 735px) {
@@ -139,10 +124,11 @@
   .hero__when { font-size: 21px; margin-top: 16px; }
 }
 
-/* Celular deitado: menos ar vertical. */
+/* Celular deitado: menos ar vertical (depois da regra de desktop, que é mais larga). */
 @media (max-height: 500px) and (orientation: landscape) {
-  :root { --logo-w: min(34vw, 340px); }
-  .hero { padding-top: calc(env(safe-area-inset-top) + 32px); padding-bottom: calc(env(safe-area-inset-bottom) + 28px); }
-  .hero__invite { font-size: 24px; max-width: none; }
-  .hero__cta { margin-top: 20px; }
+  :root { --logo-w: min(36vw, 360px); --float: 6px; }
+  .hero { padding-top: calc(env(safe-area-inset-top) + 28px); padding-bottom: calc(env(safe-area-inset-bottom) + 24px); }
+  .hero__invite { font-size: 22px; max-width: none; }
+  .hero__when { font-size: 15px; margin-top: 8px; }
+  .hero__cta { margin-top: 18px; }
 }

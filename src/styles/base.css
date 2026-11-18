@@ -4,6 +4,8 @@ html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   scroll-padding-top: 16px;
+  background: var(--bg);
+  color-scheme: dark;
 }
 
 body {
@@ -12,8 +14,9 @@ body {
   font-size: 17px;
   line-height: 1.47;
   letter-spacing: -0.374px;
-  color: var(--ink);
-  background: var(--parchment);
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -25,7 +28,7 @@ a { color: inherit; }
 a, button, input, label, textarea { touch-action: manipulation; }
 input, textarea, select, button { font: inherit; letter-spacing: inherit; }
 
-:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 .visually-hidden {
   position: absolute !important;
@@ -53,14 +56,14 @@ input, textarea, select, button { font: inherit; letter-spacing: inherit; }
   transition: transform var(--t-fast) var(--ease-out), background-color var(--t-base) ease, opacity var(--t-base) ease;
 }
 .button:active { transform: scale(0.97); }
-.button:disabled { cursor: default; opacity: 0.45; transform: none; }
+.button:disabled { cursor: default; opacity: 0.4; transform: none; }
 
-.button--primary { background: var(--ink); color: var(--paper); }
-.button--secondary { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.button--primary { background: var(--accent); color: var(--on-accent); }
+.button--secondary { background: transparent; color: var(--text); box-shadow: inset 0 0 0 1px var(--field-line); }
 
 @media (hover: hover) and (pointer: fine) {
-  .button--primary:not(:disabled):hover { background: #3a0a0e; }
-  .button--secondary:hover { background: rgb(27 0 1 / 0.05); }
+  .button--primary:not(:disabled):hover { background: #efe7ec; }
+  .button--secondary:hover { background: rgb(255 255 255 / 0.06); }
 }
 
 .demo-badge {
@@ -71,14 +74,11 @@ input, textarea, select, button { font: inherit; letter-spacing: inherit; }
   transform: translateX(-50%);
   padding: 6px 14px;
   border-radius: var(--r-pill);
-  background: rgb(255 255 255 / 0.82);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  backdrop-filter: saturate(180%) blur(20px);
-  color: var(--ink);
+  background: rgb(255 255 255 / 0.9);
+  color: var(--on-accent);
   font-size: 12px;
   letter-spacing: -0.12px;
   white-space: nowrap;
-  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.06);
 }
 
 @media (prefers-reduced-motion: reduce) {

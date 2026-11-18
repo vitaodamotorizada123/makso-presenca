@@ -1,27 +1,23 @@
 .details {
   padding: var(--section-y) var(--gutter-r) var(--section-y) var(--gutter-l);
-  background: var(--parchment);
+  background: var(--bg);
 }
 
 .details__inner { max-width: 980px; margin: 0 auto; }
 
-.details__list {
-  display: grid;
-  gap: 0;
-  margin: 0;
-}
+.details__list { display: grid; gap: 0; margin: 0; }
 
 .details__row {
   display: grid;
   align-content: start;
   gap: 4px;
   padding: 20px 0;
-  border-top: 1px solid var(--hairline);
+  border-top: 1px solid var(--line);
 }
-.details__row:last-child { border-bottom: 1px solid var(--hairline); }
+.details__row:last-child { border-bottom: 1px solid var(--line); }
 
 .details__list dt {
-  color: var(--muted);
+  color: var(--text-muted);
   font-size: 14px;
   font-weight: 600;
   letter-spacing: -0.224px;
@@ -32,14 +28,15 @@
   flex-direction: column;
   gap: 2px;
   margin: 0;
+  color: var(--text);
   font-size: 21px;
   font-weight: 600;
   line-height: 1.19;
   letter-spacing: 0.231px;
 }
 
-.details__address { color: var(--muted); font-size: 17px; font-weight: 400; letter-spacing: -0.374px; line-height: 1.47; }
-.details__soon { color: var(--muted); }
+.details__address { color: var(--text-muted); font-size: 17px; font-weight: 400; letter-spacing: -0.374px; line-height: 1.47; }
+.details__soon { color: var(--text-muted); }
 
 .details__map {
   align-self: flex-start;
@@ -54,14 +51,15 @@
 
 @media (min-width: 735px) {
   .details__list { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 32px; }
-  .details__row { padding: 24px 0 0; border-top: 1px solid var(--hairline); }
+  .details__row { padding: 24px 0 0; }
   .details__row:last-child { border-bottom: 0; }
 }
 
 .site-footer {
   padding: 32px var(--gutter-r) calc(env(safe-area-inset-bottom) + 32px) var(--gutter-l);
-  background: var(--parchment);
-  color: var(--muted);
+  border-top: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--text-muted);
   font-size: 12px;
   letter-spacing: -0.12px;
   text-align: center;
@@ -70,6 +68,6 @@
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  color: var(--ink);
+  color: var(--text);
   text-underline-offset: 3px;
 }
