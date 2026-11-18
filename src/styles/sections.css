@@ -5,7 +5,7 @@
   font-family: var(--font-script);
   font-weight: 400;
   font-size: clamp(24px, 6.6vw, 34px);
-  line-height: 1.55;
+  line-height: 1.85;
   text-wrap: balance;
 }
 /* Data, hora e endereço: três linhas (o endereço abre o mapa). */
