@@ -74,9 +74,11 @@ function sharedContext(root) {
   return ctx;
 }
 
+/** Data do convite (tela 1): 10.12.2026 / 19h30, em duas linhas. Devolve HTML já escapado. */
 function renderWhen(cal, event) {
-  const w = cal.formatWhen(event);
-  return w ? `${w.date} · ${w.time}` : 'Data em breve';
+  const w = cal.formatShort(event);
+  if (!w) return '<p class="intro__when intro__when--soon">Data em breve</p>';
+  return `<time class="intro__when" datetime="${escapeHtml(event.start)}"><span class="intro__date">${escapeHtml(w.date)}</span><span class="intro__time">${escapeHtml(w.time)}</span></time>`;
 }
 
 function renderDetails(cal, event) {
@@ -145,7 +147,7 @@ export async function build({ root = ROOT, configPath = path.join(root, 'config.
     '%%SITE_URL%%': escapeHtml(pub.siteUrl.replace(/\/$/, '')),
     '%%TITLE%%': escapeHtml(pub.event.title),
     '%%DESCRIPTION%%': escapeHtml(pub.event.description),
-    '%%WHEN%%': escapeHtml(renderWhen(cal, pub.event)),
+    '%%WHEN%%': renderWhen(cal, pub.event),
     '%%DETAILS%%': renderDetails(cal, pub.event),
   };
   let html = readFileSync(path.join(root, 'src/index.html'), 'utf8');

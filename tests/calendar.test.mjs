@@ -19,6 +19,18 @@ test('formatWhen: minutos aparecem como 20h30', () => {
   assert.equal(C.formatWhen(ev({ start: '2026-12-12T20:30:00-03:00' })).time, '20h30');
 });
 
+test('formatShort: 10.12.2026 e 19h (convite)', () => {
+  assert.deepEqual(C.formatShort(ev({ start: '2026-12-10T19:00:00-03:00' })), { date: '10.12.2026', time: '19h' });
+});
+
+test('formatShort: minutos aparecem como 19h30', () => {
+  assert.equal(C.formatShort(ev({ start: '2026-12-10T19:30:00-03:00' })).time, '19h30');
+});
+
+test('formatShort: sem início, null', () => {
+  assert.equal(C.formatShort(ev({ start: null })), null);
+});
+
 test('formatWhen: sem início, null', () => {
   assert.equal(C.formatWhen(ev({ start: null })), null);
 });

@@ -45,7 +45,7 @@ test('assets com hash existem e o bundle começa com a config', async () => {
 
 test('evento completo: data no HTML, evento.ics e event.json', async () => {
   const { html, outDir, res } = await buildWith('full');
-  assert.ok(html.includes('sábado, 12 de dezembro · 20h'));
+  assert.ok(html.includes('<time class="intro__when" datetime="2037-12-12T20:00:00-03:00"><span class="intro__date">12.12.2037</span><span class="intro__time">20h</span></time>'));
   assert.ok(existsSync(path.join(outDir, 'evento.ics')));
   const ej = JSON.parse(readFileSync(path.join(outDir, 'event.json'), 'utf8'));
   assert.equal(ej.event.start, '2037-12-12T20:00:00-03:00');
@@ -95,4 +95,13 @@ test('adobeFontsKitId: vazio ou id do kit, e vai para a config pública', async 
   const html = readFileSync(path.join(outDir, 'index.html'), 'utf8');
   const js = readFileSync(path.join(outDir, html.match(/src="\/(assets\/app\.[0-9a-f]{8}\.js)"/)[1]), 'utf8');
   assert.ok(js.includes('"adobeFontsKitId":"abc1def"'));
+});
+
+test('config.json do lançamento: 10.12.2026 às 19h30, Rua San Marino, 588 (Nova Lima)', async () => {
+  const cfg = JSON.parse(readFileSync(path.join(root, 'config.json'), 'utf8'));
+  assert.deepEqual(validateConfig(cfg), []);
+  assert.equal(cfg.event.start, '2026-12-10T19:30:00-03:00');
+  assert.equal(cfg.event.address, 'Rua San Marino, 588 – Vila Castela, Nova Lima – MG');
+  assert.match(cfg.event.mapsUrl, /^https:\/\/www\.google\.com\/maps\/search\/\?api=1&query=Rua%20San%20Marino%2C%20588/);
+  assert.ok(!cfg._todo.some((t) => /event\.start|event\.address/.test(t)), 'tirar data e local do _todo');
 });

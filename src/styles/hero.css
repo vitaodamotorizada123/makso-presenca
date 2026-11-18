@@ -70,7 +70,7 @@
   text-wrap: balance;
 }
 
-.hero__when {
+.intro__when {
   margin-top: 12px;
   color: var(--text-muted);
   font-size: 17px;
@@ -101,7 +101,7 @@
   animation: makso-intro 700ms var(--ease-out) both;
 }
 .hero.is-intro .hero__invite,
-.hero.is-intro .hero__when,
+.hero.is-intro .intro__when,
 .hero.is-intro .hero__cta {
   animation: makso-fade 500ms var(--ease-out) 200ms both;
 }
@@ -121,7 +121,7 @@
 
 @media (min-width: 735px) {
   .hero__invite { font-size: 40px; line-height: 1.1; letter-spacing: -0.4px; }
-  .hero__when { font-size: 21px; margin-top: 16px; }
+  .intro__when { font-size: 21px; margin-top: 16px; }
 }
 
 /* Celular deitado: menos ar vertical (depois da regra de desktop, que é mais larga). */
@@ -129,6 +129,6 @@
   :root { --logo-w: min(36vw, 360px); --float: 6px; }
   .hero { padding-top: calc(env(safe-area-inset-top) + 28px); padding-bottom: calc(env(safe-area-inset-bottom) + 24px); }
   .hero__invite { font-size: 22px; max-width: none; }
-  .hero__when { font-size: 15px; margin-top: 8px; }
+  .intro__when { font-size: 15px; margin-top: 8px; }
   .hero__cta { margin-top: 18px; }
 }
