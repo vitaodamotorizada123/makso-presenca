@@ -17,7 +17,7 @@ html:not(.js) #confirmar:target { display: block !important; }
 .intro {
   /* Desenho do cliente: logo em cima, frase, botão no meio, data embaixo. */
   display: grid;
-  grid-template-rows: auto 1.1fr auto 0.9fr auto 0.45fr auto 2.45fr;
+  grid-template-rows: auto 1.1fr auto 0.9fr auto 1.1fr auto 1.8fr;
   justify-items: center;
   min-height: 100vh;
   min-height: 100svh;
