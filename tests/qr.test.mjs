@@ -25,12 +25,21 @@ test('qr.py recusa URL sem https', () => {
 });
 
 const hasCv2 = spawnSync('python3', ['-c', 'import cv2']).status === 0;
-test('o PNG decodifica para a URL', { skip: hasCv2 ? false : 'OpenCV (cv2) indisponível' }, () => {
-  const out = mkdtempSync(path.join(os.tmpdir(), 'makso-qr-'));
-  execFileSync('python3', ['-I', qr, URL, out]);
-  const decoded = execFileSync('python3', ['-I', '-c',
+const cv2Skip = { skip: hasCv2 ? false : 'OpenCV (cv2) indisponível' };
+
+function decodePng(png) {
+  return execFileSync('python3', ['-I', '-c',
     // O detector do OpenCV falha em imagens enormes; 600 px ≈ o que a câmera do celular vê.
     'import sys, cv2; img = cv2.resize(cv2.imread(sys.argv[1]), (600, 600), interpolation=cv2.INTER_AREA); d, _, _ = cv2.QRCodeDetector().detectAndDecode(img); print(d)',
-    path.join(out, 'qr-makso.png')]).toString().trim();
-  assert.equal(decoded, URL);
+    png]).toString().trim();
+}
+
+test('o PNG decodifica para a URL', cv2Skip, () => {
+  const out = mkdtempSync(path.join(os.tmpdir(), 'makso-qr-'));
+  execFileSync('python3', ['-I', qr, URL, out]);
+  assert.equal(decodePng(path.join(out, 'qr-makso.png')), URL);
+});
+
+test('o QR do convite (assets/qr) marca a origem "convite" para o Umami', cv2Skip, () => {
+  assert.equal(decodePng(path.join(root, 'assets', 'qr', 'qr-makso.png')), 'https://makso.onrender.com/?utm_source=convite');
 });

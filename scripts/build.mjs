@@ -15,6 +15,7 @@ export const BUNDLE = [
   'shared/event-state.js',
   'shared/calendar.js',
   'src/js/storage.js',
+  'src/js/analytics.js',
   'src/js/api.js',
   'src/js/form-state.js',
   'src/js/form.js',
@@ -25,6 +26,7 @@ export const STYLES = ['tokens', 'base', 'hero', 'sections', 'form'].map((n) => 
 
 const ISO_OFFSET = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?(\.\d+)?([+-]\d{2}:\d{2}|Z)$/;
 const APPS_SCRIPT = /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/;
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /** @returns {string[]} lista de problemas; vazia = ok */
 export function validateConfig(cfg) {
@@ -32,6 +34,7 @@ export function validateConfig(cfg) {
   if (!cfg || typeof cfg !== 'object') return ['config: não é um objeto'];
   if (typeof cfg.siteUrl !== 'string' || !/^https:\/\/[^/\s]+/.test(cfg.siteUrl)) problems.push('siteUrl: precisa ser https://…');
   if (cfg.appsScriptUrl !== '' && !APPS_SCRIPT.test(String(cfg.appsScriptUrl))) problems.push('appsScriptUrl: vazio ou https://script.google.com/macros/s/…/exec');
+  if (cfg.umamiWebsiteId !== undefined && cfg.umamiWebsiteId !== '' && !UUID.test(String(cfg.umamiWebsiteId))) problems.push('umamiWebsiteId: vazio ou o Website ID do Umami (UUID)');
   const ev = cfg.event || {};
   for (const k of ['title', 'venueName', 'address', 'mapsUrl', 'dressCode', 'description']) {
     if (typeof ev[k] !== 'string') problems.push(`event.${k}: precisa ser texto (pode ser "")`);
@@ -51,8 +54,8 @@ export function validateConfig(cfg) {
 
 /** Subconjunto público da config (vai para o navegador e para o event.json). */
 export function publicConfig(cfg) {
-  const { siteUrl, appsScriptUrl, rsvpDeadline, event } = cfg;
-  return { siteUrl, appsScriptUrl, rsvpDeadline: rsvpDeadline ?? null, event };
+  const { siteUrl, appsScriptUrl, rsvpDeadline, event, umamiWebsiteId } = cfg;
+  return { siteUrl, appsScriptUrl, rsvpDeadline: rsvpDeadline ?? null, event, umamiWebsiteId: umamiWebsiteId || '' };
 }
 
 const hash8 = (s) => createHash('sha256').update(s).digest('hex').slice(0, 8);

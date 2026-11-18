@@ -24,3 +24,10 @@ test('toda rota tem CSP sem unsafe-inline e noindex', () => {
   assert.ok(h['Content-Security-Policy'].includes('connect-src https://script.google.com https://script.googleusercontent.com'));
   assert.equal(h['X-Robots-Tag'], 'noindex');
 });
+
+test('CSP libera o Umami (script e envio) e mais nada novo', () => {
+  const csp = headersFor('/')['Content-Security-Policy'];
+  assert.ok(csp.includes("script-src 'self' https://cloud.umami.is"));
+  assert.match(csp, /connect-src [^;]*https:\/\/cloud\.umami\.is/);
+  assert.ok(!csp.includes('unsafe-inline'));
+});

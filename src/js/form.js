@@ -20,7 +20,8 @@ var MaksoForm = (function () {
 
   /**
    * @param {{root: HTMLElement, cfg: MaksoConfig, page: RsvpState, api: typeof MaksoApi,
-   *   demo: boolean, scenario: string|null, now: () => number, reducedMotion?: boolean}} o
+   *   demo: boolean, scenario: string|null, now: () => number, reducedMotion?: boolean,
+   *   track?: (name: string, data?: Record<string, boolean>) => void}} o
    */
   function mount(o) {
     var root = o.root;
@@ -44,6 +45,13 @@ var MaksoForm = (function () {
     var gcal = /** @type {HTMLAnchorElement} */ ($('.rsvp__gcal'));
     var store = MaksoStorage.session();
     var mountedAt = o.now();
+    var track = o.track || function () {};
+    var started = false;
+    function markStarted() {
+      if (started) return;
+      started = true;
+      track('iniciou-formulario');
+    }
     var reduced = !!o.reducedMotion;
 
     var state = MaksoFormState.initialState(o.page);
@@ -199,6 +207,7 @@ var MaksoForm = (function () {
         var bad = v.fields;
         Object.keys(bad).forEach(function (k) { if (k !== 'id') errs[k] = bad[k]; });
         if (Object.keys(errs).length) {
+          track('erro-validacao');
           dispatch({ type: 'invalid', fields: errs });
           focusFirstInvalid();
           return;
@@ -229,6 +238,13 @@ var MaksoForm = (function () {
           // finally: o envio sempre termina num estado definido.
           var definitive = res.ok === true || (!res.ok && (res.code === 'ja_respondeu' || res.code === 'encerrado'));
           if (definitive) store.remove(ID_KEY);
+          // Só o desfecho (e se trouxe acompanhante) — nunca nome, e-mail ou WhatsApp.
+          if (res.ok === true) {
+            if (res.status === 'confirmado') track('confirmou', { acompanhante: payload.acompanhante === true });
+            else track('recusou');
+          } else if (res.code === 'ja_respondeu') track('ja-respondeu');
+          else if (res.code === 'encerrado') track('encerrado');
+          else if (res.code !== 'invalido') track('erro-envio');
           dispatch({ type: 'response', res: res, nome: nome, email: email });
           if (state.result) focusResult();
           else if (Object.keys(state.errors).length) focusFirstInvalid();
@@ -237,12 +253,14 @@ var MaksoForm = (function () {
 
     form.addEventListener('change', function (e) {
       var t = /** @type {HTMLInputElement} */ (e.target);
+      if (t.name !== 'hp') markStarted();
       if (t.name === 'presenca') dispatch({ type: 'choose', presenca: t.value });
       else if (t.name === 'acompanhante') dispatch({ type: 'toggleCompanion', on: t.checked });
     });
 
     form.addEventListener('input', function (e) {
       var t = /** @type {HTMLInputElement} */ (e.target);
+      if (t.name !== 'hp') markStarted();
       if (t.name && state.errors[t.name]) dispatch({ type: 'edit', field: t.name });
     });
 

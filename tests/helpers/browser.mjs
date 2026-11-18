@@ -33,7 +33,7 @@ export async function buildFor(config) {
 
 export async function startBrowser({
   viewport = { width: 390, height: 844 }, isMobile = true, hasTouch = true,
-  reducedMotion = 'no-preference', config = 'full', query = '', initScript, deviceScaleFactor = 2,
+  reducedMotion = 'no-preference', config = 'full', query = '', initScript, deviceScaleFactor = 2, routes,
 } = {}) {
   const outDir = await buildFor(config);
   const browser = await getBrowser();
@@ -43,6 +43,7 @@ export async function startBrowser({
     const res = serveFile(outDir, new URL(route.request().url()).pathname);
     await route.fulfill({ status: res.status, headers: res.headers, body: res.body });
   });
+  if (routes) await routes(context);
   const page = await context.newPage();
   page.__problems = [];
   page.on('console', (m) => {

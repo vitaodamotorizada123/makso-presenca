@@ -3,8 +3,7 @@
     "event.start / event.end: data e hora (ISO com -03:00), ex.: 2026-12-12T20:00:00-03:00",
     "event.venueName, event.address, event.mapsUrl: local do evento",
     "event.dressCode: traje (opcional)",
-    "appsScriptUrl: URL do web app do Apps Script (quando a conta Google do cliente existir)",
-    "siteUrl: confirmar o nome final do serviço no Render"
+    "appsScriptUrl: URL do web app do Apps Script (quando a conta Google do cliente existir)"
   ],
   "siteUrl": "https://makso.onrender.com",
   "appsScriptUrl": "",
@@ -18,5 +17,6 @@
     "mapsUrl": "",
     "dressCode": "",
     "description": "Você está convidado para o lançamento da maksō."
-  }
+  },
+  "umamiWebsiteId": "d475ff6c-e0b4-446d-9691-4845d03b6c44"
 }
