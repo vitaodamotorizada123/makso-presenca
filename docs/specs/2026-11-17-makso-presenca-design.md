@@ -355,3 +355,61 @@ Substitui o que as seções 8 e 8.1 dizem sobre o hero e as cores.
   - `erro-envio`, exceto quando a resposta é `invalido`.
 - **Origem:** o QR do convite aponta para `https://makso.onrender.com/?utm_source=convite` (versão 4, ECC Q), para separar o convite impresso dos links compartilhados.
 - **Privacidade:** a nota do formulário diz "Medimos as visitas de forma anônima, sem cookies."
+
+## 16. Duas telas, no desenho do cliente (2026-11-18)
+
+Substitui o que as seções 8 e 14 dizem sobre a ordem da página (hero, detalhes, formulário). Cores, fonte e backend continuam iguais.
+
+**Intenção.** O cliente mandou dois rascunhos (feitos como story) e quer o site "mais ou menos desse jeito". Pedido do Victor: "a pessoa só vê o formulário depois de clicar em confirme sua presença". O convite deve parecer exclusivo e direto.
+
+**Objetivos.**
+- **Tela 1:** frase, botão, data e logo, como no rascunho.
+- **Tela 2:** "Dados para contato" e o formulário, que só aparece depois do clique.
+- **Campos:** todos continuam (escolha do Victor).
+
+**Fora do escopo.**
+- Sem mudança na planilha, no Apps Script, no e-mail ou nas regras de validação.
+- Sem páginas novas.
+
+**Antiobjetivos.**
+- O formulário aparecer antes do clique (nem rolando a página).
+- O "voltar" do celular sair do site em vez de voltar à tela 1.
+- Perder dados já digitados ao voltar para a tela 1.
+
+**Abordagens consideradas.**
+- **Escolhida: troca de tela na mesma página.** É a única em que o formulário fica realmente escondido antes do clique.
+- Uma página com as duas telas empilhadas e o botão rolando até a 2: o formulário ficaria visível ao rolar.
+- Duas páginas (`/` e `/confirmar`): mais lento, sem ganho.
+
+**Tela 1** (`100svh`, conteúdo centralizado, logo no pé):
+- Texto, igual ao rascunho: "Algumas coisas precisam ser vistas de perto e você foi escolhida para conhecer em primeira mão." O "escolhida" é do cliente e fica como está.
+- Botão-pílula branco com o texto "Confirme sua presença". No visual vai em caixa alta, com espaçamento entre letras.
+- Data e hora em duas linhas, com números tabulares: `10.12.2026` e `19h`. Os minutos aparecem só quando existem (`19h30`). Saem de `event.start`, fixo em −03:00.
+- Logo maksō pequena no pé, com a flutuação da seção 14 numa amplitude menor. Fica parada com `prefers-reduced-motion`.
+- Título acessível: um `h1` "Lançamento maksō", só para leitores de tela.
+
+**Tela 2** (`#confirmar`):
+- Título "Dados para contato".
+- Ordem dos campos: Nome, E-mail, Telefone, Você vai? (Vou / Não vou), acompanhante, restrição alimentar, observação.
+- "Telefone" é só o rótulo novo do campo que era "WhatsApp". O nome interno, a validação e a coluna da planilha continuam `whatsapp`.
+- Botão "Confirmar presença", nota de privacidade e logo pequena no pé.
+- A tela de "obrigado" continua dentro da tela 2, com os botões de agenda. A lista de detalhes (local, traje) sai da página e passa a aparecer no "obrigado", só se houver algum detalhe preenchido.
+
+**Navegação.**
+- **Clique no botão:**
+  - `history.pushState` com `#confirmar`;
+  - a tela 1 some e a tela 2 aparece com transição de opacidade e `translateY(12px)` em 280 ms, `ease-out` (sem transição com movimento reduzido);
+  - a página vai para o topo e o foco vai para "Dados para contato".
+- **"Voltar" do navegador** (`popstate` sem hash): volta à tela 1, e o que foi digitado fica.
+- **Link aberto já com `#confirmar`:** abre direto na tela 2.
+- **Sem JavaScript:** a tela 2 continua escondida até o clique. O botão é um link `#confirmar`, e a CSS `:target` mostra a tela.
+- **Umami:**
+  - o evento `clicou-confirmar-topo` continua no botão;
+  - o Umami registra `/#confirmar` como visualização, o que vira mais um passo do funil.
+
+**Dados do evento.**
+- `event.start = 2026-12-10T19:00:00-03:00`.
+- Término padrão: +4 h, ou seja, 23h.
+- Prazo padrão das confirmações: 3 dias antes, 07/12 às 19h.
+
+**Fica com quem constrói.** Medidas, espaçamentos e tamanhos de fonte, seguindo os tokens da seção 14 e as regras de toque e acessibilidade de sempre.
