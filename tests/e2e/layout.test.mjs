@@ -17,6 +17,12 @@ const measure = (page) => page.evaluate(() => {
       .filter((el) => el.getClientRects().length && el.getBoundingClientRect().height < 44)
       .map((el) => el.className || el.tagName),
     footer: document.querySelector('footer.site-footer')?.textContent ?? '',
+    docHeight: document.documentElement.scrollHeight,
+    htmlOverflow: getComputedStyle(document.documentElement).overflowY,
+    footerBox: (() => { const r = document.querySelector('footer.site-footer').getBoundingClientRect(); return { top: r.top, bottom: r.bottom }; })(),
+    introBox: (() => { const r = document.getElementById('inicio').getBoundingClientRect(); return { top: r.top, bottom: r.bottom }; })(),
+    introParts: [...document.querySelectorAll('#inicio .screen__logo, #inicio .intro__lede, #inicio .intro__cta, #inicio .intro__when')]
+      .map((el) => { const r = el.getBoundingClientRect(); return { name: el.className, top: r.top, bottom: r.bottom }; }),
   };
 });
 
@@ -30,7 +36,15 @@ for (const viewport of VIEWPORTS) {
       assert.deepEqual(m.smallInputs, []);
       assert.deepEqual(m.smallTargets, []);
       assert.ok(m.footer.includes('Desenvolvido por DIMAK Soluções'));
-      assert.ok(m.introHeight >= m.innerHeight - 1, `tela 1 ${m.introHeight} < ${m.innerHeight}`);
+      // Tela 1 = exatamente uma tela, com o rodapé visível e nada para rolar (pedido do cliente 18/11).
+      assert.ok(m.docHeight <= m.innerHeight, `tela 1 rola: altura ${m.docHeight} > ${m.innerHeight}`);
+      assert.equal(m.introBox.top, 0);
+      assert.ok(Math.abs(m.introBox.bottom - m.footerBox.top) <= 1, 'a tela 1 vai até o rodapé');
+      assert.ok(m.footerBox.bottom <= m.innerHeight + 0.5, `rodapé fora da tela (${m.footerBox.bottom} > ${m.innerHeight})`);
+      for (const p of m.introParts) assert.ok(p.top >= 0 && p.bottom <= m.footerBox.top + 0.5, `${p.name} cortado (${p.top}–${p.bottom}, rodapé em ${m.footerBox.top})`);
+      await page.mouse.wheel(0, 2000);
+      await page.evaluate(() => window.scrollTo(0, 2000));
+      assert.equal(await page.evaluate(() => window.scrollY), 0, 'tela 1 não rola');
 
       await page.click('.intro__cta');
       // [review imp#2] mede depois da entrada (translateY animado deixava o "‹ Voltar" com 43,99px).
@@ -38,6 +52,7 @@ for (const viewport of VIEWPORTS) {
       const m2 = await measure(page);
       assert.ok(m2.scrollWidth <= m2.innerWidth, `tela 2: scrollWidth ${m2.scrollWidth} > ${m2.innerWidth}`);
       assert.deepEqual(m2.smallTargets, []);
+      assert.notEqual(m2.htmlOverflow, 'hidden', 'a tela 2 (formulário) continua rolando');
       assert.deepEqual(page.__problems, []);
     } finally {
       await close();

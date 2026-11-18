@@ -13,6 +13,35 @@
    Com JS (html.js), quem manda é o atributo hidden — pushState/replaceState não mexem em :target. */
 html:not(.js) #confirmar:target { display: block !important; }
 
+/* Tela 1 = exatamente uma tela, com o rodapé visível embaixo e nada para rolar (pedido do
+   cliente, 18/11). Vale enquanto a tela 2 está escondida: com JS pelo [hidden]; sem JS
+   enquanto #confirmar não é o alvo. A tela 2 (formulário) rola normalmente. */
+html.js:has(#confirmar[hidden]),
+html:not(.js):not(:has(#confirmar:target)) { height: 100%; overflow: hidden; }
+html.js:has(#confirmar[hidden]) body,
+html:not(.js):not(:has(#confirmar:target)) body {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+html.js:has(#confirmar[hidden]) main,
+html:not(.js):not(:has(#confirmar:target)) main { display: flex; flex: 1 1 auto; min-height: 0; }
+html.js:has(#confirmar[hidden]) .intro,
+html:not(.js):not(:has(#confirmar:target)) .intro {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding-bottom: 12px; /* a área segura de baixo fica com o rodapé */
+}
+html.js:has(#confirmar[hidden]) .site-footer,
+html:not(.js):not(:has(#confirmar:target)) .site-footer {
+  flex: none;
+  padding-top: 4px;
+  padding-bottom: calc(env(safe-area-inset-bottom) + 8px);
+  border-top: 0;
+}
+
 /* ---------- Tela 1: frase, botão, data; logo no pé ---------- */
 .intro {
   /* Desenho do cliente: logo em cima, frase, botão no meio, data embaixo. */
@@ -36,7 +65,7 @@ html:not(.js) #confirmar:target { display: block !important; }
   /* Sempre 4 linhas (pedido do cliente): quebras fixas e tamanho que acompanha a largura da tela. */
   font-family: var(--font-script); /* mesma cursiva da frase do "obrigado" */
   font-weight: 400;
-  font-size: min(5.3vw, 30px);
+  font-size: min(5.3vw, 30px, 4.4svh); /* 4.4svh: cabe também com o celular deitado */
   line-height: 1.45;
 }
 .intro__lede > span { display: block; white-space: nowrap; }

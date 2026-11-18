@@ -18,6 +18,7 @@ const intro = (page) => page.evaluate((sel) => {
     introBg: getComputedStyle(s).backgroundColor,
     introHeight: box(s).height,
     innerHeight,
+    footerHeight: document.querySelector('footer.site-footer').getBoundingClientRect().height,
     canvas: !!document.querySelector('canvas'),
     logoAboveLede: box(logo).bottom <= box(s.querySelector('.intro__lede')).top,
     logoColor: getComputedStyle(logo).color,
@@ -36,7 +37,8 @@ test('tela 1: frase, botão, data e logo creme flutuando no pé, sobre #24151f',
     const h = await intro(page);
     assert.equal(h.bodyBg, BG);
     assert.ok(h.introBg === BG || h.introBg === 'rgba(0, 0, 0, 0)', `fundo da tela 1: ${h.introBg}`);
-    assert.ok(h.introHeight >= h.innerHeight - 1, `tela 1 ${h.introHeight} < ${h.innerHeight}`);
+    // Tela 1 + rodapé = exatamente uma tela (sem rolagem: ver layout.test.mjs).
+    assert.ok(Math.abs(h.introHeight + h.footerHeight - h.innerHeight) <= 1, `tela 1 ${h.introHeight} + rodapé ${h.footerHeight} ≠ ${h.innerHeight}`);
     assert.deepEqual(h.order, ['screen__logo', 'intro__lede', 'intro__cta', 'intro__when']);
     assert.equal(h.date, '12 . 12 . 2037');
     assert.equal(h.time, '20h');
