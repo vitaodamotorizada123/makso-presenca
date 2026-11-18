@@ -102,7 +102,7 @@ test('a logo decorativa da tela 2 não duplica id nem é lida duas vezes', async
 });
 
 for (const viewport of [{ width: 440, height: 956 }, { width: 390, height: 844 }, { width: 375, height: 667 }]) {
-  test(`tela 1 ${viewport.width}×${viewport.height}: botão e data mais para cima, sem encostar na frase`, async () => {
+  test(`tela 1 ${viewport.width}×${viewport.height}: botão e data mais para cima, data perto do botão`, async () => {
     const { page, close } = await startBrowser({ viewport });
     try {
       const r = await page.evaluate(() => {
@@ -114,7 +114,8 @@ for (const viewport of [{ width: 440, height: 956 }, { width: 390, height: 844 }
       assert.ok(r.ctaMid <= 0.565, `botão no meio em ${r.ctaMid.toFixed(3)} da altura (era ~0,61)`);
       assert.ok(r.whenTop <= 0.75, `data em ${r.whenTop.toFixed(3)} da altura (era ~0,81)`);
       assert.ok(r.ctaTop - r.lede >= 0.06, 'respiro entre a frase e o botão');
-      assert.ok(r.whenTop - r.ctaBottom >= 0.08, 'respiro entre o botão e a data');
+      const gap = r.whenTop - r.ctaBottom;
+      assert.ok(gap >= 0.035 && gap <= 0.075, `data perto do botão: espaço de ${gap.toFixed(3)} da altura (era ~0,14)`);
     } finally { await close(); }
   });
 }
