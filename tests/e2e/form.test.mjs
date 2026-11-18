@@ -89,7 +89,7 @@ test('obrigado no desenho do cliente: frase, data, endereço, logo e informaçõ
     assert.ok(top.logo <= top.title, 'logo em cima no obrigado');
     assert.equal(top.bottomLogoShown, false);
     const d = await page.textContent('.rsvp__details');
-    assert.deepEqual(await page.$$eval('.rsvp__details > *', (els) => els.map((e) => e.textContent)), ['12 . 12 . 2037', '20h', 'Casa Fiat de Cultura · Praça da Liberdade, 10 — Funcionários, Belo Horizonte', 'Ver no mapa', 'Traje: Esporte fino']);
+    assert.deepEqual(await page.$$eval('.rsvp__details > *', (els) => els.map((e) => e.textContent)), ['12 . 12 . 2037', 'Casa Fiat de Cultura · Praça da Liberdade, 10 — Funcionários, Belo Horizonte', '20h', 'Ver no mapa', 'Traje: Esporte fino']);
     assert.match(d, /Praça da Liberdade, 10/);
     const info = await page.textContent('.rsvp__info');
     for (const t of ['Horário de início', 'Chuva', 'Estacionamento', 'Acesso ao endereço', 'Dúvidas', '(31) 98727-2711']) assert.ok(info.includes(t), t);

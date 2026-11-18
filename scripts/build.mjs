@@ -82,16 +82,15 @@ function renderWhen(cal, event) {
   return `<time class="intro__when" datetime="${escapeHtml(event.start)}"><span class="intro__date">${escapeHtml(w.date)}</span></time>`;
 }
 
-/** "Obrigado": data, hora e endereço em três linhas, e o link "Ver no mapa". Só o que existir. */
+/** "Obrigado": data, endereço e hora (três linhas juntas) e o link "Ver no mapa". Só o que existir. */
 function renderDetails(cal, event) {
   const w = cal.formatShort(event);
   const lines = [];
-  if (w) {
-    lines.push(`<time class="thanks__line" datetime="${escapeHtml(event.start)}">${escapeHtml(w.date)}</time>`);
-    lines.push(`<span class="thanks__line">${escapeHtml(w.time)}</span>`);
-  }
+  // Ordem pedida pelo cliente: data, endereço e hora.
+  if (w) lines.push(`<time class="thanks__line" datetime="${escapeHtml(event.start)}">${escapeHtml(w.date)}</time>`);
   const street = [event.venueName, (event.address || '').split(' – ')[0]].filter(Boolean).join(' · ');
   if (street) lines.push(`<span class="thanks__line">${escapeHtml(street)}</span>`);
+  if (w) lines.push(`<span class="thanks__line">${escapeHtml(w.time)}</span>`);
   if (event.mapsUrl) lines.push(`<a class="thanks__map" href="${escapeHtml(event.mapsUrl)}" target="_blank" rel="noopener">Ver no mapa</a>`);
   if (event.dressCode) lines.push(`<span class="thanks__line">Traje: ${escapeHtml(event.dressCode)}</span>`);
   return lines.join('');

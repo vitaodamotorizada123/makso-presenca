@@ -28,12 +28,12 @@ function renderEmail(record, cfg) {
   var SERIF = SANS;
   var SCRIPT = "'Petit Formal Script','Snell Roundhand',cursive";
 
-  var street = (ev.address || '').split(' – ')[0];
+  var street = [ev.venueName, (ev.address || '').split(' – ')[0]].filter(Boolean).join(' · ');
 
   var info = EMAIL_INFO_.map(function (it) {
     var body = e(it[1]).replace('(31) 98727-2711', '<a href="tel:+5531987272711" style="color:' + CREAM + ';">(31) 98727-2711</a>');
-    return '<p style="margin:18px 0 0;font:13px/1.4 ' + SANS + ';letter-spacing:1.5px;text-transform:uppercase;color:' + CREAM + ';">' + e(it[0]) + '</p>' +
-      '<p style="margin:4px 0 0;font:15px/1.5 ' + SANS + ';color:' + MUTED + ';">' + body + '</p>';
+    return '<p style="margin:32px 0 0;font:13px/1.4 ' + SANS + ';letter-spacing:1.5px;text-transform:uppercase;color:' + CREAM + ';">' + e(it[0]) + '</p>' +
+      '<p style="margin:8px 0 0;font:15px/1.6 ' + SANS + ';color:' + MUTED + ';">' + body + '</p>';
   }).join('');
 
   var button = gcal
@@ -41,21 +41,25 @@ function renderEmail(record, cfg) {
       '<p style="margin:12px 0 0;font:13px/1.4 ' + SANS + ';color:' + MUTED + ';">Usa Apple Calendar ou Outlook? Abra o anexo convite-makso.ics.</p>'
     : '';
 
-  var html = '<!doctype html><html lang="pt-BR"><body style="margin:0;padding:0;background:' + BG + ';">' +
-    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:' + BG + ';"><tr><td align="center" style="padding:48px 24px;">' +
-    '<table role="presentation" width="560" cellpadding="0" cellspacing="0" style="width:100%;max-width:560px;">' +
+  // bgcolor + background em cada camada: o Gmail (inclusive no modo escuro) ignora o fundo do <body>.
+  var html = '<!doctype html><html lang="pt-BR"><head><meta name="color-scheme" content="dark"><meta name="supported-color-schemes" content="dark"></head>' +
+    '<body bgcolor="' + BG + '" style="margin:0;padding:0;background:' + BG + ';background-color:' + BG + ';">' +
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="' + BG + '" style="background:' + BG + ';background-color:' + BG + ';"><tr><td align="center" bgcolor="' + BG + '" style="padding:48px 24px;background-color:' + BG + ';">' +
+    '<table role="presentation" width="560" cellpadding="0" cellspacing="0" bgcolor="' + BG + '" style="width:100%;max-width:560px;background-color:' + BG + ';">' +
     '<tr><td align="center">' +
-    '<p style="margin:0 0 40px;font:300 34px ' + SERIF + ';letter-spacing:8px;color:' + CREAM + ';">MAKSŌ</p>' +
+    '<p style="margin:0 0 64px;font:300 34px ' + SERIF + ';letter-spacing:8px;color:' + CREAM + ';">MAKSŌ</p>' +
     '<p style="margin:0;font:17px/1.4 ' + SANS + ';color:' + CREAM + ';">Olá, ' + e(first) + '. Sua presença foi confirmada.</p>' +
-    '<p style="margin:48px 0 0;font:400 28px/1.45 ' + SCRIPT + ';color:' + CREAM + ';">Prepare-se para desvendar<br>as bolsas mais icônicas<br>que você já viu!</p>' +
-    (short ? '<p style="margin:48px 0 0;font:300 20px/1.6 ' + SANS + ';color:' + CREAM + ';">' + e(short.date) + '<br>' + e(short.time) + '</p>' : '<p style="margin:48px 0 0;font:17px/1.5 ' + SANS + ';color:' + MUTED + ';">Data e local serão enviados em breve.</p>') +
-    (street ? '<p style="margin:0;font:300 20px/1.6 ' + SANS + ';">' + '<span style="color:' + CREAM + ';">' + e(street) + '</span></p>' : '') +
+    '<p style="margin:64px 0 0;font:400 22px/1.8 ' + SCRIPT + ';color:' + CREAM + ';">Prepare-se para<br>desvendar as bolsas mais<br>icônicas que você já viu!</p>' +
+    // Data, endereço e hora, nessa ordem, num bloco juntinho.
+    (short || street ? '<p style="margin:64px 0 0;font:300 19px/1.35 ' + SANS + ';color:' + CREAM + ';">' +
+      [short && e(short.date), street && e(street), short && e(short.time)].filter(Boolean).join('<br>') + '</p>'
+      : '<p style="margin:48px 0 0;font:17px/1.5 ' + SANS + ';color:' + MUTED + ';">Data e local serão enviados em breve.</p>') +
     (ev.mapsUrl ? '<p style="margin:8px 0 0;"><a href="' + e(ev.mapsUrl) + '" style="font:15px ' + SANS + ';color:' + MUTED + ';">Ver no mapa</a></p>' : '') +
     (ev.dressCode ? '<p style="margin:6px 0 0;font:300 18px/1.5 ' + SANS + ';color:' + CREAM + ';">Traje: ' + e(ev.dressCode) + '</p>' : '') +
     button +
     '</td></tr>' +
-    '<tr><td style="padding:48px 0 0;border-bottom:1px solid ' + LINE + ';"></td></tr>' +
-    '<tr><td align="left" style="padding:24px 0 0;">' +
+    '<tr><td bgcolor="' + BG + '" style="padding:48px 0 0;border-bottom:1px solid ' + LINE + ';"></td></tr>' +
+    '<tr><td align="left" style="padding:40px 0 0;">' +
     '<p style="margin:0;font:13px ' + SANS + ';letter-spacing:1.5px;text-transform:uppercase;color:' + CREAM + ';">Informações importantes</p>' +
     info +
     '</td></tr></table>' +
@@ -63,8 +67,9 @@ function renderEmail(record, cfg) {
     '</td></tr></table></body></html>';
 
   var lines = [];
-  if (short) lines.push(short.date, short.time);
+  if (short) lines.push(short.date);
   if (street) lines.push(street + (ev.mapsUrl ? ' (' + ev.mapsUrl + ')' : ''));
+  if (short) lines.push(short.time);
   if (ev.dressCode) lines.push('Traje: ' + ev.dressCode);
   if (!short) lines.push('Data e local serão enviados em breve.');
 

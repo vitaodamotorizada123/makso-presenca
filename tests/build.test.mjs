@@ -58,7 +58,7 @@ const detailsOf = (html) => html.match(/<div class="rsvp__details">([\s\S]*?)<\/
 test('obrigado: três linhas — "DD . MM . AAAA", "20h" e endereço com link do mapa — só o que existir', async () => {
   const full = (await buildWith('full')).html;
   const d = detailsOf(full);
-  assert.match(d, /12 \. 12 \. 2037<\/time><span class="thanks__line">20h<\/span>/);
+  assert.match(d, /12 \. 12 \. 2037<\/time><span class="thanks__line">[^<]+<\/span><span class="thanks__line">20h<\/span>/);
   assert.match(d, /Casa Fiat de Cultura/);
   assert.match(d, /<a class="thanks__map" href=[^>]+>Ver no mapa<\/a>/);
   assert.ok(!/:00/.test(d.replace(/<[^>]+>/g, '')), 'hora sempre no formato 19h30');
