@@ -1,6 +1,9 @@
 import test, { after } from 'node:test';
 import assert from 'node:assert/strict';
-import { startBrowser, closeBrowser } from '../helpers/browser.mjs';
+import { startBrowser as openPage, closeBrowser } from '../helpers/browser.mjs';
+
+// O formulário vive na tela 2: todos os testes daqui abrem direto em #confirmar.
+const startBrowser = (o = {}) => openPage({ ...o, query: (o.query || '') + '#confirmar' });
 
 after(closeBrowser);
 

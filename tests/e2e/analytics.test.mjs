@@ -61,7 +61,7 @@ test('funil: botão do topo, início do formulário e confirmação — sem dado
   const { page, close } = await startBrowser({ config: 'analytics', routes });
   try {
     await page.waitForFunction(() => window.umami);
-    await page.click('.hero__cta');
+    await page.click('.intro__cta');
     await page.check('input[name=presenca][value=sim]');
     await page.fill('input[name=nome]', 'Mariana Souza');
     await page.fill('input[name=email]', 'mariana@gmail.com');
@@ -81,7 +81,7 @@ test('funil: botão do topo, início do formulário e confirmação — sem dado
 });
 
 test('erro de validação e "não vou" viram eventos (sem dados)', async () => {
-  const { page, close } = await startBrowser({ config: 'analytics', routes });
+  const { page, close } = await startBrowser({ config: 'analytics', query: '#confirmar', routes });
   try {
     await page.waitForFunction(() => window.umami);
     await page.click('.rsvp__submit');

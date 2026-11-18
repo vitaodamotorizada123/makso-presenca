@@ -25,27 +25,20 @@
   <p class="demo-badge" hidden>Demonstração — nada é enviado</p>
 
   <main>
-    <section class="hero" aria-labelledby="makso-title">
-      <div class="hero__content">
-        <h1 class="hero__logo">%%LOGO%%</h1>
-        <p class="hero__invite">Você está convidado para o lançamento.</p>
+    <section id="inicio" class="screen intro" aria-labelledby="intro-title">
+      <h1 id="intro-title" class="visually-hidden">%%TITLE%%</h1>
+      <div class="intro__content">
+        <p class="intro__lede">Algumas coisas precisam ser vistas de perto e você foi escolhida para conhecer em primeira mão.</p>
+        <a class="button button--primary intro__cta" href="#confirmar">Confirme sua presença</a>
         %%WHEN%%
-        <a class="hero__cta" href="#confirmar">Confirmar presença</a>
       </div>
+      <div class="screen__logo">%%LOGO%%</div>
     </section>
 
-    <section class="details" aria-labelledby="details-title">
-      <div class="details__inner">
-        <h2 id="details-title" class="visually-hidden">Detalhes do evento</h2>
-        <dl class="details__list">
-          %%DETAILS%%
-        </dl>
-      </div>
-    </section>
-
-    <section id="confirmar" class="rsvp" aria-labelledby="rsvp-title">
+    <section id="confirmar" class="screen rsvp" aria-labelledby="rsvp-title" hidden>
       <div class="rsvp__inner">
-        <h2 id="rsvp-title" class="rsvp__title">Confirme sua presença</h2>
+        <a class="rsvp__back" href="#inicio">‹ Voltar</a>
+        <h2 id="rsvp-title" class="rsvp__title" tabindex="-1">Dados para contato</h2>
 
         <form class="rsvp__form" novalidate>
           <fieldset class="rsvp__fields">
@@ -123,12 +116,14 @@
         <div class="rsvp__result" hidden>
           <h3 class="rsvp__result-title" tabindex="-1"></h3>
           <p class="rsvp__result-text"></p>
+          <dl class="rsvp__details" hidden>%%DETAILS%%</dl>
           <div class="rsvp__calendar" hidden>
             <a class="button button--secondary rsvp__gcal" href="#" target="_blank" rel="noopener">Google Agenda</a>
             <a class="button button--secondary rsvp__ics" href="/evento.ics" download="convite-makso.ics">Apple / Outlook</a>
           </div>
         </div>
       </div>
+      <div class="screen__logo screen__logo--small">%%LOGO_DECOR%%</div>
     </section>
   </main>
 

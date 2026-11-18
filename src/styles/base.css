@@ -77,8 +77,7 @@ input, textarea, select, button { font: inherit; letter-spacing: inherit; }
   position: absolute; /* rola com a página: não cobre o formulário */
   z-index: 30;
   top: calc(env(safe-area-inset-top) + 10px);
-  left: 50%;
-  transform: translateX(-50%);
+  right: var(--gutter-r); /* à direita: não cobre o "‹ Voltar" da tela 2 */
   padding: 6px 14px;
   border-radius: var(--r-pill);
   background: rgb(229 221 209 / 0.92);

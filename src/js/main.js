@@ -35,18 +35,20 @@
     ? demoInfo.scenario
     : MaksoEventState.getRsvpState({ now: new Date(), cfg: cfg, hasEndpoint: hasEndpoint });
 
-  // 3. Hero: entrada da logo (uma vez por sessão). A flutuação é só CSS.
-  var hero = /** @type {HTMLElement|null} */ (document.querySelector('.hero'));
-  if (hero) {
+  // 3. Tela 1: entrada (uma vez por sessão). A flutuação da logo é só CSS.
+  //    html.js desliga a regra de "sem JavaScript" (#confirmar:target) — daqui em diante quem manda é o hidden.
+  document.documentElement.classList.add('js');
+  var intro = /** @type {HTMLElement|null} */ (document.getElementById('inicio'));
+  if (intro) {
     var store = MaksoStorage.session();
     var alreadyPainted = false;
     try {
       alreadyPainted = performance.getEntriesByType('paint').some(function (e) { return e.name === 'first-contentful-paint'; });
     } catch (e) { /* sem Paint Timing */ }
-    // Se a página já pintou, animar a entrada faria a logo piscar: pula.
-    var intro = !reduced && !store.get('makso-intro') && !alreadyPainted;
+    // Se a página já pintou, animar a entrada faria o texto piscar: pula.
+    var animate = !reduced && !store.get('makso-intro') && !alreadyPainted && location.hash !== '#confirmar';
     store.set('makso-intro', '1');
-    if (intro) hero.classList.add('is-intro');
+    if (animate) intro.classList.add('is-intro');
   }
 
   // 4. Contagem de visitas anônima (Umami). Nunca no modo demonstração.
@@ -65,18 +67,24 @@
     track: MaksoAnalytics.track,
   });
 
-  // 6. Selo de demonstração e botão do hero.
+  // 6. Selo de demonstração.
   var badge = document.querySelector('.demo-badge');
   if (badge && demoInfo.demo) /** @type {HTMLElement} */ (badge).hidden = false;
 
-  var cta = document.querySelector('.hero__cta');
+  // 7. Duas telas: o formulário só aparece depois de "Confirme sua presença".
   var rsvp = document.getElementById('confirmar');
-  if (cta && rsvp) {
-    var section = rsvp;
-    cta.addEventListener('click', function (e) {
-      e.preventDefault();
-      MaksoAnalytics.track('clicou-confirmar-topo');
-      section.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+  var cta = document.querySelector('.intro__cta');
+  var back = document.querySelector('.rsvp__back');
+  var title = document.getElementById('rsvp-title');
+  if (intro && rsvp && cta && back && title) {
+    MaksoScreens.mount({
+      intro: intro,
+      rsvp: rsvp,
+      cta: /** @type {HTMLAnchorElement} */ (cta),
+      back: /** @type {HTMLAnchorElement} */ (back),
+      title: title,
+      reducedMotion: reduced,
+      onOpen: function () { MaksoAnalytics.track('clicou-confirmar-topo'); },
     });
   }
 })();

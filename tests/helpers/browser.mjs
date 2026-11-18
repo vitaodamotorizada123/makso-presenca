@@ -33,11 +33,11 @@ export async function buildFor(config) {
 
 export async function startBrowser({
   viewport = { width: 390, height: 844 }, isMobile = true, hasTouch = true,
-  reducedMotion = 'no-preference', config = 'full', query = '', initScript, deviceScaleFactor = 2, routes,
+  reducedMotion = 'no-preference', config = 'full', query = '', initScript, deviceScaleFactor = 2, routes, javaScriptEnabled = true,
 } = {}) {
   const outDir = await buildFor(config);
   const browser = await getBrowser();
-  const context = await browser.newContext({ viewport, isMobile, hasTouch, reducedMotion, deviceScaleFactor });
+  const context = await browser.newContext({ viewport, isMobile, hasTouch, reducedMotion, deviceScaleFactor, javaScriptEnabled });
   await context.route(/^https:\/\/(fonts\.(googleapis|gstatic)\.com|use\.typekit\.net|p\.typekit\.net)\//, (r) => r.abort());
   await context.route(`${ORIGIN}/**`, async (route) => {
     const res = serveFile(outDir, new URL(route.request().url()).pathname);

@@ -19,10 +19,11 @@ export const BUNDLE = [
   'src/js/api.js',
   'src/js/form-state.js',
   'src/js/form.js',
+  'src/js/screens.js',
   'src/js/main.js',
 ];
 
-export const STYLES = ['tokens', 'base', 'hero', 'sections', 'form'].map((n) => `src/styles/${n}.css`);
+export const STYLES = ['tokens', 'base', 'screens', 'sections', 'form'].map((n) => `src/styles/${n}.css`);
 
 const ISO_OFFSET = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?(\.\d+)?([+-]\d{2}:\d{2}|Z)$/;
 const APPS_SCRIPT = /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/;
@@ -142,6 +143,11 @@ export async function build({ root = ROOT, configPath = path.join(root, 'config.
     .replace('<svg ', '<svg class="logo" focusable="false" ');
   const replacements = {
     '%%LOGO%%': logo,
+    // Segunda cópia (pé da tela 2): só decoração — sem <title>/id duplicado e fora do leitor de tela.
+    '%%LOGO_DECOR%%': logo
+      .replace(/<title[^>]*>[\s\S]*?<\/title>\s*/, '')
+      .replace(/ role="img"/, '')
+      .replace(/ aria-labelledby="[^"]*"/, ' aria-hidden="true"'),
     '%%APP_JS%%': appJs,
     '%%CSS%%': stylesCss,
     '%%SITE_URL%%': escapeHtml(pub.siteUrl.replace(/\/$/, '')),
