@@ -31,19 +31,19 @@ html:not(.js) #confirmar:target { display: block !important; }
 }
 
 .intro__content { display: contents; }
-.intro__lede { grid-row: 2; }
+.intro__lede {
+  grid-row: 2;
+  /* Sempre 4 linhas (pedido do cliente): quebras fixas e tamanho que acompanha a largura da tela. */
+  font-family: var(--font-script); /* mesma cursiva da frase do "obrigado" */
+  font-weight: 400;
+  font-size: min(5.3vw, 30px);
+  line-height: 1.9;
+}
+.intro__lede > span { display: block; white-space: nowrap; }
 .intro__cta { grid-row: 4; }
 .intro__when { grid-row: 5; }
 .intro > .screen__logo { grid-row: 7; }
 
-.intro__lede {
-  max-width: 20ch;
-  font-family: var(--font-script); /* mesma cursiva da frase do "obrigado" (pedido do cliente) */
-  font-weight: 400;
-  font-size: clamp(22px, 6.2vw, 32px);
-  line-height: 1.9;
-  text-wrap: balance;
-}
 
 
 .intro__when {
@@ -116,7 +116,7 @@ html:not(.js) #confirmar:target { display: block !important; }
 /* Celular deitado: menos ar vertical. */
 @media (max-height: 500px) and (orientation: landscape) {
   .intro { padding-top: calc(env(safe-area-inset-top) + 20px); padding-bottom: calc(env(safe-area-inset-bottom) + 16px); }
-  .intro__lede { font-size: 24px; max-width: 32ch; }
+  .intro__lede { font-size: 22px; line-height: 1.6; }
   .intro__cta { margin-top: 20px; }
   .intro__when { margin-top: 16px; font-size: 20px; flex-direction: row; gap: 12px; }
   .intro > .screen__logo { margin-top: 16px; --logo-w: 120px; --logo-h: calc(120px / 3.91); }
