@@ -2,7 +2,7 @@
 var MAKSO_CONFIG = {
   "siteUrl": "https://makso.onrender.com",
   "appsScriptUrl": "https://script.google.com/macros/s/AKfycbxkxEX4P4fkSfTUISTCtJ4Tqct6fjsKhePWCiVDLWuGzQCzOE8Etq1TeclX2KSX4vFfkg/exec",
-  "rsvpDeadline": null,
+  "rsvpDeadline": "2026-12-10T19:30:00-03:00",
   "event": {
     "title": "Lançamento maksō",
     "start": "2026-12-10T19:30:00-03:00",
@@ -15,7 +15,7 @@ var MAKSO_CONFIG = {
   },
   "umamiWebsiteId": "d475ff6c-e0b4-446d-9691-4845d03b6c44",
   "adobeFontsKitId": "",
-  "version": "98da5189"
+  "version": "b711e840"
 };
 /* maksō — regras compartilhadas (navegador, Apps Script V8 e Node).
  * Script clássico: define o global MaksoRules. Nenhum código de topo

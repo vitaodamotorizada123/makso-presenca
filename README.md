@@ -84,7 +84,7 @@ Edite `config.json` e faça commit na `main`:
   - A data aparece na tela 1 como `10.12.2026` / `19h30`.
   - Local, endereço, mapa e traje só aparecem no "obrigado" de quem confirmou e no e-mail. Linhas vazias não aparecem.
 - **Datas:** sempre com `-03:00`.
-- **Prazo:** `rsvpDeadline: null` fecha as confirmações 3 dias antes do início. Para outra data, informe-a no mesmo formato.
+- **Prazo:** hoje as confirmações ficam abertas até a hora do evento (`rsvpDeadline` = início, 10/12/2026 19h30). Com `null`, fecham 3 dias antes do início.
 - **O build confere tudo:** se algo estiver errado, o deploy falha com a lista do que corrigir.
 - **Script do Google:** ele lê esses dados do próprio site (`/event.json`, com cache de 10 min). Não precisa colar nada de novo.
 

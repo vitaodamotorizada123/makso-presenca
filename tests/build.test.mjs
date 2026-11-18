@@ -117,3 +117,9 @@ test('config.json do lançamento: 10.12.2026 às 19h30, Rua San Marino, 588 (Nov
   assert.match(cfg.event.mapsUrl, /^https:\/\/www\.google\.com\/maps\/search\/\?api=1&query=Rua%20San%20Marino%2C%20588/);
   assert.ok(!cfg._todo.some((t) => /event\.start|event\.address/.test(t)), 'tirar data e local do _todo');
 });
+
+test('config.json real: confirmações abertas até a hora do evento', () => {
+  const cfg = JSON.parse(readFileSync(path.join(root, 'config.json'), 'utf8'));
+  assert.equal(cfg.rsvpDeadline, cfg.event.start);
+  assert.deepEqual(validateConfig(cfg), []);
+});
