@@ -384,7 +384,7 @@ Substitui o que as seções 8 e 14 dizem sobre a ordem da página (hero, detalhe
 **Tela 1** (`100svh`, conteúdo centralizado, logo no pé):
 - Texto, igual ao rascunho: "Algumas coisas precisam ser vistas de perto e você foi escolhida para conhecer em primeira mão." O "escolhida" é do cliente e fica como está.
 - Botão-pílula branco com o texto "Confirme sua presença". No visual vai em caixa alta, com espaçamento entre letras.
-- Data e hora em duas linhas, com números tabulares: `10.12.2026` e `19h`. Os minutos aparecem só quando existem (`19h30`). Saem de `event.start`, fixo em −03:00.
+- Data e hora em duas linhas, com números tabulares: `10.12.2026` e `19h30`. Os minutos aparecem só quando existem (`19h30`). Saem de `event.start`, fixo em −03:00.
 - Logo maksō pequena no pé, com a flutuação da seção 14 numa amplitude menor. Fica parada com `prefers-reduced-motion`.
 - Título acessível: um `h1` "Lançamento maksō", só para leitores de tela.
 
@@ -407,10 +407,12 @@ Substitui o que as seções 8 e 14 dizem sobre a ordem da página (hero, detalhe
   - o evento `clicou-confirmar-topo` continua no botão;
   - o Umami registra `/#confirmar` como visualização, o que vira mais um passo do funil.
 
-**Dados do evento.**
-- `event.start = 2026-12-10T19:00:00-03:00`.
-- Término padrão: +4 h, ou seja, 23h.
-- Prazo padrão das confirmações: 3 dias antes, 07/12 às 19h.
+**Dados do evento** (Victor, 13h16):
+- `event.start = 2026-12-10T19:30:00-03:00`.
+- Término padrão: +4 h, ou seja, 23h30.
+- Prazo padrão das confirmações: 3 dias antes, 07/12 às 19h30.
+- Endereço: "Rua San Marino, 588 – Vila Castela, Nova Lima – MG". O Victor deu o endereço; a cidade foi conferida pelo CEP 34007-076.
+- O endereço não aparece nas telas 1 e 2. Ele está no convite impresso, no e-mail de confirmação, no "obrigado" (logo depois de confirmar), no `.ics` e no link "Ver no mapa".
 
 **Fica com quem constrói.** Medidas, espaçamentos e tamanhos de fonte, seguindo os tokens da seção 14 e as regras de toque e acessibilidade de sempre.
 
