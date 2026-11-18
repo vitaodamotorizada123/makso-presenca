@@ -23,8 +23,10 @@
 
   /* Guia maksō: IvyOra Text Light (via kit do Adobe Fonts) e Avenir Light.
      Sem o kit: Cormorant Garamond; fora da Apple (sem Avenir): Nunito Sans. */
-  --font-serif: "ivyora-text", "Cormorant Garamond", Georgia, serif;
-  --font-sans: "Avenir Next", Avenir, "Nunito Sans", system-ui, sans-serif;
+  /* Pedido do cliente (18/11): o documento inteiro em Poppins; a frase do "obrigado" em Petit Formal Script. */
+  --font-serif: Poppins, system-ui, sans-serif; /* nome antigo: os títulos agora também são Poppins */
+  --font-sans: Poppins, system-ui, sans-serif;
+  --font-script: "Petit Formal Script", "Snell Roundhand", cursive;
   --font: var(--font-sans);
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --t-fast: 160ms;

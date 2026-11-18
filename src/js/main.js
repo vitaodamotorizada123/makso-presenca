@@ -9,7 +9,7 @@
   // 1. Fontes da marca, injetadas por JS para não bloquear a primeira pintura nem violar a CSP.
   //    - IvyOra Text (serifada da marca): só pelo kit do Adobe Fonts (licença); sem kit, Cormorant Garamond.
   //    - Avenir (complementar): já vem no iPhone/Mac; fora da Apple, Nunito Sans.
-  (function loadFonts(kitId, apple) {
+  (function loadFonts() {
     /** @param {string} rel @param {string} href */
     function link(rel, href) {
       var l = document.createElement('link');
@@ -18,14 +18,10 @@
       if (rel === 'preconnect') l.crossOrigin = 'anonymous';
       document.head.appendChild(l);
     }
-    if (kitId) link('stylesheet', 'https://use.typekit.net/' + kitId + '.css');
-    var families = [];
-    if (!kitId) families.push('family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300');
-    if (!apple) families.push('family=Nunito+Sans:wght@400;600');
-    if (!families.length) return;
+    // Poppins no documento todo; Petit Formal Script só na frase do "obrigado".
     link('preconnect', 'https://fonts.gstatic.com');
-    link('stylesheet', 'https://fonts.googleapis.com/css2?' + families.join('&') + '&display=swap');
-  })(cfg.adobeFontsKitId || '', /Mac|iPhone|iPad|iPod/.test(navigator.platform || ''));
+    link('stylesheet', 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Petit+Formal+Script&display=swap');
+  })();
 
   // 2. Estado da página.
   var demoInfo = MaksoApi.detectDemo(location);

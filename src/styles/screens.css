@@ -42,8 +42,8 @@ html:not(.js) #confirmar:target { display: block !important; }
   max-width: 20ch;
   font-family: var(--font-serif);
   font-weight: 300;
-  font-size: clamp(26px, 7vw, 40px);
-  line-height: 1.22;
+  font-size: clamp(22px, 6vw, 32px);
+  line-height: 1.35;
   text-wrap: balance;
 }
 
@@ -65,14 +65,13 @@ html:not(.js) #confirmar:target { display: block !important; }
 }
 .intro__when--soon { font-family: var(--font-sans); font-weight: 400; font-size: 17px; letter-spacing: 0; }
 
-/* Logo no pé, flutuando devagar; a sombra no "chão" encolhe quando ela sobe. */
+/* Logo no pé, flutuando devagar (sem sombra, pedido do cliente). */
 .screen__logo {
   --logo-w: min(40vw, 200px);
   --logo-h: calc(var(--logo-w) / 3.91);
   --float: 6px;
   position: relative;
   width: var(--logo-w);
-  padding-bottom: calc(var(--logo-h) * 0.5);
   line-height: 0;
   user-select: none;
   -webkit-user-select: none;
@@ -83,26 +82,11 @@ html:not(.js) #confirmar:target { display: block !important; }
   animation: makso-float 6s ease-in-out infinite;
   will-change: transform;
 }
-.intro .screen__logo::after {
-  content: "";
-  position: absolute;
-  left: 18%;
-  right: 18%;
-  bottom: 0;
-  height: calc(var(--logo-h) * 0.16);
-  border-radius: 50%;
-  background: radial-gradient(closest-side, rgb(0 0 0 / 0.35), transparent);
-  animation: makso-shadow 6s ease-in-out infinite;
-  pointer-events: none;
-}
 @keyframes makso-float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(calc(var(--float) * -1)); }
 }
-@keyframes makso-shadow {
-  0%, 100% { transform: scaleX(1); opacity: 0.9; }
-  50% { transform: scaleX(0.82); opacity: 0.5; }
-}
+
 
 /* Tela 2: logo menor e parada, no pé. */
 .screen__logo--small {
@@ -125,7 +109,6 @@ html:not(.js) #confirmar:target { display: block !important; }
 
 @media (prefers-reduced-motion: reduce) {
   .intro .screen__logo .logo,
-  .intro .screen__logo::after { animation: none; }
 }
 
 @media (min-width: 735px) {

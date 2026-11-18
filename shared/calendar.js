@@ -37,14 +37,14 @@ var MaksoCalendar = (function () {
     };
   }
 
-  /** Formato do convite: 10.12.2026 e 19h (ou 19h30).
+  /** Formato do convite: "10 . 12 . 2026" e "19h" (ou "19h30") — sempre assim, nunca 19:30.
    * @param {MaksoEvent} event @returns {{date: string, time: string}|null} */
   function formatShort(event) {
     var start = MaksoEventState.parseDate(event.start);
     if (!start) return null;
     var p = MaksoEventState.toLocalParts(start);
     return {
-      date: pad(p.d) + '.' + pad(p.m) + '.' + p.y,
+      date: pad(p.d) + ' . ' + pad(p.m) + ' . ' + p.y,
       time: p.hh + 'h' + (p.mm ? pad(p.mm) : ''),
     };
   }

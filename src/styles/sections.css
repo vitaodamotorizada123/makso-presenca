@@ -1,34 +1,27 @@
 /* "Obrigado" — desenho do cliente: confirmação, frase, data/endereço, logo e informações. */
 .rsvp__thanks { display: grid; justify-items: center; gap: 0; margin-top: 56px; }
 .thanks__headline {
-  max-width: 18ch;
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-weight: 300;
-  font-size: clamp(30px, 8.4vw, 44px);
-  line-height: 1.2;
+  max-width: 17ch;
+  font-family: var(--font-script);
+  font-weight: 400;
+  font-size: clamp(24px, 6.6vw, 34px);
+  line-height: 1.55;
   text-wrap: balance;
 }
+/* Data, hora e endereço: três linhas (o endereço abre o mapa). */
 .rsvp__details {
   display: grid;
   justify-items: center;
-  gap: 2px;
-  margin-top: 56px;
+  gap: 4px;
+  margin-top: 48px;
   color: var(--text);
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 300;
   letter-spacing: 0.02em;
 }
-.thanks__when { font-variant-numeric: tabular-nums lining-nums; }
-.thanks__map {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  color: var(--text-muted);
-  font-size: 15px;
-  font-weight: 400;
-  text-underline-offset: 3px;
-}
+.thanks__line { font-variant-numeric: tabular-nums lining-nums; }
+.thanks__map { color: inherit; text-decoration: none; }
+@media (hover: hover) and (pointer: fine) { .thanks__map:hover { text-decoration: underline; text-underline-offset: 3px; } }
 .thanks__logo { width: min(56vw, 240px); margin-top: 56px; line-height: 0; }
 .thanks__logo .logo { width: 100%; height: auto; color: var(--text); }
 .rsvp.is-done .screen__logo--small { display: none; }

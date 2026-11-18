@@ -64,6 +64,7 @@ test('funil: botão do topo, início do formulário e confirmação — sem dado
     await page.click('.intro__cta');
       await page.fill('input[name=nome]', 'Mariana Souza');
     await page.fill('input[name=email]', 'mariana@gmail.com');
+    await page.fill('input[name=emailConfirmacao]', 'mariana@gmail.com');
     await page.fill('input[name=whatsapp]', '(31) 99876-5432');
     await page.waitForTimeout(900); // antispam do servidor: t ≥ 800 ms
     await page.click('.rsvp__submit');

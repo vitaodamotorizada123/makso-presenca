@@ -10,7 +10,10 @@ after(closeBrowser);
 async function fill(page, { presenca = '', nome = 'Mariana Souza', email = 'mariana@gmail.com', whatsapp = '(31) 99876-5432', acompanhante = '' } = {}) {
   if (presenca) await page.check(`input[name=presenca][value=${presenca}]`);
   if (nome) await page.fill('input[name=nome]', nome);
-  if (email) await page.fill('input[name=email]', email);
+  if (email) {
+    await page.fill('input[name=email]', email);
+    await page.fill('input[name=emailConfirmacao]', email);
+  }
   if (whatsapp) await page.fill('input[name=whatsapp]', whatsapp);
   if (acompanhante) {
     await page.check('input[name=acompanhante]');
@@ -37,17 +40,32 @@ test('Vou: confirmado, botões de agenda e foco no título', async () => {
   } finally { await close(); }
 });
 
-test('tela 2: Dados para contato (Nome, E-mail, Telefone) antes de Sobre a noite', async () => {
+test('tela 2: Nome completo, E-mail, Confirme seu e-mail, Telefone e Restrição — sem observação nem "Sobre a noite"', async () => {
   const { page, close } = await startBrowser();
   try {
     const r = await page.evaluate(() => ({
       names: [...document.querySelectorAll('#confirmar form [name]')].map((el) => el.getAttribute('name')).filter((n) => n !== 'hp'),
+      nameLabel: document.querySelector('label[for=f-nome]').textContent.trim(),
       phoneLabel: document.querySelector('label[for=f-whatsapp]').textContent.trim(),
-      groups: [...document.querySelectorAll('#confirmar fieldset.group > legend')].map((l) => l.textContent.trim()),
+      text: document.getElementById('confirmar').innerText,
     }));
-    assert.deepEqual(r.names, ['nome', 'email', 'whatsapp', 'restricao', 'observacao']);
+    assert.deepEqual(r.names, ['nome', 'email', 'emailConfirmacao', 'whatsapp', 'restricao']);
+    assert.equal(r.nameLabel, 'Nome completo');
     assert.equal(r.phoneLabel, 'Telefone');
-    assert.deepEqual(r.groups, ['Dados para contato', 'Sobre a noite']);
+    assert.ok(!r.text.includes('Sobre a noite'));
+    assert.ok(!r.text.includes('Observação'));
+  } finally { await close(); }
+});
+
+test('e-mails diferentes: erro na confirmação e nada é enviado', async () => {
+  const { page, close } = await startBrowser({ query: '?demo=1' });
+  try {
+    await fill(page);
+    await page.fill('input[name=emailConfirmacao]', 'mariana@gmial.com');
+    await page.click('.rsvp__submit');
+    assert.equal(await page.textContent('#err-emailConfirmacao'), 'Os e-mails não são iguais.');
+    assert.equal(await page.evaluate(() => document.activeElement?.getAttribute('name')), 'emailConfirmacao');
+    assert.equal(await page.evaluate(() => window.__maksoSubmitCount || 0), 0);
   } finally { await close(); }
 });
 
@@ -63,7 +81,7 @@ test('obrigado no desenho do cliente: frase, data, endereço, logo e informaçõ
     assert.equal(await visible(page, '.rsvp__thanks'), true);
     assert.match(await page.textContent('.thanks__headline'), /Prepare-se para desvendar as bolsas mais icônicas que você já viu!/);
     const d = await page.textContent('.rsvp__details');
-    assert.match(d, /12 \. 12 \. 2037 às 20:00/);
+    assert.deepEqual(await page.$$eval('.rsvp__details > *', (els) => els.map((e) => e.textContent)), ['12 . 12 . 2037', '20h', 'Casa Fiat de Cultura · Praça da Liberdade, 10 — Funcionários, Belo Horizonte', 'Traje: Esporte fino']);
     assert.match(d, /Praça da Liberdade, 10/);
     const info = await page.textContent('.rsvp__info');
     for (const t of ['Horário de início', 'Chuva', 'Estacionamento', 'Acesso ao endereço', 'Dúvidas', '(31) 98727-2711']) assert.ok(info.includes(t), t);
@@ -155,40 +173,28 @@ test('cenário passado: agradece com a data', async () => {
   } finally { await close(); }
 });
 
-test('fontes: Cormorant sempre, Nunito Sans só fora da Apple, IvyOra pelo kit do Adobe Fonts', async () => {
-  const googleHrefs = (page) => page.$$eval('link[rel=stylesheet][href*="fonts.googleapis"]', (ls) => ls.map((l) => l.href));
-  const iphone = await startBrowser({ initScript: () => { Object.defineProperty(Navigator.prototype, 'platform', { get: () => 'iPhone' }); } });
+test('fontes: Poppins no documento e Petit Formal Script na frase do obrigado', async () => {
+  const { page, close } = await startBrowser();
   try {
-    const g = await googleHrefs(iphone.page);
+    const g = await page.$$eval('link[rel=stylesheet][href*="fonts.googleapis"]', (ls) => ls.map((l) => l.href));
     assert.equal(g.length, 1);
-    assert.ok(g[0].includes('Cormorant+Garamond') && !g[0].includes('Nunito'), g[0]);
-    const serif = await iphone.page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--font-serif').trim());
-    assert.ok(serif.startsWith('"ivyora-text"'), serif);
-  } finally { await iphone.close(); }
-  const linux = await startBrowser();
-  try {
-    const g = await googleHrefs(linux.page);
-    assert.equal(g.length, 1);
-    assert.ok(g[0].includes('Cormorant+Garamond') && g[0].includes('Nunito+Sans'), g[0]);
-    // [review min#3] rótulos usam 600: a Nunito Sans precisa vir em 400 e 600 (sem negrito falso no Android).
-    assert.ok(g[0].includes('Nunito+Sans:wght@400;600'), g[0]);
-    assert.equal(await linux.page.locator('link[href*="typekit"]').count(), 0);
-  } finally { await linux.close(); }
-  const kit = await startBrowser({ config: 'fonts' });
-  try {
-    assert.equal(await kit.page.locator('link[rel=stylesheet][href="https://use.typekit.net/abc1def.css"]').count(), 1);
-    const g = await googleHrefs(kit.page);
-    assert.ok(g.every((h) => !h.includes('Cormorant')), g.join(' '));
-  } finally { await kit.close(); }
+    assert.ok(g[0].includes('Poppins:wght@300;400;500;600') && g[0].includes('Petit+Formal+Script'), g[0]);
+    const f = await page.evaluate(() => ({
+      body: getComputedStyle(document.body).fontFamily,
+      script: getComputedStyle(document.querySelector('.thanks__headline')).fontFamily,
+    }));
+    assert.ok(f.body.startsWith('Poppins'), f.body);
+    assert.ok(f.script.startsWith('"Petit Formal Script"'), f.script);
+  } finally { await close(); }
 });
 
 for (const viewport of [{ width: 360, height: 640 }, { width: 844, height: 390 }]) {
   test(`${viewport.width}×${viewport.height}: campo focado fica visível`, async () => {
     const { page, close } = await startBrowser({ viewport, query: '?demo=1' });
     try {
-      await page.focus('textarea[name=observacao]');
+      await page.focus('textarea[name=restricao]');
       await page.waitForTimeout(400);
-      const box = await page.$eval('textarea[name=observacao]', (el) => { const r = el.getBoundingClientRect(); return { top: r.top, bottom: r.bottom, h: innerHeight }; });
+      const box = await page.$eval('textarea[name=restricao]', (el) => { const r = el.getBoundingClientRect(); return { top: r.top, bottom: r.bottom, h: innerHeight }; });
       assert.ok(box.top >= 0 && box.bottom <= box.h, JSON.stringify(box));
     } finally { await close(); }
   });
@@ -199,6 +205,7 @@ test('[review #2] Enter num campo "next" vai para o próximo campo, sem enviar',
   try {
     await page.fill('input[name=nome]', 'Mariana Souza');
     await page.fill('input[name=email]', 'mariana@gmail.com');
+    await page.fill('input[name=emailConfirmacao]', 'mariana@gmail.com');
     await page.fill('input[name=whatsapp]', '(31) 99876-5432');
     await page.focus('input[name=nome]');
     await page.keyboard.press('Enter');
@@ -225,6 +232,7 @@ test('[review #3] campos restaurados pelo navegador continuam enviáveis', async
   try {
     await page.fill('input[name=nome]', 'Mariana Souza');
     await page.fill('input[name=email]', 'mariana@gmail.com');
+    await page.fill('input[name=emailConfirmacao]', 'mariana@gmail.com');
     await page.fill('input[name=whatsapp]', '(31) 99876-5432');
     await page.click('.rsvp__submit');
     await resultTitle(page).waitFor({ state: 'visible' });

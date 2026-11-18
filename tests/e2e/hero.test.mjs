@@ -38,7 +38,7 @@ test('tela 1: frase, botão, data e logo creme flutuando no pé, sobre #3b2935',
     assert.ok(h.introBg === BG || h.introBg === 'rgba(0, 0, 0, 0)', `fundo da tela 1: ${h.introBg}`);
     assert.ok(h.introHeight >= h.innerHeight - 1, `tela 1 ${h.introHeight} < ${h.innerHeight}`);
     assert.deepEqual(h.order, ['intro__lede', 'intro__cta', 'intro__when', 'screen__logo']);
-    assert.equal(h.date, '12.12.2037');
+    assert.equal(h.date, '12 . 12 . 2037');
     assert.equal(h.time, '20h');
     assert.equal(h.logoBelowWhen, true, 'a logo deveria ficar abaixo da data');
     assert.equal(h.canvas, false, 'não deveria haver canvas');

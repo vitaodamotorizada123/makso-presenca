@@ -17,21 +17,18 @@ var EMAIL_INFO_ = [
 function renderEmail(record, cfg) {
   var ev = cfg.event;
   var first = String(record.nome || '').trim().split(/\s+/)[0] || '';
-  var when = MaksoCalendar.formatWhen(ev);
   var short = MaksoCalendar.formatShort(ev);
-  var place = MaksoCalendar.placeLine(ev);
   var gcal = MaksoCalendar.googleCalendarUrl(ev);
   var e = escapeHtml_;
   var BG = '#3b2935';
   var CREAM = '#e5ddd1';
   var MUTED = '#b6a5af';
   var LINE = '#57434f';
-  var SANS = "'Avenir Next',Avenir,'Nunito Sans','Helvetica Neue',Arial,sans-serif";
-  var SERIF = "'Cormorant Garamond',Georgia,'Times New Roman',serif";
+  var SANS = "Poppins,'Helvetica Neue',Arial,sans-serif";
+  var SERIF = SANS;
+  var SCRIPT = "'Petit Formal Script','Snell Roundhand',cursive";
 
-  var dateLine = short
-    ? short.date.split('.').join(' . ') + ' às ' + short.time.replace(/h(\d\d)?$/, function (_, m) { return ':' + (m || '00'); })
-    : '';
+  var street = (ev.address || '').split(' – ')[0];
 
   var info = EMAIL_INFO_.map(function (it) {
     var body = e(it[1]).replace('(31) 98727-2711', '<a href="tel:+5531987272711" style="color:' + CREAM + ';">(31) 98727-2711</a>');
@@ -49,10 +46,9 @@ function renderEmail(record, cfg) {
     '<table role="presentation" width="560" cellpadding="0" cellspacing="0" style="width:100%;max-width:560px;">' +
     '<tr><td align="center">' +
     '<p style="margin:0;font:17px/1.4 ' + SANS + ';color:' + CREAM + ';">Olá, ' + e(first) + '. Sua presença foi confirmada.</p>' +
-    '<p style="margin:48px 0 0;font:italic 300 32px/1.25 ' + SERIF + ';color:' + CREAM + ';">Prepare-se para desvendar as bolsas mais icônicas que você já viu!</p>' +
-    (dateLine ? '<p style="margin:48px 0 0;font:300 20px/1.5 ' + SANS + ';color:' + CREAM + ';">' + e(dateLine) + '</p>' : '<p style="margin:48px 0 0;font:17px/1.5 ' + SANS + ';color:' + MUTED + ';">Data e local serão enviados em breve.</p>') +
-    (place ? '<p style="margin:2px 0 0;font:300 18px/1.5 ' + SANS + ';color:' + CREAM + ';">' + e(place) + '</p>' : '') +
-    (ev.mapsUrl ? '<p style="margin:6px 0 0;"><a href="' + e(ev.mapsUrl) + '" style="font:15px ' + SANS + ';color:' + MUTED + ';">Ver no mapa</a></p>' : '') +
+    '<p style="margin:48px 0 0;font:400 28px/1.45 ' + SCRIPT + ';color:' + CREAM + ';">Prepare-se para desvendar as bolsas mais icônicas que você já viu!</p>' +
+    (short ? '<p style="margin:48px 0 0;font:300 20px/1.6 ' + SANS + ';color:' + CREAM + ';">' + e(short.date) + '<br>' + e(short.time) + '</p>' : '<p style="margin:48px 0 0;font:17px/1.5 ' + SANS + ';color:' + MUTED + ';">Data e local serão enviados em breve.</p>') +
+    (street ? '<p style="margin:0;font:300 20px/1.6 ' + SANS + ';">' + (ev.mapsUrl ? '<a href="' + e(ev.mapsUrl) + '" style="color:' + CREAM + ';text-decoration:none;">' + e(street) + '</a>' : '<span style="color:' + CREAM + ';">' + e(street) + '</span>') + '</p>' : '') +
     (ev.dressCode ? '<p style="margin:6px 0 0;font:300 18px/1.5 ' + SANS + ';color:' + CREAM + ';">Traje: ' + e(ev.dressCode) + '</p>' : '') +
     '<p style="margin:48px 0 0;font:300 40px ' + SERIF + ';letter-spacing:8px;color:' + CREAM + ';">MAKSŌ</p>' +
     button +
@@ -66,10 +62,10 @@ function renderEmail(record, cfg) {
     '</td></tr></table></body></html>';
 
   var lines = [];
-  if (when) lines.push('Quando: ' + when.date + ', às ' + when.time);
-  if (place) lines.push('Onde: ' + place + (ev.mapsUrl ? ' (' + ev.mapsUrl + ')' : ''));
+  if (short) lines.push(short.date, short.time);
+  if (street) lines.push(street + (ev.mapsUrl ? ' (' + ev.mapsUrl + ')' : ''));
   if (ev.dressCode) lines.push('Traje: ' + ev.dressCode);
-  if (!when) lines.push('Data e local serão enviados em breve.');
+  if (!short) lines.push('Data e local serão enviados em breve.');
 
   var text = ['Olá, ' + first + '. Sua presença foi confirmada.', '', 'Prepare-se para desvendar as bolsas mais icônicas que você já viu!', '']
     .concat(lines)

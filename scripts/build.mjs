@@ -75,26 +75,28 @@ function sharedContext(root) {
   return ctx;
 }
 
-/** Data do convite (tela 1): 10.12.2026 / 19h30, em duas linhas. Devolve HTML já escapado. */
+/** Data do convite (tela 1): "10 . 12 . 2026" / "19h30", em duas linhas. Devolve HTML já escapado. */
 function renderWhen(cal, event) {
   const w = cal.formatShort(event);
   if (!w) return '<p class="intro__when intro__when--soon">Data em breve</p>';
   return `<time class="intro__when" datetime="${escapeHtml(event.start)}"><span class="intro__date">${escapeHtml(w.date)}</span> <span class="intro__time">${escapeHtml(w.time)}</span></time>`;
 }
 
-/** "Obrigado" (desenho do cliente): "10 . 12 . 2026 às 19:30", rua e número, mapa e traje — só o que existir. */
+/** "Obrigado": três linhas — data, hora e endereço (o endereço abre o mapa). Só o que existir. */
 function renderDetails(cal, event) {
   const w = cal.formatShort(event);
   const lines = [];
   if (w) {
-    const hhmm = w.time.replace(/h(\d\d)?$/, (_, m) => `:${m || '00'}`);
-    lines.push(`<time class="thanks__when" datetime="${escapeHtml(event.start)}">${escapeHtml(w.date.split('.').join(' . '))} às ${escapeHtml(hhmm)}</time>`);
+    lines.push(`<time class="thanks__line" datetime="${escapeHtml(event.start)}">${escapeHtml(w.date)}</time>`);
+    lines.push(`<span class="thanks__line">${escapeHtml(w.time)}</span>`);
   }
-  const street = (event.address || '').split(' – ')[0];
-  if (event.venueName) lines.push(`<span class="thanks__place">${escapeHtml(event.venueName)}</span>`);
-  if (street) lines.push(`<span class="thanks__place">${escapeHtml(street)}</span>`);
-  if (event.mapsUrl) lines.push(`<a class="thanks__map" href="${escapeHtml(event.mapsUrl)}" target="_blank" rel="noopener">Ver no mapa</a>`);
-  if (event.dressCode) lines.push(`<span class="thanks__place">Traje: ${escapeHtml(event.dressCode)}</span>`);
+  const street = [event.venueName, (event.address || '').split(' – ')[0]].filter(Boolean).join(' · ');
+  if (street) {
+    lines.push(event.mapsUrl
+      ? `<a class="thanks__line thanks__map" href="${escapeHtml(event.mapsUrl)}" target="_blank" rel="noopener">${escapeHtml(street)}</a>`
+      : `<span class="thanks__line">${escapeHtml(street)}</span>`);
+  }
+  if (event.dressCode) lines.push(`<span class="thanks__line">Traje: ${escapeHtml(event.dressCode)}</span>`);
   return lines.join('');
 }
 

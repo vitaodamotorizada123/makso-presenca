@@ -194,11 +194,16 @@ var MaksoForm = (function () {
       /** @type {Record<string, unknown>} */
       var payload = Object.assign({ id: id }, collect());
       var v = MaksoRules.validateSubmission(payload);
-      if (!v.ok) {
+      var confirmEl = /** @type {HTMLInputElement|null} */ (form.elements.namedItem('emailConfirmacao'));
+      var emailInvalid = !v.ok && 'email' in v.fields;
+      var confirmBad = !!confirmEl && !emailInvalid &&
+        MaksoRules.normalizeEmail(confirmEl.value) !== MaksoRules.normalizeEmail(payload.email);
+      if (!v.ok || confirmBad) {
         /** @type {Record<string, string>} */
         var errs = {};
-        var bad = v.fields;
+        var bad = v.ok ? {} : v.fields;
         Object.keys(bad).forEach(function (k) { if (k !== 'id') errs[k] = bad[k]; });
+        if (confirmBad) errs.emailConfirmacao = 'Os e-mails não são iguais.';
         if (Object.keys(errs).length) {
           track('erro-validacao');
           dispatch({ type: 'invalid', fields: errs });
@@ -207,7 +212,8 @@ var MaksoForm = (function () {
         }
         id = o.api.makeId(); // id corrompido: gera outro
         payload.id = id;
-      } else {
+      }
+      if (v.ok) {
         payload = /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (Object.assign({}, v.value)));
       }
 

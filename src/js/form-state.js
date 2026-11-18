@@ -5,7 +5,7 @@ var MaksoFormState = (function () {
   'use strict';
 
   /** Campos que existem no formulário (erros só podem apontar para eles). */
-  var FIELDS = ['nome', 'email', 'whatsapp', 'presenca', 'acompanhanteNome', 'restricao', 'observacao']; // ordem da tela 2
+  var FIELDS = ['nome', 'email', 'emailConfirmacao', 'whatsapp', 'presenca', 'acompanhanteNome', 'restricao']; // ordem da tela 2
 
   /**
    * @typedef {{kind: 'confirmado'|'recusado'|'ja_respondeu'|'encerrado', nome: string, email: string}} Result

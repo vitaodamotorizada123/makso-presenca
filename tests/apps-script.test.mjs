@@ -95,14 +95,14 @@ test('renderEmail escapa o nome e não tem script', async () => {
   assert.ok(!m.html.includes('<b>Zoë'));
   assert.ok(!/<script/i.test(m.html));
   assert.ok(m.html.includes('Desenvolvido por DIMAK Soluções'));
-  assert.ok(m.text.includes('sábado, 12 de dezembro'));
+  assert.ok(m.text.includes('12 . 12 . 2037') && m.text.includes('20h'));
 });
 
 test('e-mail no desenho do obrigado: frase, data, endereço, informações e sem acompanhantes', async () => {
   const { ctx } = await setupCtx();
   const m = ctx.renderEmail({ nome: 'Mariana Souza', email: 'm@x.com', acompanhante: false, acompanhanteNome: '' }, fullCfg);
   for (const t of ['Sua presença foi confirmada.', 'Prepare-se para desvendar as bolsas mais icônicas que você já viu!',
-    '12 . 12 . 2037 às 20:00', 'Informações importantes', 'Acesso ao endereço', '(31) 98727-2711', '#3b2935']) {
+    '12 . 12 . 2037<br>20h', 'Petit Formal Script', 'Informações importantes', 'Acesso ao endereço', '(31) 98727-2711', '#3b2935']) {
     assert.ok(m.html.includes(t), t);
   }
   assert.ok(m.text.includes('Informações importantes'));
