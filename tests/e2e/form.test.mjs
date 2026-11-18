@@ -80,8 +80,16 @@ test('obrigado no desenho do cliente: frase, data, endereço, logo e informaçõ
     await resultTitle(page).waitFor({ state: 'visible' });
     assert.equal(await visible(page, '.rsvp__thanks'), true);
     assert.match(await page.textContent('.thanks__headline'), /Prepare-se para desvendar as bolsas mais icônicas que você já viu!/);
+    assert.equal(await page.$$eval('.thanks__headline > span', (els) => els.length), 3, 'frase em 3 linhas');
+    const top = await page.evaluate(() => ({
+      logo: document.querySelector('.rsvp__result .thanks__logo').getBoundingClientRect().bottom,
+      title: document.querySelector('.rsvp__result-title').getBoundingClientRect().top,
+      bottomLogoShown: !!document.querySelector('#confirmar > .screen__logo--small').getClientRects().length,
+    }));
+    assert.ok(top.logo <= top.title, 'logo em cima no obrigado');
+    assert.equal(top.bottomLogoShown, false);
     const d = await page.textContent('.rsvp__details');
-    assert.deepEqual(await page.$$eval('.rsvp__details > *', (els) => els.map((e) => e.textContent)), ['12 . 12 . 2037', '20h', 'Casa Fiat de Cultura · Praça da Liberdade, 10 — Funcionários, Belo Horizonte', 'Traje: Esporte fino']);
+    assert.deepEqual(await page.$$eval('.rsvp__details > *', (els) => els.map((e) => e.textContent)), ['12 . 12 . 2037', '20h', 'Casa Fiat de Cultura · Praça da Liberdade, 10 — Funcionários, Belo Horizonte', 'Ver no mapa', 'Traje: Esporte fino']);
     assert.match(d, /Praça da Liberdade, 10/);
     const info = await page.textContent('.rsvp__info');
     for (const t of ['Horário de início', 'Chuva', 'Estacionamento', 'Acesso ao endereço', 'Dúvidas', '(31) 98727-2711']) assert.ok(info.includes(t), t);

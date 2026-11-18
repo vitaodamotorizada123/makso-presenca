@@ -60,7 +60,7 @@ test('obrigado: três linhas — "DD . MM . AAAA", "20h" e endereço com link do
   const d = detailsOf(full);
   assert.match(d, /12 \. 12 \. 2037<\/time><span class="thanks__line">20h<\/span>/);
   assert.match(d, /Casa Fiat de Cultura/);
-  assert.match(d, /<a class="thanks__line thanks__map" href=/);
+  assert.match(d, /<a class="thanks__map" href=[^>]+>Ver no mapa<\/a>/);
   assert.ok(!/:00/.test(d.replace(/<[^>]+>/g, '')), 'hora sempre no formato 19h30');
   assert.equal(detailsOf((await buildWith('empty')).html).trim(), '');
 });

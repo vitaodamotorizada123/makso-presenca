@@ -722,12 +722,13 @@ function renderEmail(record, cfg) {
     '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:' + BG + ';"><tr><td align="center" style="padding:48px 24px;">' +
     '<table role="presentation" width="560" cellpadding="0" cellspacing="0" style="width:100%;max-width:560px;">' +
     '<tr><td align="center">' +
+    '<p style="margin:0 0 40px;font:300 34px ' + SERIF + ';letter-spacing:8px;color:' + CREAM + ';">MAKSŌ</p>' +
     '<p style="margin:0;font:17px/1.4 ' + SANS + ';color:' + CREAM + ';">Olá, ' + e(first) + '. Sua presença foi confirmada.</p>' +
-    '<p style="margin:48px 0 0;font:400 28px/1.45 ' + SCRIPT + ';color:' + CREAM + ';">Prepare-se para desvendar as bolsas mais icônicas que você já viu!</p>' +
+    '<p style="margin:48px 0 0;font:400 28px/1.45 ' + SCRIPT + ';color:' + CREAM + ';">Prepare-se para desvendar<br>as bolsas mais icônicas<br>que você já viu!</p>' +
     (short ? '<p style="margin:48px 0 0;font:300 20px/1.6 ' + SANS + ';color:' + CREAM + ';">' + e(short.date) + '<br>' + e(short.time) + '</p>' : '<p style="margin:48px 0 0;font:17px/1.5 ' + SANS + ';color:' + MUTED + ';">Data e local serão enviados em breve.</p>') +
-    (street ? '<p style="margin:0;font:300 20px/1.6 ' + SANS + ';">' + (ev.mapsUrl ? '<a href="' + e(ev.mapsUrl) + '" style="color:' + CREAM + ';text-decoration:none;">' + e(street) + '</a>' : '<span style="color:' + CREAM + ';">' + e(street) + '</span>') + '</p>' : '') +
+    (street ? '<p style="margin:0;font:300 20px/1.6 ' + SANS + ';">' + '<span style="color:' + CREAM + ';">' + e(street) + '</span></p>' : '') +
+    (ev.mapsUrl ? '<p style="margin:8px 0 0;"><a href="' + e(ev.mapsUrl) + '" style="font:15px ' + SANS + ';color:' + MUTED + ';">Ver no mapa</a></p>' : '') +
     (ev.dressCode ? '<p style="margin:6px 0 0;font:300 18px/1.5 ' + SANS + ';color:' + CREAM + ';">Traje: ' + e(ev.dressCode) + '</p>' : '') +
-    '<p style="margin:48px 0 0;font:300 40px ' + SERIF + ';letter-spacing:8px;color:' + CREAM + ';">MAKSŌ</p>' +
     button +
     '</td></tr>' +
     '<tr><td style="padding:48px 0 0;border-bottom:1px solid ' + LINE + ';"></td></tr>' +
