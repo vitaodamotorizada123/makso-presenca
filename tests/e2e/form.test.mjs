@@ -57,6 +57,26 @@ test('tela 2: Nome completo, E-mail, Confirme seu e-mail, Telefone e Restrição
   } finally { await close(); }
 });
 
+for (const viewport of [{ width: 440, height: 956 }, { width: 375, height: 812 }]) {
+  test(`obrigado ${viewport.width}px: a frase cursiva é o destaque; confirmação e data/endereço menores`, async () => {
+    const { page, close } = await startBrowser({ query: '?demo=1', viewport });
+    try {
+      await fill(page);
+      await page.click('.rsvp__submit');
+      await resultTitle(page).waitFor({ state: 'visible' });
+      const s = await page.evaluate(() => {
+        const fs = (sel) => parseFloat(getComputedStyle(document.querySelector(sel)).fontSize);
+        return { headline: fs('.thanks__headline'), title: fs('.rsvp__result-title'), text: fs('.rsvp__result-text'), details: fs('.rsvp__details'), map: fs('.thanks__map') };
+      });
+      assert.ok(s.title <= 14, `confirmação ${s.title}px`);
+      assert.ok(s.text <= 12, `"Enviamos os detalhes…" ${s.text}px`);
+      assert.ok(s.details <= 14, `data/endereço/hora ${s.details}px`);
+      assert.ok(s.map <= 13, `"Ver no mapa" ${s.map}px`);
+      assert.ok(s.headline >= 1.6 * Math.max(s.title, s.details), `frase ${s.headline}px não domina (${s.title}/${s.details})`);
+    } finally { await close(); }
+  });
+}
+
 test('e-mails diferentes: erro na confirmação e nada é enviado', async () => {
   const { page, close } = await startBrowser({ query: '?demo=1' });
   try {

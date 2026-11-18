@@ -202,7 +202,9 @@ textarea.field__input--short { min-height: 76px; }
 .rsvp__result { padding: 24px 0 8px; text-align: center; }
 .rsvp__result-title { color: var(--text); font-size: 28px; line-height: 1.14; letter-spacing: -0.28px; }
 .rsvp__result-title:focus { outline: none; }
-.rsvp__result.is-confirmed .rsvp__result-title { font-family: var(--font-sans); font-size: 18px; font-weight: 400; letter-spacing: 0.01em; }
+.rsvp__result.is-confirmed .rsvp__result-title { font-family: var(--font-sans); font-size: 13px; font-weight: 400; letter-spacing: 0.02em; }
+/* Obrigado: confirmação discreta — o destaque é a frase cursiva (pedido do cliente). */
+.rsvp__result.is-confirmed .rsvp__result-text { font-size: 12px; }
 .rsvp__result.is-confirmed .rsvp__calendar { margin-top: 56px; }
 .rsvp__result.is-confirmed { padding-top: 24px; }
 .rsvp__result-text { margin-top: 8px; color: var(--text-muted); font-size: 14px; line-height: 1.5; }

@@ -1,10 +1,11 @@
 /* "Obrigado" — desenho do cliente: confirmação, frase, data/endereço, logo e informações. */
 .rsvp__thanks { display: grid; justify-items: center; gap: 0; margin-top: 72px; }
 .thanks__headline {
-  /* Sempre 3 linhas (pedido do cliente). */
+  /* Destaque da tela, sempre em 3 linhas (pedido do cliente). A linha mais longa mede
+     13,7em na Petit Formal Script: 6,2vw cabe com as margens de 20px de 320 a 440px. */
   font-family: var(--font-script);
   font-weight: 400;
-  font-size: clamp(20px, 5.4vw, 28px);
+  font-size: clamp(19px, 6.2vw, 34px);
   line-height: 1.45;
 }
 .thanks__headline > span { display: block; white-space: nowrap; }
@@ -15,7 +16,7 @@
   gap: 0;
   margin-top: 64px;
   color: var(--text);
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 300;
   line-height: 1.4;
   letter-spacing: 0.02em;
@@ -26,7 +27,7 @@
   align-items: center;
   min-height: 44px;
   color: var(--text-muted);
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 400;
   text-underline-offset: 3px;
 }
