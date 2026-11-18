@@ -45,7 +45,7 @@ test('assets com hash existem e o bundle começa com a config', async () => {
 
 test('evento completo: data no HTML, evento.ics e event.json', async () => {
   const { html, outDir, res } = await buildWith('full');
-  assert.ok(html.includes('<time class="intro__when" datetime="2037-12-12T20:00:00-03:00"><span class="intro__date">12.12.2037</span><span class="intro__time">20h</span></time>'));
+  assert.ok(html.includes('<time class="intro__when" datetime="2037-12-12T20:00:00-03:00"><span class="intro__date">12.12.2037</span> <span class="intro__time">20h</span></time>'));
   assert.ok(existsSync(path.join(outDir, 'evento.ics')));
   const ej = JSON.parse(readFileSync(path.join(outDir, 'event.json'), 'utf8'));
   assert.equal(ej.event.start, '2037-12-12T20:00:00-03:00');

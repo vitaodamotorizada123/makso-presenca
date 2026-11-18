@@ -21,7 +21,7 @@
     if (kitId) link('stylesheet', 'https://use.typekit.net/' + kitId + '.css');
     var families = [];
     if (!kitId) families.push('family=Cormorant+Garamond:wght@300;400');
-    if (!apple) families.push('family=Nunito+Sans:wght@300;400');
+    if (!apple) families.push('family=Nunito+Sans:wght@400;600');
     if (!families.length) return;
     link('preconnect', 'https://fonts.gstatic.com');
     link('stylesheet', 'https://fonts.googleapis.com/css2?' + families.join('&') + '&display=swap');
@@ -35,43 +35,10 @@
     ? demoInfo.scenario
     : MaksoEventState.getRsvpState({ now: new Date(), cfg: cfg, hasEndpoint: hasEndpoint });
 
-  // 3. Tela 1: entrada (uma vez por sessão). A flutuação da logo é só CSS.
-  //    html.js desliga a regra de "sem JavaScript" (#confirmar:target) — daqui em diante quem manda é o hidden.
-  document.documentElement.classList.add('js');
+  // 3. Duas telas: o formulário só aparece depois de "Confirme sua presença".
+  //    Montadas antes de tudo o que pode falhar; html.js (que desliga a regra de "sem JavaScript",
+  //    #confirmar:target) só entra depois que a navegação está de pé.
   var intro = /** @type {HTMLElement|null} */ (document.getElementById('inicio'));
-  if (intro) {
-    var store = MaksoStorage.session();
-    var alreadyPainted = false;
-    try {
-      alreadyPainted = performance.getEntriesByType('paint').some(function (e) { return e.name === 'first-contentful-paint'; });
-    } catch (e) { /* sem Paint Timing */ }
-    // Se a página já pintou, animar a entrada faria o texto piscar: pula.
-    var animate = !reduced && !store.get('makso-intro') && !alreadyPainted && location.hash !== '#confirmar';
-    store.set('makso-intro', '1');
-    if (animate) intro.classList.add('is-intro');
-  }
-
-  // 4. Contagem de visitas anônima (Umami). Nunca no modo demonstração.
-  MaksoAnalytics.load({ websiteId: cfg.umamiWebsiteId, demo: demoInfo.demo, siteUrl: cfg.siteUrl });
-
-  // 5. Formulário.
-  MaksoForm.mount({
-    root: /** @type {HTMLElement} */ (document.getElementById('confirmar')),
-    cfg: cfg,
-    page: page,
-    api: MaksoApi,
-    demo: demoInfo.demo,
-    scenario: demoInfo.scenario,
-    now: function () { return performance.now(); },
-    reducedMotion: reduced,
-    track: MaksoAnalytics.track,
-  });
-
-  // 6. Selo de demonstração.
-  var badge = document.querySelector('.demo-badge');
-  if (badge && demoInfo.demo) /** @type {HTMLElement} */ (badge).hidden = false;
-
-  // 7. Duas telas: o formulário só aparece depois de "Confirme sua presença".
   var rsvp = document.getElementById('confirmar');
   var cta = document.querySelector('.intro__cta');
   var back = document.querySelector('.rsvp__back');
@@ -86,5 +53,39 @@
       reducedMotion: reduced,
       onOpen: function () { MaksoAnalytics.track('clicou-confirmar-topo'); },
     });
+    document.documentElement.classList.add('js');
   }
+
+  // 4. Tela 1: entrada (uma vez por sessão). A flutuação da logo é só CSS.
+  if (intro) {
+    var store = MaksoStorage.session();
+    var alreadyPainted = false;
+    try {
+      alreadyPainted = performance.getEntriesByType('paint').some(function (e) { return e.name === 'first-contentful-paint'; });
+    } catch (e) { /* sem Paint Timing */ }
+    // Se a página já pintou, animar a entrada faria o texto piscar: pula.
+    var animate = !reduced && !store.get('makso-intro') && !alreadyPainted && location.hash !== '#confirmar';
+    store.set('makso-intro', '1');
+    if (animate) intro.classList.add('is-intro');
+  }
+
+  // 5. Contagem de visitas anônima (Umami). Nunca no modo demonstração.
+  MaksoAnalytics.load({ websiteId: cfg.umamiWebsiteId, demo: demoInfo.demo, siteUrl: cfg.siteUrl });
+
+  // 6. Formulário.
+  MaksoForm.mount({
+    root: /** @type {HTMLElement} */ (document.getElementById('confirmar')),
+    cfg: cfg,
+    page: page,
+    api: MaksoApi,
+    demo: demoInfo.demo,
+    scenario: demoInfo.scenario,
+    now: function () { return performance.now(); },
+    reducedMotion: reduced,
+    track: MaksoAnalytics.track,
+  });
+
+  // 7. Selo de demonstração.
+  var badge = document.querySelector('.demo-badge');
+  if (badge && demoInfo.demo) /** @type {HTMLElement} */ (badge).hidden = false;
 })();

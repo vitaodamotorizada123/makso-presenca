@@ -33,6 +33,8 @@ for (const viewport of VIEWPORTS) {
       assert.ok(m.introHeight >= m.innerHeight - 1, `tela 1 ${m.introHeight} < ${m.innerHeight}`);
 
       await page.click('.intro__cta');
+      // [review imp#2] mede depois da entrada (translateY animado deixava o "‹ Voltar" com 43,99px).
+      await page.waitForFunction(() => !document.getElementById('confirmar').classList.contains('is-entering'));
       const m2 = await measure(page);
       assert.ok(m2.scrollWidth <= m2.innerWidth, `tela 2: scrollWidth ${m2.scrollWidth} > ${m2.innerWidth}`);
       assert.deepEqual(m2.smallTargets, []);

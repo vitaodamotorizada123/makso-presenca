@@ -181,6 +181,8 @@ test('fontes: Cormorant sempre, Nunito Sans só fora da Apple, IvyOra pelo kit d
     const g = await googleHrefs(linux.page);
     assert.equal(g.length, 1);
     assert.ok(g[0].includes('Cormorant+Garamond') && g[0].includes('Nunito+Sans'), g[0]);
+    // [review min#3] rótulos usam 600: a Nunito Sans precisa vir em 400 e 600 (sem negrito falso no Android).
+    assert.ok(g[0].includes('Nunito+Sans:wght@400;600'), g[0]);
     assert.equal(await linux.page.locator('link[href*="typekit"]').count(), 0);
   } finally { await linux.close(); }
   const kit = await startBrowser({ config: 'fonts' });

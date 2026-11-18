@@ -126,3 +126,43 @@ test('sem movimento reduzido, a tela 2 entra com transição', async () => {
     assert.equal(await page.evaluate(() => getComputedStyle(document.getElementById('confirmar')).animationName), 'makso-enter');
   } finally { await close(); }
 });
+
+test('[review imp#1] confirmações encerradas: o botão leva à tela 2 e o foco vai para a mensagem', async () => {
+  const { page, close } = await startBrowser({ query: '?demo=1&cenario=encerrado' });
+  try {
+    await page.click('.intro__cta');
+    assert.equal(await shown(page, '.rsvp__result-title'), true);
+    assert.equal(await page.evaluate(() => document.activeElement?.className), 'rsvp__result-title');
+  } finally { await close(); }
+});
+
+test('[review imp#1] confirmar, voltar e abrir de novo: foco no título do obrigado', async () => {
+  const { page, close } = await startBrowser({ query: '?demo=1' });
+  try {
+    await page.click('.intro__cta');
+    await fillYes(page);
+    await page.waitForTimeout(900);
+    await page.click('.rsvp__submit');
+    await page.locator('.rsvp__result-title').waitFor({ state: 'visible' });
+    await page.goBack();
+    await page.waitForFunction(() => !document.getElementById('inicio').hidden);
+    await page.click('.intro__cta');
+    assert.equal(await page.evaluate(() => document.activeElement?.className), 'rsvp__result-title');
+  } finally { await close(); }
+});
+
+test('[review min#1] se um script quebrar antes, o botão ainda abre a tela 2', async () => {
+  // Analytics que explode no load: o resto da inicialização não pode deixar o botão morto.
+  const initScript = () => {
+    Object.defineProperty(window, 'MaksoAnalytics', {
+      value: { load() { throw new Error('analytics quebrou'); }, track() {} },
+      writable: false, configurable: false,
+    });
+  };
+  const { page, close } = await startBrowser({ initScript });
+  try {
+    await page.click('.intro__cta');
+    await page.waitForTimeout(100);
+    assert.equal(await shown(page, '#confirmar'), true);
+  } finally { await close(); }
+});

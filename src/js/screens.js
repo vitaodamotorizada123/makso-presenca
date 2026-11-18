@@ -36,7 +36,16 @@ var MaksoScreens = (function () {
       if (!changed) return;
       enter(n === 1 ? o.intro : o.rsvp);
       window.scrollTo(0, 0);
-      if (focus) (n === 2 ? o.title : o.cta).focus({ preventScroll: true });
+      if (focus) focusTarget(n).focus({ preventScroll: true });
+    }
+
+    // Tela 2 com "obrigado"/mensagem: o título "Dados para contato" some (.is-done) e
+    // não recebe foco — então o foco vai para o título do resultado.
+    /** @param {1|2} n @returns {HTMLElement} */
+    function focusTarget(n) {
+      if (n === 1) return o.cta;
+      if (o.title.getClientRects().length) return o.title;
+      return /** @type {HTMLElement|null} */ (o.rsvp.querySelector('.rsvp__result-title')) || o.title;
     }
 
     function fromLocation() {
@@ -45,7 +54,7 @@ var MaksoScreens = (function () {
 
     o.cta.addEventListener('click', function (e) {
       e.preventDefault();
-      if (o.onOpen) o.onOpen();
+      try { if (o.onOpen) o.onOpen(); } catch (err) { /* contagem nunca impede a navegação */ }
       if (location.hash === HASH) show(2);
       else show(2, { push: true });
     });
