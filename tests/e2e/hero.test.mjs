@@ -4,7 +4,8 @@ import { startBrowser, closeBrowser } from '../helpers/browser.mjs';
 
 after(closeBrowser);
 
-const BG = 'rgb(36, 21, 31)'; // #24151F
+const BG = 'rgb(59, 41, 53)'; // #3b2935 (Pantone 6077 C)
+const CREAM = 'rgb(229, 221, 209)'; // #e5ddd1
 
 const hero = (page) => page.evaluate(() => {
   const h = document.querySelector('.hero');
@@ -16,13 +17,14 @@ const hero = (page) => page.evaluate(() => {
     heroBgImage: getComputedStyle(h, '::before').backgroundImage,
     canvas: !!document.querySelector('canvas'),
     capsule: before.content !== 'none' && before.content !== 'normal',
+    logoColor: getComputedStyle(logo).color,
     logoAnimation: getComputedStyle(logo).animationName,
     logoIteration: getComputedStyle(logo).animationIterationCount,
     themeColor: document.querySelector('meta[name=theme-color]').content,
   };
 });
 
-test('topo: logo flutuando sobre #24151F, sem pílula e sem WebGL', async () => {
+test('topo: logo creme flutuando sobre #3b2935, sem pílula e sem WebGL', async () => {
   const { page, close } = await startBrowser();
   try {
     const h = await hero(page);
@@ -33,7 +35,8 @@ test('topo: logo flutuando sobre #24151F, sem pílula e sem WebGL', async () => 
     assert.equal(h.capsule, false, 'não deveria haver cápsula/pílula em volta da logo');
     assert.equal(h.logoAnimation, 'makso-float');
     assert.equal(h.logoIteration, 'infinite');
-    assert.equal(h.themeColor, '#24151F');
+    assert.equal(h.themeColor, '#3B2935');
+    assert.equal(h.logoColor, CREAM);
     assert.deepEqual(page.__problems, []);
   } finally { await close(); }
 });
@@ -62,7 +65,7 @@ test('com movimento reduzido, a logo fica parada', async () => {
   } finally { await close(); }
 });
 
-test('seções de baixo também em #24151F, com texto claro legível', async () => {
+test('seções de baixo também em #3b2935, com texto claro legível', async () => {
   const { page, close } = await startBrowser();
   try {
     const s = await page.evaluate(() => ['.details', '.rsvp', '.site-footer'].map((sel) => {
@@ -70,7 +73,7 @@ test('seções de baixo também em #24151F, com texto claro legível', async () 
       return { sel, bg: getComputedStyle(el).backgroundColor, color: getComputedStyle(el.querySelector('h2, dd, p') || el).color };
     }));
     for (const x of s) {
-      assert.ok(x.bg === 'rgb(36, 21, 31)' || x.bg === 'rgba(0, 0, 0, 0)', `${x.sel} com fundo ${x.bg}`);
+      assert.ok(x.bg === BG || x.bg === 'rgba(0, 0, 0, 0)', `${x.sel} com fundo ${x.bg}`);
       const [r, g, b] = x.color.match(/\d+/g).map(Number);
       assert.ok(r > 150 && g > 140 && b > 145, `${x.sel} com texto escuro demais: ${x.color}`);
     }
