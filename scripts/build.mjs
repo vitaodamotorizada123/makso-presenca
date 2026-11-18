@@ -35,6 +35,7 @@ export function validateConfig(cfg) {
   if (typeof cfg.siteUrl !== 'string' || !/^https:\/\/[^/\s]+/.test(cfg.siteUrl)) problems.push('siteUrl: precisa ser https://…');
   if (cfg.appsScriptUrl !== '' && !APPS_SCRIPT.test(String(cfg.appsScriptUrl))) problems.push('appsScriptUrl: vazio ou https://script.google.com/macros/s/…/exec');
   if (cfg.umamiWebsiteId !== undefined && cfg.umamiWebsiteId !== '' && !UUID.test(String(cfg.umamiWebsiteId))) problems.push('umamiWebsiteId: vazio ou o Website ID do Umami (UUID)');
+  if (cfg.adobeFontsKitId !== undefined && cfg.adobeFontsKitId !== '' && !/^[a-z0-9]{5,12}$/.test(String(cfg.adobeFontsKitId))) problems.push('adobeFontsKitId: vazio ou o ID do kit do Adobe Fonts (ex.: abc1def)');
   const ev = cfg.event || {};
   for (const k of ['title', 'venueName', 'address', 'mapsUrl', 'dressCode', 'description']) {
     if (typeof ev[k] !== 'string') problems.push(`event.${k}: precisa ser texto (pode ser "")`);
@@ -54,8 +55,8 @@ export function validateConfig(cfg) {
 
 /** Subconjunto público da config (vai para o navegador e para o event.json). */
 export function publicConfig(cfg) {
-  const { siteUrl, appsScriptUrl, rsvpDeadline, event, umamiWebsiteId } = cfg;
-  return { siteUrl, appsScriptUrl, rsvpDeadline: rsvpDeadline ?? null, event, umamiWebsiteId: umamiWebsiteId || '' };
+  const { siteUrl, appsScriptUrl, rsvpDeadline, event, umamiWebsiteId, adobeFontsKitId } = cfg;
+  return { siteUrl, appsScriptUrl, rsvpDeadline: rsvpDeadline ?? null, event, umamiWebsiteId: umamiWebsiteId || '', adobeFontsKitId: adobeFontsKitId || '' };
 }
 
 const hash8 = (s) => createHash('sha256').update(s).digest('hex').slice(0, 8);

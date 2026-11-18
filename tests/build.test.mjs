@@ -84,3 +84,15 @@ test('umamiWebsiteId: vazio ou UUID, e vai para a config pública do bundle', as
   assert.ok(js.includes('"umamiWebsiteId":"0d6f3a5e-2b7c-4e1a-9f8d-1c2b3a4d5e6f"'));
   assert.ok(html.includes('Medimos as visitas de forma anônima, sem cookies.'));
 });
+
+test('adobeFontsKitId: vazio ou id do kit, e vai para a config pública', async () => {
+  const ok = JSON.parse(readFileSync(fixture('full'), 'utf8'));
+  assert.deepEqual(validateConfig({ ...ok, adobeFontsKitId: '' }), []);
+  assert.deepEqual(validateConfig({ ...ok, adobeFontsKitId: 'abc1def' }), []);
+  assert.ok(validateConfig({ ...ok, adobeFontsKitId: 'ABC!' }).some((p) => p.includes('adobeFontsKitId')));
+  const outDir = mkdtempSync(path.join(os.tmpdir(), 'makso-build-'));
+  await build({ root, configPath: fixture('fonts'), outDir });
+  const html = readFileSync(path.join(outDir, 'index.html'), 'utf8');
+  const js = readFileSync(path.join(outDir, html.match(/src="\/(assets\/app\.[0-9a-f]{8}\.js)"/)[1]), 'utf8');
+  assert.ok(js.includes('"adobeFontsKitId":"abc1def"'));
+});

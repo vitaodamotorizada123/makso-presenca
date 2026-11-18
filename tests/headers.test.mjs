@@ -33,3 +33,9 @@ test('CSP libera o Umami (script e envio) e mais nada novo', () => {
   assert.deepEqual(connect, ['https://script.google.com', 'https://script.googleusercontent.com', 'https://gateway.umami.is']);
   assert.ok(!csp.includes('unsafe-inline'));
 });
+
+test('CSP libera o kit do Adobe Fonts (IvyOra) e o Google Fonts, e mais nada', () => {
+  const csp = headersFor('/')['Content-Security-Policy'];
+  assert.ok(csp.includes("style-src 'self' https://fonts.googleapis.com https://use.typekit.net https://p.typekit.net"));
+  assert.ok(csp.includes('font-src https://fonts.gstatic.com https://use.typekit.net'));
+});

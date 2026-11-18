@@ -132,15 +132,29 @@ test('cenário passado: agradece com a data', async () => {
   } finally { await close(); }
 });
 
-test('fonte Inter só é carregada fora de plataformas Apple', async () => {
+test('fontes: Cormorant sempre, Nunito Sans só fora da Apple, IvyOra pelo kit do Adobe Fonts', async () => {
+  const googleHrefs = (page) => page.$$eval('link[rel=stylesheet][href*="fonts.googleapis"]', (ls) => ls.map((l) => l.href));
   const iphone = await startBrowser({ initScript: () => { Object.defineProperty(Navigator.prototype, 'platform', { get: () => 'iPhone' }); } });
   try {
-    assert.equal(await iphone.page.locator('link[href*="fonts.googleapis"]').count(), 0);
+    const g = await googleHrefs(iphone.page);
+    assert.equal(g.length, 1);
+    assert.ok(g[0].includes('Cormorant+Garamond') && !g[0].includes('Nunito'), g[0]);
+    const serif = await iphone.page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--font-serif').trim());
+    assert.ok(serif.startsWith('"ivyora-text"'), serif);
   } finally { await iphone.close(); }
   const linux = await startBrowser();
   try {
-    assert.equal(await linux.page.locator('link[rel=stylesheet][href*="fonts.googleapis"]').count(), 1);
+    const g = await googleHrefs(linux.page);
+    assert.equal(g.length, 1);
+    assert.ok(g[0].includes('Cormorant+Garamond') && g[0].includes('Nunito+Sans'), g[0]);
+    assert.equal(await linux.page.locator('link[href*="typekit"]').count(), 0);
   } finally { await linux.close(); }
+  const kit = await startBrowser({ config: 'fonts' });
+  try {
+    assert.equal(await kit.page.locator('link[rel=stylesheet][href="https://use.typekit.net/abc1def.css"]').count(), 1);
+    const g = await googleHrefs(kit.page);
+    assert.ok(g.every((h) => !h.includes('Cormorant')), g.join(' '));
+  } finally { await kit.close(); }
 });
 
 for (const viewport of [{ width: 360, height: 640 }, { width: 844, height: 390 }]) {

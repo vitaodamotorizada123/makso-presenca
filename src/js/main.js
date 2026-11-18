@@ -6,20 +6,26 @@
   var cfg = /** @type {MaksoConfig} */ (/** @type {any} */ (window).MAKSO_CONFIG);
   var reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
-  // 1. Inter só fora de plataformas Apple (lá a fonte do sistema já é a SF Pro).
-  //    Injetada por JS para não bloquear a primeira pintura nem violar a CSP.
-  (function loadFonts() {
-    if (/Mac|iPhone|iPad|iPod/.test(navigator.platform || '')) return;
-    var pre = document.createElement('link');
-    pre.rel = 'preconnect';
-    pre.href = 'https://fonts.gstatic.com';
-    pre.crossOrigin = 'anonymous';
-    var css = document.createElement('link');
-    css.rel = 'stylesheet';
-    css.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap';
-    document.head.appendChild(pre);
-    document.head.appendChild(css);
-  })();
+  // 1. Fontes da marca, injetadas por JS para não bloquear a primeira pintura nem violar a CSP.
+  //    - IvyOra Text (serifada da marca): só pelo kit do Adobe Fonts (licença); sem kit, Cormorant Garamond.
+  //    - Avenir (complementar): já vem no iPhone/Mac; fora da Apple, Nunito Sans.
+  (function loadFonts(kitId, apple) {
+    /** @param {string} rel @param {string} href */
+    function link(rel, href) {
+      var l = document.createElement('link');
+      l.rel = rel;
+      l.href = href;
+      if (rel === 'preconnect') l.crossOrigin = 'anonymous';
+      document.head.appendChild(l);
+    }
+    if (kitId) link('stylesheet', 'https://use.typekit.net/' + kitId + '.css');
+    var families = [];
+    if (!kitId) families.push('family=Cormorant+Garamond:wght@300;400');
+    if (!apple) families.push('family=Nunito+Sans:wght@300;400');
+    if (!families.length) return;
+    link('preconnect', 'https://fonts.gstatic.com');
+    link('stylesheet', 'https://fonts.googleapis.com/css2?' + families.join('&') + '&display=swap');
+  })(cfg.adobeFontsKitId || '', /Mac|iPhone|iPad|iPod/.test(navigator.platform || ''));
 
   // 2. Estado da página.
   var demoInfo = MaksoApi.detectDemo(location);

@@ -38,6 +38,7 @@ interface MaksoConfig {
   rsvpDeadline: string | null;
   event: MaksoEvent;
   umamiWebsiteId?: string;
+  adobeFontsKitId?: string;
   version?: string;
 }
 

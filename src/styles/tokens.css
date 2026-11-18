@@ -21,7 +21,11 @@
   --gutter-l: max(20px, env(safe-area-inset-left));
   --gutter-r: max(20px, env(safe-area-inset-right));
 
-  --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", Inter, "Helvetica Neue", Arial, sans-serif;
+  /* Guia maksō: IvyOra Text Light (via kit do Adobe Fonts) e Avenir Light.
+     Sem o kit: Cormorant Garamond; fora da Apple (sem Avenir): Nunito Sans. */
+  --font-serif: "ivyora-text", "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Avenir Next", Avenir, "Nunito Sans", system-ui, sans-serif;
+  --font: var(--font-sans);
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --t-fast: 160ms;
   --t-base: 200ms;
