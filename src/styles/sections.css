@@ -1,58 +1,49 @@
-.details {
-  padding: var(--section-y) var(--gutter-r) var(--section-y) var(--gutter-l);
-  background: var(--bg);
+/* Quando / Onde / Traje — dentro do "obrigado" (tela 2), só depois de confirmar. */
+.rsvp__details {
+  display: grid;
+  max-width: 420px;
+  margin: 28px auto 0;
+  text-align: left;
 }
-
-.details__inner { max-width: 980px; margin: 0 auto; }
-
-.details__list { display: grid; gap: 0; margin: 0; }
 
 .details__row {
   display: grid;
-  align-content: start;
   gap: 4px;
-  padding: 20px 0;
+  padding: 16px 0;
   border-top: 1px solid var(--line);
 }
 .details__row:last-child { border-bottom: 1px solid var(--line); }
 
-.details__list dt {
+.rsvp__details dt {
   color: var(--text-muted);
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: -0.224px;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
-.details__list dd {
+.rsvp__details dd {
   display: flex;
   flex-direction: column;
   gap: 2px;
   margin: 0;
   color: var(--text);
+  font-family: var(--font-serif);
   font-size: 21px;
-  font-weight: 600;
-  line-height: 1.19;
-  letter-spacing: 0.231px;
+  font-weight: 300;
+  line-height: 1.25;
 }
 
-.details__address { color: var(--text-muted); font-size: 17px; font-weight: 400; letter-spacing: -0.374px; line-height: 1.47; }
-.details__soon { color: var(--text-muted); }
+.details__address { color: var(--text-muted); font-family: var(--font-sans); font-size: 17px; font-weight: 400; line-height: 1.47; }
 
 .details__map {
   align-self: flex-start;
   display: inline-flex;
   align-items: center;
   min-height: 44px;
+  font-family: var(--font-sans);
   font-size: 17px;
   font-weight: 400;
-  letter-spacing: -0.374px;
   text-underline-offset: 3px;
-}
-
-@media (min-width: 735px) {
-  .details__list { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 32px; }
-  .details__row { padding: 24px 0 0; }
-  .details__row:last-child { border-bottom: 0; }
 }
 
 .site-footer {

@@ -44,62 +44,70 @@
           <fieldset class="rsvp__fields">
             <legend class="visually-hidden">Confirmação de presença</legend>
 
-            <fieldset class="choice" aria-describedby="err-presenca">
-              <legend class="field__label">Você vai?</legend>
-              <div class="choice__options">
-                <label class="chip">
-                  <input class="chip__input" type="radio" name="presenca" value="sim">
-                  <span class="chip__label">Vou</span>
-                </label>
-                <label class="chip">
-                  <input class="chip__input" type="radio" name="presenca" value="nao">
-                  <span class="chip__label">Não vou</span>
-                </label>
+            <fieldset class="group">
+              <legend class="group__title visually-hidden">Dados para contato</legend>
+
+              <div class="field">
+                <label class="field__label" for="f-nome">Nome</label>
+                <input class="field__input" id="f-nome" name="nome" type="text" autocomplete="name" autocapitalize="words" enterkeyhint="next" maxlength="80" aria-describedby="err-nome">
+                <p class="field__error" id="err-nome"></p>
               </div>
-              <p class="field__error" id="err-presenca"></p>
+
+              <div class="field">
+                <label class="field__label" for="f-email">E-mail</label>
+                <input class="field__input" id="f-email" name="email" type="email" autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false" enterkeyhint="next" maxlength="120" aria-describedby="err-email">
+                <p class="field__error" id="err-email"></p>
+              </div>
+
+              <div class="field">
+                <label class="field__label" for="f-whatsapp">Telefone</label>
+                <input class="field__input" id="f-whatsapp" name="whatsapp" type="tel" autocomplete="tel-national" inputmode="tel" enterkeyhint="next" maxlength="20" placeholder="(31) 99999-9999" aria-describedby="err-whatsapp">
+                <p class="field__error" id="err-whatsapp"></p>
+              </div>
             </fieldset>
 
-            <div class="field">
-              <label class="field__label" for="f-nome">Nome</label>
-              <input class="field__input" id="f-nome" name="nome" type="text" autocomplete="name" autocapitalize="words" enterkeyhint="next" maxlength="80" aria-describedby="err-nome">
-              <p class="field__error" id="err-nome"></p>
-            </div>
+            <fieldset class="group">
+              <legend class="group__title">Sobre a noite</legend>
 
-            <div class="field">
-              <label class="field__label" for="f-email">E-mail</label>
-              <input class="field__input" id="f-email" name="email" type="email" autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false" enterkeyhint="next" maxlength="120" aria-describedby="err-email">
-              <p class="field__error" id="err-email"></p>
-            </div>
+              <fieldset class="choice" aria-describedby="err-presenca">
+                <legend class="field__label">Você vai?</legend>
+                <div class="choice__options">
+                  <label class="chip">
+                    <input class="chip__input" type="radio" name="presenca" value="sim">
+                    <span class="chip__label">Vou</span>
+                  </label>
+                  <label class="chip">
+                    <input class="chip__input" type="radio" name="presenca" value="nao">
+                    <span class="chip__label">Não vou</span>
+                  </label>
+                </div>
+                <p class="field__error" id="err-presenca"></p>
+              </fieldset>
 
-            <div class="field">
-              <label class="field__label" for="f-whatsapp">WhatsApp</label>
-              <input class="field__input" id="f-whatsapp" name="whatsapp" type="tel" autocomplete="tel-national" inputmode="tel" enterkeyhint="next" maxlength="20" placeholder="(31) 99999-9999" aria-describedby="err-whatsapp">
-              <p class="field__error" id="err-whatsapp"></p>
-            </div>
-
-            <div class="companion">
-              <label class="switch">
-                <span class="switch__text">Vou levar acompanhante</span>
-                <input class="switch__input" type="checkbox" role="switch" name="acompanhante">
-              </label>
-              <div class="field companion__name" hidden>
-                <label class="field__label" for="f-acompanhante">Nome do acompanhante</label>
-                <input class="field__input" id="f-acompanhante" name="acompanhanteNome" type="text" autocomplete="off" autocapitalize="words" enterkeyhint="next" maxlength="80" aria-describedby="err-acompanhanteNome">
-                <p class="field__error" id="err-acompanhanteNome"></p>
+              <div class="companion">
+                <label class="switch">
+                  <span class="switch__text">Vou levar acompanhante</span>
+                  <input class="switch__input" type="checkbox" role="switch" name="acompanhante">
+                </label>
+                <div class="field companion__name" hidden>
+                  <label class="field__label" for="f-acompanhante">Nome do acompanhante</label>
+                  <input class="field__input" id="f-acompanhante" name="acompanhanteNome" type="text" autocomplete="off" autocapitalize="words" enterkeyhint="next" maxlength="80" aria-describedby="err-acompanhanteNome">
+                  <p class="field__error" id="err-acompanhanteNome"></p>
+                </div>
               </div>
-            </div>
 
-            <div class="field field--restricao">
-              <label class="field__label" for="f-restricao">Restrição alimentar <span class="field__optional">(opcional)</span></label>
-              <textarea class="field__input field__input--short" id="f-restricao" name="restricao" rows="2" maxlength="300" enterkeyhint="next" aria-describedby="err-restricao"></textarea>
-              <p class="field__error" id="err-restricao"></p>
-            </div>
+              <div class="field field--restricao">
+                <label class="field__label" for="f-restricao">Restrição alimentar <span class="field__optional">(opcional)</span></label>
+                <textarea class="field__input field__input--short" id="f-restricao" name="restricao" rows="2" maxlength="300" enterkeyhint="next" aria-describedby="err-restricao"></textarea>
+                <p class="field__error" id="err-restricao"></p>
+              </div>
 
-            <div class="field">
-              <label class="field__label" for="f-observacao">Observação <span class="field__optional">(opcional)</span></label>
-              <textarea class="field__input" id="f-observacao" name="observacao" rows="3" maxlength="500" enterkeyhint="send" aria-describedby="err-observacao"></textarea>
-              <p class="field__error" id="err-observacao"></p>
-            </div>
+              <div class="field">
+                <label class="field__label" for="f-observacao">Observação <span class="field__optional">(opcional)</span></label>
+                <textarea class="field__input" id="f-observacao" name="observacao" rows="3" maxlength="500" enterkeyhint="send" aria-describedby="err-observacao"></textarea>
+                <p class="field__error" id="err-observacao"></p>
+              </div>
+            </fieldset>
 
             <div class="hp" aria-hidden="true">
               <label for="f-hp">Não preencha</label>

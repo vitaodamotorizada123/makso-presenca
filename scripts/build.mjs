@@ -82,25 +82,20 @@ function renderWhen(cal, event) {
   return `<time class="intro__when" datetime="${escapeHtml(event.start)}"><span class="intro__date">${escapeHtml(w.date)}</span><span class="intro__time">${escapeHtml(w.time)}</span></time>`;
 }
 
+/** Quando/Onde/Traje para o "obrigado" — só as linhas preenchidas; '' se não houver nada. */
 function renderDetails(cal, event) {
+  const rows = [];
   const w = cal.formatWhen(event);
-  const quando = w
-    ? `<time datetime="${escapeHtml(event.start)}">${escapeHtml(w.date)}, às ${escapeHtml(w.time)}</time>`
-    : '<span class="details__soon">Em breve</span>';
-  let onde = '<span class="details__soon">Em breve</span>';
+  if (w) rows.push(['Quando', `<time datetime="${escapeHtml(event.start)}">${escapeHtml(w.date)}, às ${escapeHtml(w.time)}</time>`]);
   if (event.venueName || event.address) {
-    onde = [
+    rows.push(['Onde', [
       event.venueName ? `<span class="details__venue">${escapeHtml(event.venueName)}</span>` : '',
       event.address ? `<span class="details__address">${escapeHtml(event.address)}</span>` : '',
       event.mapsUrl ? `<a class="details__map" href="${escapeHtml(event.mapsUrl)}" target="_blank" rel="noopener">Ver no mapa</a>` : '',
-    ].filter(Boolean).join('');
+    ].filter(Boolean).join('')]);
   }
-  const rows = [
-    ['Quando', quando],
-    ['Onde', onde],
-  ];
   if (event.dressCode) rows.push(['Traje', escapeHtml(event.dressCode)]);
-  return rows.map(([dt, dd]) => `<div class="details__row"><dt>${dt}</dt><dd>${dd}</dd></div>`).join('\n          ');
+  return rows.map(([dt, dd]) => `<div class="details__row"><dt>${dt}</dt><dd>${dd}</dd></div>`).join('');
 }
 
 function assertSafeOutDir(root, outDir) {
