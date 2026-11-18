@@ -4,7 +4,8 @@
     "event.venueName, event.address, event.mapsUrl: local do evento",
     "event.dressCode: traje (opcional)",
     "appsScriptUrl: URL do web app do Apps Script (quando a conta Google do cliente existir)",
-    "siteUrl: confirmar o nome final do serviço no Render"
+    "siteUrl: confirmar o nome final do serviço no Render",
+    "umamiWebsiteId: ID do site no Umami Cloud (cloud.umami.is → Websites → Edit → Website ID)"
   ],
   "siteUrl": "https://makso.onrender.com",
   "appsScriptUrl": "",
@@ -18,5 +19,6 @@
     "mapsUrl": "",
     "dressCode": "",
     "description": "Você está convidado para o lançamento da maksō."
-  }
+  },
+  "umamiWebsiteId": ""
 }

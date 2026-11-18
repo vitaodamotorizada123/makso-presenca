@@ -71,3 +71,16 @@ test('validateConfig acusa siteUrl sem https e appsScriptUrl estranho', () => {
 test('build recusa outDir fora do projeto e do tmp', async () => {
   await assert.rejects(build({ root, configPath: fixture('full'), outDir: '/etc/makso-x' }), /outDir/);
 });
+
+test('umamiWebsiteId: vazio ou UUID, e vai para a config pública do bundle', async () => {
+  const ok = JSON.parse(readFileSync(fixture('full'), 'utf8'));
+  assert.deepEqual(validateConfig({ ...ok, umamiWebsiteId: '' }), []);
+  assert.deepEqual(validateConfig({ ...ok, umamiWebsiteId: '0d6f3a5e-2b7c-4e1a-9f8d-1c2b3a4d5e6f' }), []);
+  assert.ok(validateConfig({ ...ok, umamiWebsiteId: 'abc' }).some((p) => p.includes('umamiWebsiteId')));
+  const outDir = mkdtempSync(path.join(os.tmpdir(), 'makso-build-'));
+  await build({ root, configPath: fixture('analytics'), outDir });
+  const html = readFileSync(path.join(outDir, 'index.html'), 'utf8');
+  const js = readFileSync(path.join(outDir, html.match(/src="\/(assets\/app\.[0-9a-f]{8}\.js)"/)[1]), 'utf8');
+  assert.ok(js.includes('"umamiWebsiteId":"0d6f3a5e-2b7c-4e1a-9f8d-1c2b3a4d5e6f"'));
+  assert.ok(html.includes('Medimos as visitas de forma anônima, sem cookies.'));
+});

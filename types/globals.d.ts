@@ -37,6 +37,7 @@ interface MaksoConfig {
   appsScriptUrl: string;
   rsvpDeadline: string | null;
   event: MaksoEvent;
+  umamiWebsiteId?: string;
   version?: string;
 }
 

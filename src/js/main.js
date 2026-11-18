@@ -43,7 +43,10 @@
     if (intro) hero.classList.add('is-intro');
   }
 
-  // 4. Formulário.
+  // 4. Contagem de visitas anônima (Umami). Nunca no modo demonstração.
+  MaksoAnalytics.load({ websiteId: cfg.umamiWebsiteId, demo: demoInfo.demo, siteUrl: cfg.siteUrl });
+
+  // 5. Formulário.
   MaksoForm.mount({
     root: /** @type {HTMLElement} */ (document.getElementById('confirmar')),
     cfg: cfg,
@@ -53,9 +56,10 @@
     scenario: demoInfo.scenario,
     now: function () { return performance.now(); },
     reducedMotion: reduced,
+    track: MaksoAnalytics.track,
   });
 
-  // 5. Selo de demonstração e botão do hero.
+  // 6. Selo de demonstração e botão do hero.
   var badge = document.querySelector('.demo-badge');
   if (badge && demoInfo.demo) /** @type {HTMLElement} */ (badge).hidden = false;
 
@@ -65,6 +69,7 @@
     var section = rsvp;
     cta.addEventListener('click', function (e) {
       e.preventDefault();
+      MaksoAnalytics.track('clicou-confirmar-topo');
       section.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
     });
   }

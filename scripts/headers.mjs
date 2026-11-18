@@ -3,11 +3,11 @@
 
 export const CSP = [
   "default-src 'self'",
-  "script-src 'self'",
+  "script-src 'self' https://cloud.umami.is",
   "style-src 'self' https://fonts.googleapis.com",
   'font-src https://fonts.gstatic.com',
   "img-src 'self' data:",
-  'connect-src https://script.google.com https://script.googleusercontent.com',
+  'connect-src https://script.google.com https://script.googleusercontent.com https://cloud.umami.is https://api-gateway.umami.dev',
   "frame-ancestors 'none'",
   "base-uri 'none'",
   "form-action 'none'",
