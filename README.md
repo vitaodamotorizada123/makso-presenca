@@ -101,12 +101,18 @@ A **Avenir** já vem instalada no iPhone e no Mac, então lá aparece a original
 
 ## Ligar as confirmações (Apps Script)
 
+**Já ligado (18/11/2026):**
+- **Conta:** makso.atelie@gmail.com.
+- **Projeto:** "maksō — confirmações".
+- **Planilha:** "maksō — Confirmações", no Drive dessa conta.
+
+
 Enquanto `appsScriptUrl` estiver vazio, o site mostra "Confirmações abrem em breve.". Para ligar:
 
 1. Rode `npm run build`. Os arquivos ficam em `apps-script/dist/`.
 2. Na **conta Google do cliente**, abra [script.google.com](https://script.google.com) e crie um **Novo projeto** chamado "maksō — confirmações".
 3. Em ⚙️ **Configurações do projeto**, marque "Mostrar o arquivo de manifesto `appsscript.json`".
-4. Crie um arquivo para cada `.js` de `apps-script/dist/` (mesmo nome) e cole o conteúdo. Cole também o `appsscript.json`.
+4. Cole o conteúdo de `apps-script/Codigo.gs` no `Code.gs`. É o script inteiro num arquivo só; ao mudar o script, regenere esse arquivo com o comando `cat` do histórico do git.
 5. Selecione a função **`setup`** e clique em **Executar**.
    - Autorize: planilha, envio de e-mail, gatilhos e acesso ao site.
    - O log mostra o link da planilha **"maksō — Confirmações"**.
