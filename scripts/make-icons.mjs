@@ -10,8 +10,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const logo = readFileSync(path.join(root, 'assets/brand/makso-logo.svg'), 'utf8');
 const paths = [...logo.matchAll(/<path d="([^"]+)"\/>/g)].map((m) => m[1]);
 const viewBox = logo.match(/viewBox="([^"]+)"/)[1];
-const BG = '#3B2935'; // Pantone 6077 C (guia maksō)
-const FG = '#E5DDD1'; // creme da marca
+const BG = '#24151F'; // Pantone 6077 C (guia maksō)
+const FG = '#E1DAD0'; // creme da marca
 
 // Ō = paths 3 (O) e 4 (mácron). Quadrado centrado no glifo.
 const omacron = `<path d="${paths[3]}"/><path d="${paths[4]}"/>`;

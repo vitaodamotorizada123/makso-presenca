@@ -1,17 +1,17 @@
 /* maksō — tokens. Paleta do guia maksō (Pantone 6077 C); contrastes medidos sobre --bg. */
 :root {
-  --bg: #3b2935;               /* Pantone 6077 C — fundo do site inteiro */
-  --text: #e5ddd1;             /* creme da marca — 10:1 */
+  --bg: #24151f;               /* fundo do site inteiro (pedido do cliente, 18/11) */
+  --text: #e1dad0;             /* texto (pedido do cliente, 18/11) */
   --text-muted: #b6a5af;       /* lilás claro da marca — 5,8:1 */
   --deco: #6b5664;             /* lilás escuro — 2,0:1: só decoração, nunca texto nem contorno */
   --line: rgb(229 221 209 / 0.14);
   --field-bg: rgb(229 221 209 / 0.05);
   --field-line: #b6a5af;       /* 5,8:1 — acima do mínimo de componente (WCAG 1.4.11) */
   --autofill-bg: #443240;      /* --field-bg aplicado sobre --bg */
-  --accent: #e5ddd1;           /* ações: pílula creme */
-  --on-accent: #3b2935;        /* 10:1 sobre a pílula */
+  --accent: #e1dad0;           /* ações: pílula creme */
+  --on-accent: #24151f;        /* 10:1 sobre a pílula */
   --error: #ff8f99;            /* fora da paleta; 6,2:1 sobre o fundo */
-  --brand-ink: #3b2935;        /* cor da logo sobre fundo claro (e-mail) */
+  --brand-ink: #24151f;        /* cor da logo sobre fundo claro (e-mail) */
 
   --r-pill: 9999px;
   --r-field: 11px;

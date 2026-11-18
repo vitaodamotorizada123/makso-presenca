@@ -20,8 +20,8 @@ function renderEmail(record, cfg) {
   var short = MaksoCalendar.formatShort(ev);
   var gcal = MaksoCalendar.googleCalendarUrl(ev);
   var e = escapeHtml_;
-  var BG = '#3b2935';
-  var CREAM = '#e5ddd1';
+  var BG = '#24151f';
+  var CREAM = '#e1dad0';
   var MUTED = '#b6a5af';
   var LINE = '#57434f';
   var SANS = "Poppins,'Helvetica Neue',Arial,sans-serif";

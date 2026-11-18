@@ -18,7 +18,7 @@ test('index.html tem logo, noindex, theme-color, viewport-fit e lang', async () 
   const { html } = await buildWith('full');
   assert.ok(html.includes('<title id="makso-title">maksō</title>'));
   assert.ok(html.includes('name="robots" content="noindex"'));
-  assert.ok(html.includes('name="theme-color" content="#3B2935"'));
+  assert.ok(html.includes('name="theme-color" content="#24151F"'));
   assert.ok(html.includes('viewport-fit=cover'));
   assert.ok(html.includes('lang="pt-BR"'));
 });

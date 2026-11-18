@@ -4,8 +4,8 @@ import { startBrowser, closeBrowser } from '../helpers/browser.mjs';
 
 after(closeBrowser);
 
-const BG = 'rgb(59, 41, 53)'; // #3b2935 (Pantone 6077 C)
-const CREAM = 'rgb(229, 221, 209)'; // #e5ddd1
+const BG = 'rgb(36, 21, 31)'; // #24151f (Pantone 6077 C)
+const CREAM = 'rgb(225, 218, 208)'; // #e1dad0
 const LOGO = '#inicio .screen__logo .logo';
 
 const intro = (page) => page.evaluate((sel) => {
@@ -30,7 +30,7 @@ const intro = (page) => page.evaluate((sel) => {
   };
 }, LOGO);
 
-test('tela 1: frase, botão, data e logo creme flutuando no pé, sobre #3b2935', async () => {
+test('tela 1: frase, botão, data e logo creme flutuando no pé, sobre #24151f', async () => {
   const { page, close } = await startBrowser();
   try {
     const h = await intro(page);
@@ -45,7 +45,7 @@ test('tela 1: frase, botão, data e logo creme flutuando no pé, sobre #3b2935',
     assert.equal(h.logoAnimation, 'makso-float');
     assert.equal(h.logoIteration, 'infinite');
     assert.equal(h.logoColor, CREAM);
-    assert.equal(h.themeColor, '#3B2935');
+    assert.equal(h.themeColor, '#24151F');
     assert.deepEqual(page.__problems, []);
   } finally { await close(); }
 });
@@ -74,7 +74,7 @@ test('com movimento reduzido, a logo fica parada', async () => {
   } finally { await close(); }
 });
 
-test('tela 2 e rodapé também em #3b2935, com texto claro legível', async () => {
+test('tela 2 e rodapé também em #24151f, com texto claro legível', async () => {
   const { page, close } = await startBrowser({ query: '#confirmar' });
   try {
     const s = await page.evaluate(() => ['.rsvp', '.site-footer'].map((sel) => {

@@ -41,7 +41,7 @@ html:not(.js) #confirmar:target { display: block !important; }
   font-family: var(--font-script); /* mesma cursiva da frase do "obrigado" (pedido do cliente) */
   font-weight: 400;
   font-size: clamp(22px, 6.2vw, 32px);
-  line-height: 1.6;
+  line-height: 1.9;
   text-wrap: balance;
 }
 
