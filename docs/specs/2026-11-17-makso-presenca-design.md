@@ -413,3 +413,45 @@ Substitui o que as seções 8 e 14 dizem sobre a ordem da página (hero, detalhe
 - Prazo padrão das confirmações: 3 dias antes, 07/12 às 19h.
 
 **Fica com quem constrói.** Medidas, espaçamentos e tamanhos de fonte, seguindo os tokens da seção 14 e as regras de toque e acessibilidade de sempre.
+
+### 16.1 Identidade da marca (guia "fontes e cores maksō", 2026-11-18)
+
+O Victor pediu: "use essa fonte e os detalhes de design". Isto substitui as cores e a fonte da seção 14.
+
+**Paleta e contraste** (contra o fundo `#3b2935`):
+
+| Uso | Cor | Contraste |
+|---|---|---|
+| Fundo (Pantone 6077 C) | `#3b2935` | — |
+| Texto principal, logo e botão-pílula (texto `#3b2935` sobre `#e5ddd1`) | `#e5ddd1` | 10:1 |
+| Texto secundário, rótulos e contorno dos campos | `#b6a5af` | 5,8:1 |
+| Só decoração (linhas finas, sombra da logo); nunca texto nem contorno de campo | `#6b5664` | 2,0:1 |
+| Erro (fora da paleta; necessário) | `#ff8f99` | 6,2:1 |
+
+- O `#24151F` sai. `theme-color` passa a `#3b2935`.
+- Ícones e imagem de compartilhamento passam a usar o fundo `#3b2935` com a logo em `#e5ddd1`.
+
+**Tipografia.**
+- **Serifada da marca:** IvyOra Text Light, nos textos de destaque: a frase da tela 1, "Dados para contato", a data e os títulos do "obrigado".
+  - Só existe com licença: Adobe Fonts (Web Project, incluído no Creative Cloud) ou licença web da Ivy Foundry.
+  - O site já fica preparado: `config.json` ganha `adobeFontsKitId`; com ele preenchido, carrega `https://use.typekit.net/<id>.css`.
+  - A CSP libera `use.typekit.net` (style) e `use.typekit.net` + `p.typekit.net` (font).
+  - Sem o kit, usa a substituta livre **Cormorant Garamond 300** (Google Fonts, OFL). A pilha é `"ivyora-text", "Cormorant Garamond", Georgia, serif`.
+- **Complementar:** Avenir Light, em rótulos, campos, botões, nota de privacidade e rodapé.
+  - Já vem instalada no iPhone e no Mac, então lá é usada a original.
+  - Nos outros sistemas entra **Nunito Sans** (Google Fonts, OFL), que substitui a Inter.
+  - A pilha é `"Avenir Next", Avenir, "Nunito Sans", system-ui, sans-serif`.
+- **Peso e tamanho:**
+  - texto corrido e campos em 16 px ou mais, com peso 400 (Avenir Book) para ler bem no fundo escuro;
+  - Light só a partir de 20 px.
+- **Atesse Std** (assinatura "sofia maksud."): fora desta versão. Não está no rascunho e não há licença web.
+
+**Botões.**
+- **Principal:** pílula `#e5ddd1` com texto `#3b2935`, em caixa alta, Avenir com espaçamento de letra `0,12em`, altura de 48 px ou mais.
+- **Secundário** (agenda): contorno `#b6a5af`.
+
+**Tela 2.**
+- Os campos ficam em dois grupos com o mesmo estilo:
+  - "Dados para contato": Nome, E-mail e Telefone;
+  - "Sobre a noite": Você vai?, acompanhante, restrição e observação.
+- Um link discreto "‹ Voltar" no topo, com área de toque de 44 px ou mais, leva à tela 1 pelo mesmo caminho do "voltar" do navegador.
