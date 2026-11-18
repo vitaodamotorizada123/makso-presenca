@@ -20,7 +20,7 @@
     }
     if (kitId) link('stylesheet', 'https://use.typekit.net/' + kitId + '.css');
     var families = [];
-    if (!kitId) families.push('family=Cormorant+Garamond:wght@300;400');
+    if (!kitId) families.push('family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300');
     if (!apple) families.push('family=Nunito+Sans:wght@400;600');
     if (!families.length) return;
     link('preconnect', 'https://fonts.gstatic.com');

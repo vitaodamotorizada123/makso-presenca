@@ -53,18 +53,15 @@ test('evento completo: data no HTML, evento.ics e event.json', async () => {
   for (const f of ['robots.txt', 'favicon.svg', 'apple-touch-icon.png', 'og.png']) assert.ok(existsSync(path.join(outDir, f)), f);
 });
 
-const detailsOf = (html) => html.match(/<dl class="rsvp__details"[^>]*>([\s\S]*?)<\/dl>/)[1];
+const detailsOf = (html) => html.match(/<div class="rsvp__details">([\s\S]*?)<\/div>/)[1];
 
-test('detalhes só no "obrigado": sem a seção antiga e só com linhas preenchidas', async () => {
+test('obrigado: data "DD . MM . AAAA às HH:MM", rua e mapa — só o que existir', async () => {
   const full = (await buildWith('full')).html;
-  assert.ok(!/<section[^>]*class="details"/.test(full), 'a seção .details saiu da página');
   const d = detailsOf(full);
-  assert.match(d, /<dt>Quando<\/dt>/);
+  assert.match(d, /12 \. 12 \. 2037 às 20:00/);
   assert.match(d, /Casa Fiat de Cultura/);
-  assert.match(d, /Esporte fino/);
-  const empty = (await buildWith('empty')).html;
-  assert.equal(detailsOf(empty).trim(), '');
-  assert.ok(!detailsOf(empty).includes('Em breve'));
+  assert.match(d, /Ver no mapa/);
+  assert.equal(detailsOf((await buildWith('empty')).html).trim(), '');
 });
 
 test('evento sem data: "Data em breve" e sem evento.ics', async () => {

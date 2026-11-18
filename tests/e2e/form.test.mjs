@@ -20,13 +20,13 @@ async function fill(page, { presenca = 'sim', nome = 'Mariana Souza', email = 'm
 const resultTitle = (page) => page.locator('.rsvp__result-title');
 const visible = (page, sel) => page.evaluate((s) => { const el = document.querySelector(s); return !!el && el.getClientRects().length > 0; }, sel);
 
-test('Vou + acompanhante: confirmado, botões de agenda e foco no título', async () => {
+test('Vou: confirmado, botões de agenda e foco no título', async () => {
   const { page, close } = await startBrowser({ query: '?demo=1' });
   try {
-    await fill(page, { acompanhante: 'Ana' });
+    await fill(page);
     await page.click('.rsvp__submit');
     await resultTitle(page).waitFor({ state: 'visible' });
-    assert.equal(await resultTitle(page).textContent(), 'Presença confirmada, Mariana.');
+    assert.equal(await resultTitle(page).textContent(), 'Sua presença foi confirmada.');
     assert.match(await page.locator('.rsvp__gcal').getAttribute('href'), /^https:\/\/calendar\.google\.com/);
     assert.equal(await page.locator('.rsvp__ics').getAttribute('href'), '/evento.ics');
     assert.ok(await visible(page, '.rsvp__calendar'));
@@ -45,40 +45,44 @@ test('tela 2: Dados para contato (Nome, E-mail, Telefone) antes de Sobre a noite
       phoneLabel: document.querySelector('label[for=f-whatsapp]').textContent.trim(),
       groups: [...document.querySelectorAll('#confirmar fieldset.group > legend')].map((l) => l.textContent.trim()),
     }));
-    assert.deepEqual(r.names, ['nome', 'email', 'whatsapp', 'presenca', 'presenca', 'acompanhante', 'acompanhanteNome', 'restricao', 'observacao']);
+    assert.deepEqual(r.names, ['nome', 'email', 'whatsapp', 'presenca', 'presenca', 'restricao', 'observacao']);
     assert.equal(r.phoneLabel, 'Telefone');
     assert.deepEqual(r.groups, ['Dados para contato', 'Sobre a noite']);
   } finally { await close(); }
 });
 
-test('obrigado mostra quando, onde e traje', async () => {
+test('obrigado no desenho do cliente: frase, data, endereço, logo e informações (sem acompanhantes)', async () => {
   const { page, close } = await startBrowser({ query: '?demo=1' });
   try {
-    assert.equal(await visible(page, '.rsvp__details'), false);
+    assert.equal(await visible(page, '.rsvp__thanks'), false);
+    assert.equal(await page.locator('input[name=acompanhante]').count(), 0, 'convites individuais: sem campo de acompanhante');
     await fill(page);
     await page.click('.rsvp__submit');
     await resultTitle(page).waitFor({ state: 'visible' });
-    assert.equal(await visible(page, '.rsvp__details'), true);
-    const text = await page.textContent('.rsvp__details');
-    assert.match(text, /Casa Fiat de Cultura/);
-    assert.match(text, /Praça da Liberdade, 10/);
-    assert.match(text, /Esporte fino/);
-    assert.match(text, /12 de dezembro/);
+    assert.equal(await visible(page, '.rsvp__thanks'), true);
+    assert.match(await page.textContent('.thanks__headline'), /Prepare-se para desvendar as bolsas mais icônicas que você já viu!/);
+    const d = await page.textContent('.rsvp__details');
+    assert.match(d, /12 \. 12 \. 2037 às 20:00/);
+    assert.match(d, /Praça da Liberdade, 10/);
+    const info = await page.textContent('.rsvp__info');
+    for (const t of ['Horário de início', 'Chuva', 'Estacionamento', 'Acesso ao endereço', 'Dúvidas', '(31) 98727-2711']) assert.ok(info.includes(t), t);
+    assert.ok(!/acompanhante/i.test(info), 'sem o item de acompanhantes');
+    assert.equal(await page.getAttribute('.rsvp__info a', 'href'), 'tel:+5531987272711');
   } finally { await close(); }
 });
 
-test('Não vou: esconde acompanhante e restrição, e agradece', async () => {
+test('Não vou: esconde restrição, e agradece', async () => {
   const { page, close } = await startBrowser({ query: '?demo=1' });
   try {
     await page.check('input[name=presenca][value=nao]');
-    assert.equal(await visible(page, '.companion'), false);
     assert.equal(await visible(page, '.field--restricao'), false);
     await fill(page, { presenca: '' });
     await page.click('.rsvp__submit');
     await resultTitle(page).waitFor({ state: 'visible' });
     assert.equal(await resultTitle(page).textContent(), 'Obrigado por avisar, Mariana. Sentiremos sua falta.');
     assert.equal(await visible(page, '.rsvp__calendar'), false);
-    assert.equal(await visible(page, '.rsvp__details'), false);
+    assert.equal(await visible(page, '.rsvp__thanks'), false);
+    assert.equal(await visible(page, '.rsvp__info'), false);
     assert.deepEqual(page.__problems, []);
   } finally { await close(); }
 });
@@ -142,7 +146,7 @@ test('sessionStorage bloqueado não impede confirmar', async () => {
     await fill(page);
     await page.click('.rsvp__submit');
     await resultTitle(page).waitFor({ state: 'visible' });
-    assert.equal(await resultTitle(page).textContent(), 'Presença confirmada, Mariana.');
+    assert.equal(await resultTitle(page).textContent(), 'Sua presença foi confirmada.');
     assert.deepEqual(page.__problems, []);
   } finally { await close(); }
 });
@@ -226,28 +230,25 @@ test('[review #2] Enter num campo "next" vai para o próximo campo, sem enviar',
   } finally { await close(); }
 });
 
-test('[review #3] campos restaurados pelo navegador (acompanhante ligado) continuam enviáveis', async () => {
+test('[review #3] campos restaurados pelo navegador continuam enviáveis', async () => {
   const initScript = () => {
     document.addEventListener('readystatechange', () => {
       if (document.readyState !== 'interactive') return;
       document.querySelector('input[name=presenca][value=sim]').checked = true;
-      document.querySelector('input[name=acompanhante]').checked = true;
     });
   };
   const { page, close } = await startBrowser({ query: '?demo=1', initScript });
   try {
-    assert.ok(await visible(page, '.companion__name'), 'nome do acompanhante deveria aparecer');
     await page.fill('input[name=nome]', 'Mariana Souza');
     await page.fill('input[name=email]', 'mariana@gmail.com');
     await page.fill('input[name=whatsapp]', '(31) 99876-5432');
-    await page.fill('input[name=acompanhanteNome]', 'Ana');
     await page.click('.rsvp__submit');
     await resultTitle(page).waitFor({ state: 'visible' });
-    assert.equal(await resultTitle(page).textContent(), 'Presença confirmada, Mariana.');
+    assert.equal(await resultTitle(page).textContent(), 'Sua presença foi confirmada.');
   } finally { await close(); }
 });
 
-test('[review #3] "Não vou" restaurado esconde acompanhante e restrição', async () => {
+test('[review #3] "Não vou" restaurado esconde a restrição', async () => {
   const initScript = () => {
     document.addEventListener('readystatechange', () => {
       if (document.readyState === 'interactive') document.querySelector('input[name=presenca][value=nao]').checked = true;
@@ -255,7 +256,6 @@ test('[review #3] "Não vou" restaurado esconde acompanhante e restrição', asy
   };
   const { page, close } = await startBrowser({ query: '?demo=1', initScript });
   try {
-    assert.equal(await visible(page, '.companion'), false);
     assert.equal(await visible(page, '.field--restricao'), false);
   } finally { await close(); }
 });

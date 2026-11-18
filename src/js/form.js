@@ -32,9 +32,6 @@ var MaksoForm = (function () {
     var form = /** @type {HTMLFormElement} */ ($('.rsvp__form'));
     var fields = /** @type {HTMLFieldSetElement} */ ($('.rsvp__fields'));
     var choice = $('.choice');
-    var companion = $('.companion');
-    var companionName = $('.companion__name');
-    var companionSwitch = /** @type {HTMLInputElement} */ ($('input[name=acompanhante]'));
     var restricao = $('.field--restricao');
     var submitBtn = /** @type {HTMLButtonElement} */ ($('.rsvp__submit'));
     var status = $('.rsvp__status');
@@ -42,7 +39,8 @@ var MaksoForm = (function () {
     var resultTitle = $('.rsvp__result-title');
     var resultText = $('.rsvp__result-text');
     var calendar = $('.rsvp__calendar');
-    var details = $('.rsvp__details'); // quando/onde/traje, gerado no build; pode vir vazio
+    var thanks = $('.rsvp__thanks'); // frase, data/endereço e logo (desenho do cliente)
+    var info = $('.rsvp__info'); // informações importantes
     var gcal = /** @type {HTMLAnchorElement} */ ($('.rsvp__gcal'));
     var store = MaksoStorage.session();
     var mountedAt = o.now();
@@ -91,12 +89,12 @@ var MaksoForm = (function () {
           var nome = firstName(r.nome);
           switch (r.kind) {
             case 'confirmado':
-              title = 'Presença confirmada, ' + nome + '.';
+              title = 'Sua presença foi confirmada.';
               text = o.demo
                 ? 'Em produção, enviaremos os detalhes para ' + r.email + '.'
                 : 'Enviamos os detalhes para ' + r.email + '.';
               showCal = !!o.cfg.event.start;
-              showDetails = details.children.length > 0;
+              showDetails = true;
               break;
             case 'recusado':
               title = 'Obrigado por avisar, ' + nome + '. Sentiremos sua falta.';
@@ -113,25 +111,16 @@ var MaksoForm = (function () {
         if (resultText.textContent !== text) resultText.textContent = text;
         resultText.hidden = !text;
         calendar.hidden = !showCal;
-        details.hidden = !showDetails;
+        thanks.hidden = !showDetails;
+        info.hidden = !showDetails;
+        result.classList.toggle('is-confirmed', showDetails);
         if (showCal) gcal.href = MaksoCalendar.googleCalendarUrl(o.cfg.event) || '#';
         return;
       }
 
       // Campos condicionais.
       var vai = s.presenca !== 'nao';
-      companion.hidden = !vai;
-      restricao.hidden = !vai;
-      var showName = vai && s.companion;
-      if (companionName.hidden === showName) {
-        companionName.hidden = !showName;
-        if (showName && !reduced) {
-          companionName.classList.remove('is-entering');
-          void companionName.offsetWidth; // reinicia a animação
-          companionName.classList.add('is-entering');
-        }
-      }
-      companionSwitch.checked = s.companion;
+      restricao.hidden = !vai; // convites individuais: sem acompanhante
 
       // Erros junto de cada campo.
       MaksoFormState.FIELDS.forEach(function (f) {
@@ -190,8 +179,8 @@ var MaksoForm = (function () {
         nome: String(data.get('nome') || ''),
         email: String(data.get('email') || ''),
         whatsapp: String(data.get('whatsapp') || ''),
-        acompanhante: state.companion && state.presenca !== 'nao',
-        acompanhanteNome: String(data.get('acompanhanteNome') || ''),
+        acompanhante: false, // convites individuais (pedido do cliente)
+        acompanhanteNome: '',
         restricao: String(data.get('restricao') || ''),
         observacao: String(data.get('observacao') || ''),
       };
@@ -259,7 +248,6 @@ var MaksoForm = (function () {
       var t = /** @type {HTMLInputElement} */ (e.target);
       if (t.name !== 'hp') markStarted();
       if (t.name === 'presenca') dispatch({ type: 'choose', presenca: t.value });
-      else if (t.name === 'acompanhante') dispatch({ type: 'toggleCompanion', on: t.checked });
     });
 
     form.addEventListener('input', function (e) {
@@ -303,9 +291,7 @@ var MaksoForm = (function () {
       if (state.phase !== 'editando') return;
       // Lê tudo antes de despachar: cada render escreve o estado nos controles.
       var checked = /** @type {HTMLInputElement|null} */ (form.querySelector('input[name=presenca]:checked'));
-      var companionOn = companionSwitch.checked;
       if (checked) dispatch({ type: 'choose', presenca: checked.value });
-      dispatch({ type: 'toggleCompanion', on: companionOn });
     }
     window.addEventListener('pageshow', syncFromControls);
 

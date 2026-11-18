@@ -84,18 +84,6 @@
                 <p class="field__error" id="err-presenca"></p>
               </fieldset>
 
-              <div class="companion">
-                <label class="switch">
-                  <span class="switch__text">Vou levar acompanhante</span>
-                  <input class="switch__input" type="checkbox" role="switch" name="acompanhante">
-                </label>
-                <div class="field companion__name" hidden>
-                  <label class="field__label" for="f-acompanhante">Nome do acompanhante</label>
-                  <input class="field__input" id="f-acompanhante" name="acompanhanteNome" type="text" autocomplete="off" autocapitalize="words" enterkeyhint="next" maxlength="80" aria-describedby="err-acompanhanteNome">
-                  <p class="field__error" id="err-acompanhanteNome"></p>
-                </div>
-              </div>
-
               <div class="field field--restricao">
                 <label class="field__label" for="f-restricao">Restrição alimentar <span class="field__optional">(opcional)</span></label>
                 <textarea class="field__input field__input--short" id="f-restricao" name="restricao" rows="2" maxlength="300" enterkeyhint="next" aria-describedby="err-restricao"></textarea>
@@ -124,11 +112,30 @@
         <div class="rsvp__result" hidden>
           <h3 class="rsvp__result-title" tabindex="-1"></h3>
           <p class="rsvp__result-text"></p>
-          <dl class="rsvp__details" hidden>%%DETAILS%%</dl>
+          <div class="rsvp__thanks" hidden>
+            <p class="thanks__headline">Prepare-se para desvendar as bolsas mais icônicas que você já viu!</p>
+            <div class="rsvp__details">%%DETAILS%%</div>
+            <div class="thanks__logo">%%LOGO_DECOR%%</div>
+          </div>
           <div class="rsvp__calendar" hidden>
             <a class="button button--secondary rsvp__gcal" href="#" target="_blank" rel="noopener">Google Agenda</a>
             <a class="button button--secondary rsvp__ics" href="/evento.ics" download="convite-makso.ics">Apple / Outlook</a>
           </div>
+          <section class="rsvp__info" aria-labelledby="info-title" hidden>
+            <h4 id="info-title" class="info__title">Informações importantes</h4>
+            <dl class="info__list">
+              <dt>Horário de início</dt>
+              <dd>Devido ao trânsito na região, sugerimos sair com antecedência para chegar com tranquilidade e aproveitar desde o início.</dd>
+              <dt>Chuva</dt>
+              <dd>Se chover, fique tranquila. Haverá uma pessoa na entrada para recebê-la com guarda-chuva e acompanhá-la até a porta do evento.</dd>
+              <dt>Estacionamento</dt>
+              <dd>Há vagas para estacionar na rua.</dd>
+              <dt>Acesso ao endereço</dt>
+              <dd>O evento acontece dentro de um condomínio fechado. Seu nome estará em uma lista de autorização na portaria. Ao chegar, basta informar seu nome completo e os demais dados ou documentos que lhe forem solicitados no momento.</dd>
+              <dt>Dúvidas</dt>
+              <dd>Para outras dúvidas e mais informações, entre em contato pelo número <a href="tel:+5531987272711">(31) 98727-2711</a>.</dd>
+            </dl>
+          </section>
         </div>
       </div>
       <div class="screen__logo screen__logo--small">%%LOGO_DECOR%%</div>

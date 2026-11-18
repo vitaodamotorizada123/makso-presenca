@@ -69,7 +69,7 @@ test('funil: botão do topo, início do formulário e confirmação — sem dado
     await page.waitForTimeout(900); // antispam do servidor: t ≥ 800 ms
     await page.click('.rsvp__submit');
     await page.locator('.rsvp__result-title').waitFor({ state: 'visible' });
-    assert.equal(await page.textContent('.rsvp__result-title'), 'Presença confirmada, Mariana.');
+    assert.equal(await page.textContent('.rsvp__result-title'), 'Sua presença foi confirmada.');
     const events = await page.evaluate(() => window.__events);
     const names = events.map((e) => e[0]);
     assert.deepEqual(names, ['clicou-confirmar-topo', 'iniciou-formulario', 'confirmou']);

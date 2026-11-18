@@ -82,20 +82,20 @@ function renderWhen(cal, event) {
   return `<time class="intro__when" datetime="${escapeHtml(event.start)}"><span class="intro__date">${escapeHtml(w.date)}</span> <span class="intro__time">${escapeHtml(w.time)}</span></time>`;
 }
 
-/** Quando/Onde/Traje para o "obrigado" — só as linhas preenchidas; '' se não houver nada. */
+/** "Obrigado" (desenho do cliente): "10 . 12 . 2026 às 19:30", rua e número, mapa e traje — só o que existir. */
 function renderDetails(cal, event) {
-  const rows = [];
-  const w = cal.formatWhen(event);
-  if (w) rows.push(['Quando', `<time datetime="${escapeHtml(event.start)}">${escapeHtml(w.date)}, às ${escapeHtml(w.time)}</time>`]);
-  if (event.venueName || event.address) {
-    rows.push(['Onde', [
-      event.venueName ? `<span class="details__venue">${escapeHtml(event.venueName)}</span>` : '',
-      event.address ? `<span class="details__address">${escapeHtml(event.address)}</span>` : '',
-      event.mapsUrl ? `<a class="details__map" href="${escapeHtml(event.mapsUrl)}" target="_blank" rel="noopener">Ver no mapa</a>` : '',
-    ].filter(Boolean).join('')]);
+  const w = cal.formatShort(event);
+  const lines = [];
+  if (w) {
+    const hhmm = w.time.replace(/h(\d\d)?$/, (_, m) => `:${m || '00'}`);
+    lines.push(`<time class="thanks__when" datetime="${escapeHtml(event.start)}">${escapeHtml(w.date.split('.').join(' . '))} às ${escapeHtml(hhmm)}</time>`);
   }
-  if (event.dressCode) rows.push(['Traje', escapeHtml(event.dressCode)]);
-  return rows.map(([dt, dd]) => `<div class="details__row"><dt>${dt}</dt><dd>${dd}</dd></div>`).join('');
+  const street = (event.address || '').split(' – ')[0];
+  if (event.venueName) lines.push(`<span class="thanks__place">${escapeHtml(event.venueName)}</span>`);
+  if (street) lines.push(`<span class="thanks__place">${escapeHtml(street)}</span>`);
+  if (event.mapsUrl) lines.push(`<a class="thanks__map" href="${escapeHtml(event.mapsUrl)}" target="_blank" rel="noopener">Ver no mapa</a>`);
+  if (event.dressCode) lines.push(`<span class="thanks__place">Traje: ${escapeHtml(event.dressCode)}</span>`);
+  return lines.join('');
 }
 
 function assertSafeOutDir(root, outDir) {
