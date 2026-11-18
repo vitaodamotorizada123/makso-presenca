@@ -103,18 +103,22 @@ test('a logo decorativa da tela 2 não duplica id nem é lida duas vezes', async
   } finally { await close(); }
 });
 
-for (const viewport of [{ width: 440, height: 956 }, { width: 390, height: 844 }, { width: 375, height: 667 }]) {
-  test(`tela 1 ${viewport.width}×${viewport.height}: botão e data mais para cima, sem encostar na frase`, async () => {
+for (const viewport of [{ width: 440, height: 956 }, { width: 390, height: 844 }, { width: 375, height: 667 }, { width: 1440, height: 900 }]) {
+  test(`tela 1 ${viewport.width}×${viewport.height}: logo, frase, botão e data centralizados entre o topo e o rodapé`, async () => {
     const { page, close } = await startBrowser({ viewport });
     try {
       const r = await page.evaluate(() => {
         const b = (s) => document.querySelector(s).getBoundingClientRect();
         const h = innerHeight;
         const cta = b('.intro__cta');
-        return { lede: b('.intro__lede').bottom / h, ctaTop: cta.top / h, ctaMid: (cta.top + cta.bottom) / 2 / h, ctaBottom: cta.bottom / h, whenTop: b('.intro__when').top / h };
+        return {
+          h,
+          top: b('.intro > .screen__logo').top, bottom: b('.intro__when').bottom, footer: b('footer.site-footer').top,
+          lede: b('.intro__lede').bottom / h, ctaTop: cta.top / h, ctaBottom: cta.bottom / h, whenTop: b('.intro__when').top / h,
+        };
       });
-      assert.ok(r.ctaMid <= 0.565, `botão no meio em ${r.ctaMid.toFixed(3)} da altura (era ~0,61)`);
-      assert.ok(r.whenTop <= 0.75, `data em ${r.whenTop.toFixed(3)} da altura (era ~0,81)`);
+      const above = r.top, below = r.footer - r.bottom;
+      assert.ok(Math.abs(above - below) <= 0.02 * r.h, `conjunto fora do centro: ${Math.round(above)}px em cima, ${Math.round(below)}px embaixo`);
       assert.ok(r.ctaTop - r.lede >= 0.06, 'respiro entre a frase e o botão');
       assert.ok(r.whenTop - r.ctaBottom >= 0.08, 'respiro entre o botão e a data');
     } finally { await close(); }

@@ -44,16 +44,17 @@ html:not(.js):not(:has(#confirmar:target)) .site-footer {
 
 /* ---------- Tela 1: frase, botão, data; logo no pé ---------- */
 .intro {
-  /* Desenho do cliente: logo em cima, frase, botão no meio, data embaixo. */
+  /* Desenho do cliente: logo em cima, frase, botão, data — o conjunto centralizado na
+     vertical entre o topo da tela e o rodapé (pedido do cliente, 18/11). */
   display: grid;
-  grid-template-rows: auto 1.1fr auto 0.9fr auto 1.1fr auto 1.8fr;
+  grid-template-rows: 1fr auto 1.1fr auto 0.9fr auto 1.1fr auto 1fr;
   justify-items: center;
   min-height: 100vh;
   min-height: 100svh;
   padding:
-    calc(env(safe-area-inset-top) + 9svh)
+    calc(env(safe-area-inset-top) + 12px)
     var(--gutter-r)
-    calc(env(safe-area-inset-bottom) + 24px)
+    calc(env(safe-area-inset-bottom) + 12px)
     var(--gutter-l);
   overflow: hidden;
   text-align: center;
@@ -61,7 +62,7 @@ html:not(.js):not(:has(#confirmar:target)) .site-footer {
 
 .intro__content { display: contents; }
 .intro__lede {
-  grid-row: 3;
+  grid-row: 4;
   /* Sempre 4 linhas (pedido do cliente): quebras fixas e tamanho que acompanha a largura da tela. */
   font-family: var(--font-script); /* mesma cursiva da frase do "obrigado" */
   font-weight: 400;
@@ -69,9 +70,9 @@ html:not(.js):not(:has(#confirmar:target)) .site-footer {
   line-height: 1.45;
 }
 .intro__lede > span { display: block; white-space: nowrap; }
-.intro > .screen__logo { grid-row: 1; --logo-w: min(30vw, 150px); --logo-h: calc(var(--logo-w) / 3.91); --float: 4px; }
-.intro__cta { grid-row: 5; }
-.intro__when { grid-row: 7; }
+.intro > .screen__logo { grid-row: 2; --logo-w: min(30vw, 150px); --logo-h: calc(var(--logo-w) / 3.91); --float: 4px; }
+.intro__cta { grid-row: 6; }
+.intro__when { grid-row: 8; }
 
 
 
