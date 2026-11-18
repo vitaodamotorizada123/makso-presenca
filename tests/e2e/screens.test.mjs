@@ -13,7 +13,6 @@ const screenState = (page) => page.evaluate(() => ({
 }));
 
 async function fillYes(page) {
-  await page.check('input[name=presenca][value=sim]');
   await page.fill('input[name=nome]', 'Mariana Souza');
   await page.fill('input[name=email]', 'mariana@gmail.com');
   await page.fill('input[name=whatsapp]', '(31) 99876-5432');

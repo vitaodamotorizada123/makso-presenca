@@ -7,7 +7,7 @@ const startBrowser = (o = {}) => openPage({ ...o, query: (o.query || '') + '#con
 
 after(closeBrowser);
 
-async function fill(page, { presenca = 'sim', nome = 'Mariana Souza', email = 'mariana@gmail.com', whatsapp = '(31) 99876-5432', acompanhante = '' } = {}) {
+async function fill(page, { presenca = '', nome = 'Mariana Souza', email = 'mariana@gmail.com', whatsapp = '(31) 99876-5432', acompanhante = '' } = {}) {
   if (presenca) await page.check(`input[name=presenca][value=${presenca}]`);
   if (nome) await page.fill('input[name=nome]', nome);
   if (email) await page.fill('input[name=email]', email);
@@ -45,7 +45,7 @@ test('tela 2: Dados para contato (Nome, E-mail, Telefone) antes de Sobre a noite
       phoneLabel: document.querySelector('label[for=f-whatsapp]').textContent.trim(),
       groups: [...document.querySelectorAll('#confirmar fieldset.group > legend')].map((l) => l.textContent.trim()),
     }));
-    assert.deepEqual(r.names, ['nome', 'email', 'whatsapp', 'presenca', 'presenca', 'restricao', 'observacao']);
+    assert.deepEqual(r.names, ['nome', 'email', 'whatsapp', 'restricao', 'observacao']);
     assert.equal(r.phoneLabel, 'Telefone');
     assert.deepEqual(r.groups, ['Dados para contato', 'Sobre a noite']);
   } finally { await close(); }
@@ -56,6 +56,7 @@ test('obrigado no desenho do cliente: frase, data, endereço, logo e informaçõ
   try {
     assert.equal(await visible(page, '.rsvp__thanks'), false);
     assert.equal(await page.locator('input[name=acompanhante]').count(), 0, 'convites individuais: sem campo de acompanhante');
+    assert.equal(await page.locator('input[name=presenca]').count(), 0, 'sem "vou/não vou"');
     await fill(page);
     await page.click('.rsvp__submit');
     await resultTitle(page).waitFor({ state: 'visible' });
@@ -71,28 +72,12 @@ test('obrigado no desenho do cliente: frase, data, endereço, logo e informaçõ
   } finally { await close(); }
 });
 
-test('Não vou: esconde restrição, e agradece', async () => {
-  const { page, close } = await startBrowser({ query: '?demo=1' });
-  try {
-    await page.check('input[name=presenca][value=nao]');
-    assert.equal(await visible(page, '.field--restricao'), false);
-    await fill(page, { presenca: '' });
-    await page.click('.rsvp__submit');
-    await resultTitle(page).waitFor({ state: 'visible' });
-    assert.equal(await resultTitle(page).textContent(), 'Obrigado por avisar, Mariana. Sentiremos sua falta.');
-    assert.equal(await visible(page, '.rsvp__calendar'), false);
-    assert.equal(await visible(page, '.rsvp__thanks'), false);
-    assert.equal(await visible(page, '.rsvp__info'), false);
-    assert.deepEqual(page.__problems, []);
-  } finally { await close(); }
-});
-
-test('envio vazio mostra 4 erros e foca o primeiro inválido', async () => {
+test('envio vazio mostra 3 erros e foca o primeiro inválido', async () => {
   const { page, close } = await startBrowser({ query: '?demo=1' });
   try {
     await page.click('.rsvp__submit');
     const errs = await page.$$eval('.field__error', (els) => els.filter((e) => e.textContent).map((e) => e.id));
-    assert.deepEqual(errs, ['err-nome', 'err-email', 'err-whatsapp', 'err-presenca']);
+    assert.deepEqual(errs, ['err-nome', 'err-email', 'err-whatsapp']);
     assert.equal(await page.evaluate(() => document.activeElement?.getAttribute('name')), 'nome');
     assert.equal(await page.getAttribute('input[name=nome]', 'aria-invalid'), 'true');
     assert.equal(await page.evaluate(() => window.__maksoSubmitCount || 0), 0);
@@ -212,7 +197,6 @@ for (const viewport of [{ width: 360, height: 640 }, { width: 844, height: 390 }
 test('[review #2] Enter num campo "next" vai para o próximo campo, sem enviar', async () => {
   const { page, close } = await startBrowser({ query: '?demo=1' });
   try {
-    await page.check('input[name=presenca][value=sim]');
     await page.fill('input[name=nome]', 'Mariana Souza');
     await page.fill('input[name=email]', 'mariana@gmail.com');
     await page.fill('input[name=whatsapp]', '(31) 99876-5432');
@@ -234,7 +218,7 @@ test('[review #3] campos restaurados pelo navegador continuam enviáveis', async
   const initScript = () => {
     document.addEventListener('readystatechange', () => {
       if (document.readyState !== 'interactive') return;
-      document.querySelector('input[name=presenca][value=sim]').checked = true;
+      document.querySelector('input[name=nome]').value = 'Mariana Souza';
     });
   };
   const { page, close } = await startBrowser({ query: '?demo=1', initScript });
@@ -245,18 +229,6 @@ test('[review #3] campos restaurados pelo navegador continuam enviáveis', async
     await page.click('.rsvp__submit');
     await resultTitle(page).waitFor({ state: 'visible' });
     assert.equal(await resultTitle(page).textContent(), 'Sua presença foi confirmada.');
-  } finally { await close(); }
-});
-
-test('[review #3] "Não vou" restaurado esconde a restrição', async () => {
-  const initScript = () => {
-    document.addEventListener('readystatechange', () => {
-      if (document.readyState === 'interactive') document.querySelector('input[name=presenca][value=nao]').checked = true;
-    });
-  };
-  const { page, close } = await startBrowser({ query: '?demo=1', initScript });
-  try {
-    assert.equal(await visible(page, '.field--restricao'), false);
   } finally { await close(); }
 });
 

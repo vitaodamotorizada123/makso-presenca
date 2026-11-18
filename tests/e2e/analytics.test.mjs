@@ -62,8 +62,7 @@ test('funil: botão do topo, início do formulário e confirmação — sem dado
   try {
     await page.waitForFunction(() => window.umami);
     await page.click('.intro__cta');
-    await page.check('input[name=presenca][value=sim]');
-    await page.fill('input[name=nome]', 'Mariana Souza');
+      await page.fill('input[name=nome]', 'Mariana Souza');
     await page.fill('input[name=email]', 'mariana@gmail.com');
     await page.fill('input[name=whatsapp]', '(31) 99876-5432');
     await page.waitForTimeout(900); // antispam do servidor: t ≥ 800 ms
@@ -80,12 +79,12 @@ test('funil: botão do topo, início do formulário e confirmação — sem dado
   } finally { await close(); }
 });
 
-test('erro de validação e "não vou" viram eventos (sem dados)', async () => {
+test('erro de validação vira evento (sem dados)', async () => {
   const { page, close } = await startBrowser({ config: 'analytics', query: '#confirmar', routes });
   try {
     await page.waitForFunction(() => window.umami);
     await page.click('.rsvp__submit');
-    await page.check('input[name=presenca][value=nao]');
+    await page.fill('input[name=nome]', 'Ana');
     const names = await page.evaluate(() => window.__events.map((e) => e[0]));
     assert.deepEqual(names, ['erro-validacao', 'iniciou-formulario']);
   } finally { await close(); }

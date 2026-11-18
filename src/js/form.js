@@ -175,7 +175,7 @@ var MaksoForm = (function () {
     function collect() {
       var data = new FormData(form);
       return {
-        presenca: String(data.get('presenca') || ''),
+        presenca: 'sim', // quem abre o formulário está confirmando (sem "vou/não vou")
         nome: String(data.get('nome') || ''),
         email: String(data.get('email') || ''),
         whatsapp: String(data.get('whatsapp') || ''),
