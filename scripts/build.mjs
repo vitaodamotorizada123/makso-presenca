@@ -19,10 +19,11 @@ export const BUNDLE = [
   'src/js/api.js',
   'src/js/form-state.js',
   'src/js/form.js',
+  'src/js/screens.js',
   'src/js/main.js',
 ];
 
-export const STYLES = ['tokens', 'base', 'hero', 'sections', 'form'].map((n) => `src/styles/${n}.css`);
+export const STYLES = ['tokens', 'base', 'screens', 'sections', 'form'].map((n) => `src/styles/${n}.css`);
 
 const ISO_OFFSET = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?(\.\d+)?([+-]\d{2}:\d{2}|Z)$/;
 const APPS_SCRIPT = /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/;
@@ -35,6 +36,7 @@ export function validateConfig(cfg) {
   if (typeof cfg.siteUrl !== 'string' || !/^https:\/\/[^/\s]+/.test(cfg.siteUrl)) problems.push('siteUrl: precisa ser https://…');
   if (cfg.appsScriptUrl !== '' && !APPS_SCRIPT.test(String(cfg.appsScriptUrl))) problems.push('appsScriptUrl: vazio ou https://script.google.com/macros/s/…/exec');
   if (cfg.umamiWebsiteId !== undefined && cfg.umamiWebsiteId !== '' && !UUID.test(String(cfg.umamiWebsiteId))) problems.push('umamiWebsiteId: vazio ou o Website ID do Umami (UUID)');
+  if (cfg.adobeFontsKitId !== undefined && cfg.adobeFontsKitId !== '' && !/^[a-z0-9]{5,12}$/.test(String(cfg.adobeFontsKitId))) problems.push('adobeFontsKitId: vazio ou o ID do kit do Adobe Fonts (ex.: abc1def)');
   const ev = cfg.event || {};
   for (const k of ['title', 'venueName', 'address', 'mapsUrl', 'dressCode', 'description']) {
     if (typeof ev[k] !== 'string') problems.push(`event.${k}: precisa ser texto (pode ser "")`);
@@ -54,8 +56,8 @@ export function validateConfig(cfg) {
 
 /** Subconjunto público da config (vai para o navegador e para o event.json). */
 export function publicConfig(cfg) {
-  const { siteUrl, appsScriptUrl, rsvpDeadline, event, umamiWebsiteId } = cfg;
-  return { siteUrl, appsScriptUrl, rsvpDeadline: rsvpDeadline ?? null, event, umamiWebsiteId: umamiWebsiteId || '' };
+  const { siteUrl, appsScriptUrl, rsvpDeadline, event, umamiWebsiteId, adobeFontsKitId } = cfg;
+  return { siteUrl, appsScriptUrl, rsvpDeadline: rsvpDeadline ?? null, event, umamiWebsiteId: umamiWebsiteId || '', adobeFontsKitId: adobeFontsKitId || '' };
 }
 
 const hash8 = (s) => createHash('sha256').update(s).digest('hex').slice(0, 8);
@@ -73,30 +75,27 @@ function sharedContext(root) {
   return ctx;
 }
 
+/** Data do convite (tela 1): 10.12.2026 / 19h30, em duas linhas. Devolve HTML já escapado. */
 function renderWhen(cal, event) {
-  const w = cal.formatWhen(event);
-  return w ? `${w.date} · ${w.time}` : 'Data em breve';
+  const w = cal.formatShort(event);
+  if (!w) return '<p class="intro__when intro__when--soon">Data em breve</p>';
+  return `<time class="intro__when" datetime="${escapeHtml(event.start)}"><span class="intro__date">${escapeHtml(w.date)}</span> <span class="intro__time">${escapeHtml(w.time)}</span></time>`;
 }
 
+/** Quando/Onde/Traje para o "obrigado" — só as linhas preenchidas; '' se não houver nada. */
 function renderDetails(cal, event) {
+  const rows = [];
   const w = cal.formatWhen(event);
-  const quando = w
-    ? `<time datetime="${escapeHtml(event.start)}">${escapeHtml(w.date)}, às ${escapeHtml(w.time)}</time>`
-    : '<span class="details__soon">Em breve</span>';
-  let onde = '<span class="details__soon">Em breve</span>';
+  if (w) rows.push(['Quando', `<time datetime="${escapeHtml(event.start)}">${escapeHtml(w.date)}, às ${escapeHtml(w.time)}</time>`]);
   if (event.venueName || event.address) {
-    onde = [
+    rows.push(['Onde', [
       event.venueName ? `<span class="details__venue">${escapeHtml(event.venueName)}</span>` : '',
       event.address ? `<span class="details__address">${escapeHtml(event.address)}</span>` : '',
       event.mapsUrl ? `<a class="details__map" href="${escapeHtml(event.mapsUrl)}" target="_blank" rel="noopener">Ver no mapa</a>` : '',
-    ].filter(Boolean).join('');
+    ].filter(Boolean).join('')]);
   }
-  const rows = [
-    ['Quando', quando],
-    ['Onde', onde],
-  ];
   if (event.dressCode) rows.push(['Traje', escapeHtml(event.dressCode)]);
-  return rows.map(([dt, dd]) => `<div class="details__row"><dt>${dt}</dt><dd>${dd}</dd></div>`).join('\n          ');
+  return rows.map(([dt, dd]) => `<div class="details__row"><dt>${dt}</dt><dd>${dd}</dd></div>`).join('');
 }
 
 function assertSafeOutDir(root, outDir) {
@@ -139,12 +138,17 @@ export async function build({ root = ROOT, configPath = path.join(root, 'config.
     .replace('<svg ', '<svg class="logo" focusable="false" ');
   const replacements = {
     '%%LOGO%%': logo,
+    // Segunda cópia (pé da tela 2): só decoração — sem <title>/id duplicado e fora do leitor de tela.
+    '%%LOGO_DECOR%%': logo
+      .replace(/<title[^>]*>[\s\S]*?<\/title>\s*/, '')
+      .replace(/ role="img"/, '')
+      .replace(/ aria-labelledby="[^"]*"/, ' aria-hidden="true"'),
     '%%APP_JS%%': appJs,
     '%%CSS%%': stylesCss,
     '%%SITE_URL%%': escapeHtml(pub.siteUrl.replace(/\/$/, '')),
     '%%TITLE%%': escapeHtml(pub.event.title),
     '%%DESCRIPTION%%': escapeHtml(pub.event.description),
-    '%%WHEN%%': escapeHtml(renderWhen(cal, pub.event)),
+    '%%WHEN%%': renderWhen(cal, pub.event),
     '%%DETAILS%%': renderDetails(cal, pub.event),
   };
   let html = readFileSync(path.join(root, 'src/index.html'), 'utf8');

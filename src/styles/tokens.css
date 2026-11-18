@@ -1,15 +1,17 @@
-/* maksō — tokens (base: design-md/apple, tema escuro em #24151F). */
+/* maksō — tokens. Paleta do guia maksō (Pantone 6077 C); contrastes medidos sobre --bg. */
 :root {
-  --bg: #24151f;               /* fundo do site inteiro (pedido do Victor, 2026-11-18) */
-  --text: #ffffff;
-  --text-muted: #b3a6ae;       /* contraste 7,5:1 sobre o fundo */
-  --line: rgb(255 255 255 / 0.12);
-  --field-bg: rgb(255 255 255 / 0.06);
-  --field-line: rgb(255 255 255 / 0.35); /* 3,2:1 — limite de componente (WCAG 1.4.11) */
-  --accent: #ffffff;           /* ações: pílula branca */
-  --on-accent: #24151f;
-  --error: #ff6b78;            /* 6,3:1 sobre o fundo */
-  --brand-ink: #1b0001;        /* cor da logo (ícones/e-mail) */
+  --bg: #3b2935;               /* Pantone 6077 C — fundo do site inteiro */
+  --text: #e5ddd1;             /* creme da marca — 10:1 */
+  --text-muted: #b6a5af;       /* lilás claro da marca — 5,8:1 */
+  --deco: #6b5664;             /* lilás escuro — 2,0:1: só decoração, nunca texto nem contorno */
+  --line: rgb(229 221 209 / 0.14);
+  --field-bg: rgb(229 221 209 / 0.05);
+  --field-line: #b6a5af;       /* 5,8:1 — acima do mínimo de componente (WCAG 1.4.11) */
+  --autofill-bg: #443240;      /* --field-bg aplicado sobre --bg */
+  --accent: #e5ddd1;           /* ações: pílula creme */
+  --on-accent: #3b2935;        /* 10:1 sobre a pílula */
+  --error: #ff8f99;            /* fora da paleta; 6,2:1 sobre o fundo */
+  --brand-ink: #3b2935;        /* cor da logo sobre fundo claro (e-mail) */
 
   --r-pill: 9999px;
   --r-field: 11px;
@@ -19,7 +21,11 @@
   --gutter-l: max(20px, env(safe-area-inset-left));
   --gutter-r: max(20px, env(safe-area-inset-right));
 
-  --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", Inter, "Helvetica Neue", Arial, sans-serif;
+  /* Guia maksō: IvyOra Text Light (via kit do Adobe Fonts) e Avenir Light.
+     Sem o kit: Cormorant Garamond; fora da Apple (sem Avenir): Nunito Sans. */
+  --font-serif: "ivyora-text", "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Avenir Next", Avenir, "Nunito Sans", system-ui, sans-serif;
+  --font: var(--font-sans);
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --t-fast: 160ms;
   --t-base: 200ms;

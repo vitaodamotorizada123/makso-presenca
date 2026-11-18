@@ -42,6 +42,7 @@ var MaksoForm = (function () {
     var resultTitle = $('.rsvp__result-title');
     var resultText = $('.rsvp__result-text');
     var calendar = $('.rsvp__calendar');
+    var details = $('.rsvp__details'); // quando/onde/traje, gerado no build; pode vir vazio
     var gcal = /** @type {HTMLAnchorElement} */ ($('.rsvp__gcal'));
     var store = MaksoStorage.session();
     var mountedAt = o.now();
@@ -85,6 +86,7 @@ var MaksoForm = (function () {
         var title = pageMessage || '';
         var text = '';
         var showCal = false;
+        var showDetails = false;
         if (r) {
           var nome = firstName(r.nome);
           switch (r.kind) {
@@ -94,6 +96,7 @@ var MaksoForm = (function () {
                 ? 'Em produção, enviaremos os detalhes para ' + r.email + '.'
                 : 'Enviamos os detalhes para ' + r.email + '.';
               showCal = !!o.cfg.event.start;
+              showDetails = details.children.length > 0;
               break;
             case 'recusado':
               title = 'Obrigado por avisar, ' + nome + '. Sentiremos sua falta.';
@@ -110,6 +113,7 @@ var MaksoForm = (function () {
         if (resultText.textContent !== text) resultText.textContent = text;
         resultText.hidden = !text;
         calendar.hidden = !showCal;
+        details.hidden = !showDetails;
         if (showCal) gcal.href = MaksoCalendar.googleCalendarUrl(o.cfg.event) || '#';
         return;
       }

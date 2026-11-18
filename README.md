@@ -11,7 +11,11 @@ Convite (QR) ──▶ site estático no Render ──▶ Apps Script (conta Goo
                                               └─ envia e-mail com .ics ──▶ convidado
 ```
 
-- **Design:** padrão Apple (`design-md/apple` do voltagent/awesome-design-md), tema escuro em `#24151F` com a logo flutuando. Ver `docs/specs/2026-11-17-makso-presenca-design.md` (seção 14).
+- **Design:** duas telas, no desenho do cliente, com a identidade da marca. Detalhes no spec (`docs/specs/2026-11-17-makso-presenca-design.md`, seções 16 e 16.1).
+  - **Tela 1:** frase, botão "Confirme sua presença", data e logo.
+  - **Tela 2:** o formulário. Só aparece depois do clique e fica em `#confirmar`, então o "voltar" do celular retorna à tela 1.
+  - **Cores:** fundo `#3b2935` (Pantone 6077 C), texto `#e5ddd1` e secundário `#b6a5af`.
+  - **Fontes:** IvyOra Text Light e Avenir.
 - **Sem dependências:** HTML/CSS/JS puros + Node 22 para o build.
 
 ---
@@ -76,10 +80,24 @@ Edite `config.json` e faça commit na `main`:
 }
 ```
 
+- **Onde cada dado aparece:**
+  - A data aparece na tela 1 como `10.12.2026` / `19h30`.
+  - Local, endereço, mapa e traje só aparecem no "obrigado" de quem confirmou e no e-mail. Linhas vazias não aparecem.
 - **Datas:** sempre com `-03:00`.
 - **Prazo:** `rsvpDeadline: null` fecha as confirmações 3 dias antes do início. Para outra data, informe-a no mesmo formato.
 - **O build confere tudo:** se algo estiver errado, o deploy falha com a lista do que corrigir.
 - **Script do Google:** ele lê esses dados do próprio site (`/event.json`, com cache de 10 min). Não precisa colar nada de novo.
+
+## Fontes da marca (Adobe Fonts)
+
+O guia da marca usa **IvyOra Text Light**, uma fonte paga. No site ela só pode entrar com licença, e o caminho mais simples é o Adobe Fonts, incluído no Creative Cloud. Enquanto não houver kit, o site usa a **Cormorant Garamond**, gratuita e parecida.
+
+1. Em fonts.adobe.com, com a conta Creative Cloud da marca, adicione **IvyOra Text**, peso Light (300), a um **Web Project**.
+2. Em "Domains", coloque `makso.onrender.com`.
+3. Copie o **ID do projeto**: são as letras e números de `https://use.typekit.net/<ID>.css`.
+4. Cole o ID em `config.json` → `"adobeFontsKitId": "<ID>"` e faça commit na `main`.
+
+A **Avenir** já vem instalada no iPhone e no Mac, então lá aparece a original. Nos outros aparelhos entra a **Nunito Sans**.
 
 ## Ligar as confirmações (Apps Script)
 

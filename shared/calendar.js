@@ -37,6 +37,18 @@ var MaksoCalendar = (function () {
     };
   }
 
+  /** Formato do convite: 10.12.2026 e 19h (ou 19h30).
+   * @param {MaksoEvent} event @returns {{date: string, time: string}|null} */
+  function formatShort(event) {
+    var start = MaksoEventState.parseDate(event.start);
+    if (!start) return null;
+    var p = MaksoEventState.toLocalParts(start);
+    return {
+      date: pad(p.d) + '.' + pad(p.m) + '.' + p.y,
+      time: p.hh + 'h' + (p.mm ? pad(p.mm) : ''),
+    };
+  }
+
   /** @param {MaksoEvent} event */
   function placeLine(event) {
     return [event.venueName, event.address].filter(Boolean).join(', ');
@@ -132,6 +144,7 @@ var MaksoCalendar = (function () {
 
   return {
     formatWhen: formatWhen,
+    formatShort: formatShort,
     googleCalendarUrl: googleCalendarUrl,
     buildIcs: buildIcs,
     eventUid: eventUid,

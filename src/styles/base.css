@@ -12,15 +12,16 @@ body {
   margin: 0;
   font-family: var(--font);
   font-size: 17px;
-  line-height: 1.47;
-  letter-spacing: -0.374px;
+  font-weight: 400;            /* Avenir Book: Light só a partir de 20px (fundo escuro) */
+  line-height: 1.5;
+  letter-spacing: 0;
   color: var(--text);
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
 }
 
-h1, h2, h3 { margin: 0; font-weight: 600; text-wrap: balance; }
+h1, h2, h3 { margin: 0; font-family: var(--font-serif); font-weight: 300; letter-spacing: 0; text-wrap: balance; }
 p { margin: 0; }
 svg { display: block; }
 
@@ -32,11 +33,12 @@ input, textarea, select, button { font: inherit; letter-spacing: inherit; }
 
 .visually-hidden {
   position: absolute !important;
-  width: 1px; height: 1px;
-  margin: -1px; padding: 0; border: 0;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
+  width: 1px !important; height: 1px !important;
+  margin: -1px !important; padding: 0 !important; border: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  float: none !important;
+  white-space: nowrap !important;
 }
 
 [hidden] { display: none !important; }
@@ -58,23 +60,28 @@ input, textarea, select, button { font: inherit; letter-spacing: inherit; }
 .button:active { transform: scale(0.97); }
 .button:disabled { cursor: default; opacity: 0.4; transform: none; }
 
-.button--primary { background: var(--accent); color: var(--on-accent); }
+.button--primary {
+  background: var(--accent);
+  color: var(--on-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 15px;
+}
 .button--secondary { background: transparent; color: var(--text); box-shadow: inset 0 0 0 1px var(--field-line); }
 
 @media (hover: hover) and (pointer: fine) {
-  .button--primary:not(:disabled):hover { background: #efe7ec; }
-  .button--secondary:hover { background: rgb(255 255 255 / 0.06); }
+  .button--primary:not(:disabled):hover { background: #f0e9df; }
+  .button--secondary:hover { background: rgb(229 221 209 / 0.06); }
 }
 
 .demo-badge {
   position: absolute; /* rola com a página: não cobre o formulário */
   z-index: 30;
   top: calc(env(safe-area-inset-top) + 10px);
-  left: 50%;
-  transform: translateX(-50%);
+  right: var(--gutter-r); /* à direita: não cobre o "‹ Voltar" da tela 2 */
   padding: 6px 14px;
   border-radius: var(--r-pill);
-  background: rgb(255 255 255 / 0.9);
+  background: rgb(229 221 209 / 0.92);
   color: var(--on-accent);
   font-size: 12px;
   letter-spacing: -0.12px;

@@ -1,6 +1,9 @@
 import test, { after } from 'node:test';
 import assert from 'node:assert/strict';
-import { startBrowser, closeBrowser } from '../helpers/browser.mjs';
+import { startBrowser as openPage, closeBrowser } from '../helpers/browser.mjs';
+
+// O formulário vive na tela 2: todos os testes daqui abrem direto em #confirmar.
+const startBrowser = (o = {}) => openPage({ ...o, query: (o.query || '') + '#confirmar' });
 
 after(closeBrowser);
 
@@ -34,6 +37,36 @@ test('Vou + acompanhante: confirmado, botões de agenda e foco no título', asyn
   } finally { await close(); }
 });
 
+test('tela 2: Dados para contato (Nome, E-mail, Telefone) antes de Sobre a noite', async () => {
+  const { page, close } = await startBrowser();
+  try {
+    const r = await page.evaluate(() => ({
+      names: [...document.querySelectorAll('#confirmar form [name]')].map((el) => el.getAttribute('name')).filter((n) => n !== 'hp'),
+      phoneLabel: document.querySelector('label[for=f-whatsapp]').textContent.trim(),
+      groups: [...document.querySelectorAll('#confirmar fieldset.group > legend')].map((l) => l.textContent.trim()),
+    }));
+    assert.deepEqual(r.names, ['nome', 'email', 'whatsapp', 'presenca', 'presenca', 'acompanhante', 'acompanhanteNome', 'restricao', 'observacao']);
+    assert.equal(r.phoneLabel, 'Telefone');
+    assert.deepEqual(r.groups, ['Dados para contato', 'Sobre a noite']);
+  } finally { await close(); }
+});
+
+test('obrigado mostra quando, onde e traje', async () => {
+  const { page, close } = await startBrowser({ query: '?demo=1' });
+  try {
+    assert.equal(await visible(page, '.rsvp__details'), false);
+    await fill(page);
+    await page.click('.rsvp__submit');
+    await resultTitle(page).waitFor({ state: 'visible' });
+    assert.equal(await visible(page, '.rsvp__details'), true);
+    const text = await page.textContent('.rsvp__details');
+    assert.match(text, /Casa Fiat de Cultura/);
+    assert.match(text, /Praça da Liberdade, 10/);
+    assert.match(text, /Esporte fino/);
+    assert.match(text, /12 de dezembro/);
+  } finally { await close(); }
+});
+
 test('Não vou: esconde acompanhante e restrição, e agradece', async () => {
   const { page, close } = await startBrowser({ query: '?demo=1' });
   try {
@@ -45,6 +78,7 @@ test('Não vou: esconde acompanhante e restrição, e agradece', async () => {
     await resultTitle(page).waitFor({ state: 'visible' });
     assert.equal(await resultTitle(page).textContent(), 'Obrigado por avisar, Mariana. Sentiremos sua falta.');
     assert.equal(await visible(page, '.rsvp__calendar'), false);
+    assert.equal(await visible(page, '.rsvp__details'), false);
     assert.deepEqual(page.__problems, []);
   } finally { await close(); }
 });
@@ -54,8 +88,8 @@ test('envio vazio mostra 4 erros e foca o primeiro inválido', async () => {
   try {
     await page.click('.rsvp__submit');
     const errs = await page.$$eval('.field__error', (els) => els.filter((e) => e.textContent).map((e) => e.id));
-    assert.deepEqual(errs, ['err-presenca', 'err-nome', 'err-email', 'err-whatsapp']);
-    assert.equal(await page.evaluate(() => document.activeElement?.getAttribute('name')), 'presenca');
+    assert.deepEqual(errs, ['err-nome', 'err-email', 'err-whatsapp', 'err-presenca']);
+    assert.equal(await page.evaluate(() => document.activeElement?.getAttribute('name')), 'nome');
     assert.equal(await page.getAttribute('input[name=nome]', 'aria-invalid'), 'true');
     assert.equal(await page.evaluate(() => window.__maksoSubmitCount || 0), 0);
   } finally { await close(); }
@@ -132,15 +166,31 @@ test('cenário passado: agradece com a data', async () => {
   } finally { await close(); }
 });
 
-test('fonte Inter só é carregada fora de plataformas Apple', async () => {
+test('fontes: Cormorant sempre, Nunito Sans só fora da Apple, IvyOra pelo kit do Adobe Fonts', async () => {
+  const googleHrefs = (page) => page.$$eval('link[rel=stylesheet][href*="fonts.googleapis"]', (ls) => ls.map((l) => l.href));
   const iphone = await startBrowser({ initScript: () => { Object.defineProperty(Navigator.prototype, 'platform', { get: () => 'iPhone' }); } });
   try {
-    assert.equal(await iphone.page.locator('link[href*="fonts.googleapis"]').count(), 0);
+    const g = await googleHrefs(iphone.page);
+    assert.equal(g.length, 1);
+    assert.ok(g[0].includes('Cormorant+Garamond') && !g[0].includes('Nunito'), g[0]);
+    const serif = await iphone.page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--font-serif').trim());
+    assert.ok(serif.startsWith('"ivyora-text"'), serif);
   } finally { await iphone.close(); }
   const linux = await startBrowser();
   try {
-    assert.equal(await linux.page.locator('link[rel=stylesheet][href*="fonts.googleapis"]').count(), 1);
+    const g = await googleHrefs(linux.page);
+    assert.equal(g.length, 1);
+    assert.ok(g[0].includes('Cormorant+Garamond') && g[0].includes('Nunito+Sans'), g[0]);
+    // [review min#3] rótulos usam 600: a Nunito Sans precisa vir em 400 e 600 (sem negrito falso no Android).
+    assert.ok(g[0].includes('Nunito+Sans:wght@400;600'), g[0]);
+    assert.equal(await linux.page.locator('link[href*="typekit"]').count(), 0);
   } finally { await linux.close(); }
+  const kit = await startBrowser({ config: 'fonts' });
+  try {
+    assert.equal(await kit.page.locator('link[rel=stylesheet][href="https://use.typekit.net/abc1def.css"]').count(), 1);
+    const g = await googleHrefs(kit.page);
+    assert.ok(g.every((h) => !h.includes('Cormorant')), g.join(' '));
+  } finally { await kit.close(); }
 });
 
 for (const viewport of [{ width: 360, height: 640 }, { width: 844, height: 390 }]) {

@@ -4,8 +4,9 @@
 export const CSP = [
   "default-src 'self'",
   "script-src 'self' https://cloud.umami.is",
-  "style-src 'self' https://fonts.googleapis.com",
-  'font-src https://fonts.gstatic.com',
+  // Fontes: Google Fonts (substitutas livres) e o kit do Adobe Fonts com a IvyOra (use/p.typekit.net).
+  "style-src 'self' https://fonts.googleapis.com https://use.typekit.net https://p.typekit.net",
+  'font-src https://fonts.gstatic.com https://use.typekit.net',
   "img-src 'self' data:",
   // Umami Cloud: o script vem de cloud.umami.is e envia as visitas para gateway.umami.is/api/send.
   'connect-src https://script.google.com https://script.googleusercontent.com https://gateway.umami.is',

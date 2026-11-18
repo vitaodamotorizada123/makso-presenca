@@ -1,22 +1,24 @@
 {
   "_todo": [
-    "event.start / event.end: data e hora (ISO com -03:00), ex.: 2026-12-12T20:00:00-03:00",
-    "event.venueName, event.address, event.mapsUrl: local do evento",
+    "event.end: término (opcional; sem ele, início + 4h)",
+    "event.venueName: nome do local (opcional)",
     "event.dressCode: traje (opcional)",
-    "appsScriptUrl: URL do web app do Apps Script (quando a conta Google do cliente existir)"
+    "appsScriptUrl: URL do web app do Apps Script (quando a conta Google do cliente existir)",
+    "adobeFontsKitId: ID do kit do Adobe Fonts com a IvyOra Text Light (fonts.adobe.com → Web Projects); vazio = Cormorant Garamond"
   ],
   "siteUrl": "https://makso.onrender.com",
   "appsScriptUrl": "",
   "rsvpDeadline": null,
   "event": {
     "title": "Lançamento maksō",
-    "start": null,
+    "start": "2026-12-10T19:30:00-03:00",
     "end": null,
     "venueName": "",
-    "address": "",
-    "mapsUrl": "",
+    "address": "Rua San Marino, 588 – Vila Castela, Nova Lima – MG",
+    "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Rua%20San%20Marino%2C%20588%2C%20Vila%20Castela%2C%20Nova%20Lima%20-%20MG",
     "dressCode": "",
     "description": "Você está convidado para o lançamento da maksō."
   },
-  "umamiWebsiteId": "d475ff6c-e0b4-446d-9691-4845d03b6c44"
+  "umamiWebsiteId": "d475ff6c-e0b4-446d-9691-4845d03b6c44",
+  "adobeFontsKitId": ""
 }

@@ -54,7 +54,7 @@
 
 ---
 
-### Tarefa 1: paleta da marca
+### Task 1: paleta da marca
 
 **Arquivos:**
 - Alterar: `src/styles/tokens.css`, `src/styles/form.css:130` (`#ffffff` fixo), `src/index.html:9`, `scripts/make-icons.mjs:13-14` e a cor da logo no OG.
@@ -76,7 +76,7 @@
 - [ ] **Passo 4:** a mesma dupla de comandos. Esperado: PASSA.
 - [ ] **Passo 5:** commit com a mensagem "feat: paleta da marca maksō (#3b2935, #e5ddd1, #b6a5af)".
 
-### Tarefa 2: fontes da marca e kit do Adobe Fonts
+### Task 2: fontes da marca e kit do Adobe Fonts
 
 **Arquivos:**
 - Alterar:
@@ -116,7 +116,7 @@
 - [ ] **Passo 4:** `npm test`, `npm run typecheck` e `npm run test:e2e`. Esperado: PASSA.
 - [ ] **Passo 5:** commit com a mensagem "feat: fontes da marca (IvyOra via Adobe Fonts, Cormorant/Avenir/Nunito Sans)".
 
-### Tarefa 3: data curta (10.12.2026 · 19h30), data e endereço do evento
+### Task 3: data curta (10.12.2026 · 19h30), data e endereço do evento
 
 **Arquivos:**
 - Alterar: `shared/calendar.js` (nova `formatShort`), `scripts/build.mjs` (`renderWhen` gera HTML), `config.json` (`event.start: "2026-12-10T19:30:00-03:00"`, `event.address: "Rua San Marino, 588 – Vila Castela, Nova Lima – MG"`, `event.mapsUrl: "https://www.google.com/maps/search/?api=1&query=Rua%20San%20Marino%2C%20588%2C%20Vila%20Castela%2C%20Nova%20Lima%20-%20MG"`, tirar do `_todo` as linhas de data e local), `types/globals.d.ts`.
@@ -143,7 +143,7 @@
 - [ ] **Passo 4:** `npm test` e `npm run typecheck`. Esperado: PASSA.
 - [ ] **Passo 5:** commit com a mensagem "feat: data curta 10.12.2026 · 19h30, data e endereço do lançamento".
 
-### Tarefa 4: duas telas e navegação
+### Task 4: duas telas e navegação
 
 **Arquivos:**
 - Criar: `src/js/screens.js` (`MaksoScreens`) e `src/styles/screens.css`, este último no lugar de `hero.css`, que sai.
@@ -218,7 +218,7 @@
 - [ ] **Passo 4:** `npm test`, `npm run typecheck` e `npm run test:e2e`. Esperado: tudo PASSA.
 - [ ] **Passo 5:** commit com a mensagem "feat: duas telas — formulário só depois de Confirme sua presença".
 
-### Tarefa 5: tela 2 em grupos, "Telefone" e detalhes no "obrigado"
+### Task 5: tela 2 em grupos, "Telefone" e detalhes no "obrigado"
 
 **Arquivos:**
 - Alterar:
@@ -244,7 +244,7 @@
 - [ ] **Passo 4:** `npm test`, `npm run typecheck` e `npm run test:e2e`. Esperado: PASSA.
 - [ ] **Passo 5:** commit com a mensagem "feat: tela 2 em grupos, rótulo Telefone e detalhes no obrigado".
 
-### Tarefa 6: documentação, revisão final e publicação
+### Task 6: documentação, revisão final e publicação
 
 **Arquivos:** `README.md` (seções "Preencher os dados do evento", fontes e Adobe Fonts, design).
 

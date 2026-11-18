@@ -33,12 +33,12 @@ export async function buildFor(config) {
 
 export async function startBrowser({
   viewport = { width: 390, height: 844 }, isMobile = true, hasTouch = true,
-  reducedMotion = 'no-preference', config = 'full', query = '', initScript, deviceScaleFactor = 2, routes,
+  reducedMotion = 'no-preference', config = 'full', query = '', initScript, deviceScaleFactor = 2, routes, javaScriptEnabled = true,
 } = {}) {
   const outDir = await buildFor(config);
   const browser = await getBrowser();
-  const context = await browser.newContext({ viewport, isMobile, hasTouch, reducedMotion, deviceScaleFactor });
-  await context.route(/^https:\/\/fonts\.(googleapis|gstatic)\.com\//, (r) => r.abort());
+  const context = await browser.newContext({ viewport, isMobile, hasTouch, reducedMotion, deviceScaleFactor, javaScriptEnabled });
+  await context.route(/^https:\/\/(fonts\.(googleapis|gstatic)\.com|use\.typekit\.net|p\.typekit\.net)\//, (r) => r.abort());
   await context.route(`${ORIGIN}/**`, async (route) => {
     const res = serveFile(outDir, new URL(route.request().url()).pathname);
     await route.fulfill({ status: res.status, headers: res.headers, body: res.body });
@@ -48,7 +48,7 @@ export async function startBrowser({
   page.__problems = [];
   page.on('console', (m) => {
     if (m.type() !== 'error') return;
-    if (/fonts\.(googleapis|gstatic)\.com/.test(m.location().url || '')) return;
+    if (/fonts\.(googleapis|gstatic)\.com|typekit\.net/.test(m.location().url || '') || /typekit\.net/.test(m.text())) return;
     page.__problems.push(`console: ${m.text()}`);
   });
   page.on('pageerror', (e) => page.__problems.push(`pageerror: ${e.message}`));

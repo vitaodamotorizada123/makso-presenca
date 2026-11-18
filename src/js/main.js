@@ -6,20 +6,26 @@
   var cfg = /** @type {MaksoConfig} */ (/** @type {any} */ (window).MAKSO_CONFIG);
   var reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
-  // 1. Inter só fora de plataformas Apple (lá a fonte do sistema já é a SF Pro).
-  //    Injetada por JS para não bloquear a primeira pintura nem violar a CSP.
-  (function loadFonts() {
-    if (/Mac|iPhone|iPad|iPod/.test(navigator.platform || '')) return;
-    var pre = document.createElement('link');
-    pre.rel = 'preconnect';
-    pre.href = 'https://fonts.gstatic.com';
-    pre.crossOrigin = 'anonymous';
-    var css = document.createElement('link');
-    css.rel = 'stylesheet';
-    css.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap';
-    document.head.appendChild(pre);
-    document.head.appendChild(css);
-  })();
+  // 1. Fontes da marca, injetadas por JS para não bloquear a primeira pintura nem violar a CSP.
+  //    - IvyOra Text (serifada da marca): só pelo kit do Adobe Fonts (licença); sem kit, Cormorant Garamond.
+  //    - Avenir (complementar): já vem no iPhone/Mac; fora da Apple, Nunito Sans.
+  (function loadFonts(kitId, apple) {
+    /** @param {string} rel @param {string} href */
+    function link(rel, href) {
+      var l = document.createElement('link');
+      l.rel = rel;
+      l.href = href;
+      if (rel === 'preconnect') l.crossOrigin = 'anonymous';
+      document.head.appendChild(l);
+    }
+    if (kitId) link('stylesheet', 'https://use.typekit.net/' + kitId + '.css');
+    var families = [];
+    if (!kitId) families.push('family=Cormorant+Garamond:wght@300;400');
+    if (!apple) families.push('family=Nunito+Sans:wght@400;600');
+    if (!families.length) return;
+    link('preconnect', 'https://fonts.gstatic.com');
+    link('stylesheet', 'https://fonts.googleapis.com/css2?' + families.join('&') + '&display=swap');
+  })(cfg.adobeFontsKitId || '', /Mac|iPhone|iPad|iPod/.test(navigator.platform || ''));
 
   // 2. Estado da página.
   var demoInfo = MaksoApi.detectDemo(location);
@@ -29,24 +35,44 @@
     ? demoInfo.scenario
     : MaksoEventState.getRsvpState({ now: new Date(), cfg: cfg, hasEndpoint: hasEndpoint });
 
-  // 3. Hero: entrada da logo (uma vez por sessão). A flutuação é só CSS.
-  var hero = /** @type {HTMLElement|null} */ (document.querySelector('.hero'));
-  if (hero) {
+  // 3. Duas telas: o formulário só aparece depois de "Confirme sua presença".
+  //    Montadas antes de tudo o que pode falhar; html.js (que desliga a regra de "sem JavaScript",
+  //    #confirmar:target) só entra depois que a navegação está de pé.
+  var intro = /** @type {HTMLElement|null} */ (document.getElementById('inicio'));
+  var rsvp = document.getElementById('confirmar');
+  var cta = document.querySelector('.intro__cta');
+  var back = document.querySelector('.rsvp__back');
+  var title = document.getElementById('rsvp-title');
+  if (intro && rsvp && cta && back && title) {
+    MaksoScreens.mount({
+      intro: intro,
+      rsvp: rsvp,
+      cta: /** @type {HTMLAnchorElement} */ (cta),
+      back: /** @type {HTMLAnchorElement} */ (back),
+      title: title,
+      reducedMotion: reduced,
+      onOpen: function () { MaksoAnalytics.track('clicou-confirmar-topo'); },
+    });
+    document.documentElement.classList.add('js');
+  }
+
+  // 4. Tela 1: entrada (uma vez por sessão). A flutuação da logo é só CSS.
+  if (intro) {
     var store = MaksoStorage.session();
     var alreadyPainted = false;
     try {
       alreadyPainted = performance.getEntriesByType('paint').some(function (e) { return e.name === 'first-contentful-paint'; });
     } catch (e) { /* sem Paint Timing */ }
-    // Se a página já pintou, animar a entrada faria a logo piscar: pula.
-    var intro = !reduced && !store.get('makso-intro') && !alreadyPainted;
+    // Se a página já pintou, animar a entrada faria o texto piscar: pula.
+    var animate = !reduced && !store.get('makso-intro') && !alreadyPainted && location.hash !== '#confirmar';
     store.set('makso-intro', '1');
-    if (intro) hero.classList.add('is-intro');
+    if (animate) intro.classList.add('is-intro');
   }
 
-  // 4. Contagem de visitas anônima (Umami). Nunca no modo demonstração.
+  // 5. Contagem de visitas anônima (Umami). Nunca no modo demonstração.
   MaksoAnalytics.load({ websiteId: cfg.umamiWebsiteId, demo: demoInfo.demo, siteUrl: cfg.siteUrl });
 
-  // 5. Formulário.
+  // 6. Formulário.
   MaksoForm.mount({
     root: /** @type {HTMLElement} */ (document.getElementById('confirmar')),
     cfg: cfg,
@@ -59,18 +85,7 @@
     track: MaksoAnalytics.track,
   });
 
-  // 6. Selo de demonstração e botão do hero.
+  // 7. Selo de demonstração.
   var badge = document.querySelector('.demo-badge');
   if (badge && demoInfo.demo) /** @type {HTMLElement} */ (badge).hidden = false;
-
-  var cta = document.querySelector('.hero__cta');
-  var rsvp = document.getElementById('confirmar');
-  if (cta && rsvp) {
-    var section = rsvp;
-    cta.addEventListener('click', function (e) {
-      e.preventDefault();
-      MaksoAnalytics.track('clicou-confirmar-topo');
-      section.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
-    });
-  }
 })();
