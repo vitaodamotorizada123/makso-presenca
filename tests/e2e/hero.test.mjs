@@ -19,7 +19,7 @@ const intro = (page) => page.evaluate((sel) => {
     introHeight: box(s).height,
     innerHeight,
     canvas: !!document.querySelector('canvas'),
-    logoBelowWhen: box(logo).top >= box(when).bottom,
+    logoAboveLede: box(logo).bottom <= box(s.querySelector('.intro__lede')).top,
     logoColor: getComputedStyle(logo).color,
     logoAnimation: getComputedStyle(logo).animationName,
     logoIteration: getComputedStyle(logo).animationIterationCount,
@@ -37,10 +37,10 @@ test('tela 1: frase, botão, data e logo creme flutuando no pé, sobre #24151f',
     assert.equal(h.bodyBg, BG);
     assert.ok(h.introBg === BG || h.introBg === 'rgba(0, 0, 0, 0)', `fundo da tela 1: ${h.introBg}`);
     assert.ok(h.introHeight >= h.innerHeight - 1, `tela 1 ${h.introHeight} < ${h.innerHeight}`);
-    assert.deepEqual(h.order, ['intro__lede', 'intro__cta', 'intro__when', 'screen__logo']);
+    assert.deepEqual(h.order, ['screen__logo', 'intro__lede', 'intro__cta', 'intro__when']);
     assert.equal(h.date, '12 . 12 . 2037');
-    assert.equal(h.time, '20h');
-    assert.equal(h.logoBelowWhen, true, 'a logo deveria ficar abaixo da data');
+    assert.equal(h.time, undefined, 'a hora não aparece na tela 1');
+    assert.equal(h.logoAboveLede, true, 'a logo deveria ficar acima da frase');
     assert.equal(h.canvas, false, 'não deveria haver canvas');
     assert.equal(h.logoAnimation, 'makso-float');
     assert.equal(h.logoIteration, 'infinite');

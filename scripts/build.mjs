@@ -75,11 +75,11 @@ function sharedContext(root) {
   return ctx;
 }
 
-/** Data do convite (tela 1): "10 . 12 . 2026" / "19h30", em duas linhas. Devolve HTML já escapado. */
+/** Data do convite (tela 1): só "10 . 12 . 2026" — a hora fica no "obrigado" (pedido do cliente). */
 function renderWhen(cal, event) {
   const w = cal.formatShort(event);
   if (!w) return '<p class="intro__when intro__when--soon">Data em breve</p>';
-  return `<time class="intro__when" datetime="${escapeHtml(event.start)}"><span class="intro__date">${escapeHtml(w.date)}</span> <span class="intro__time">${escapeHtml(w.time)}</span></time>`;
+  return `<time class="intro__when" datetime="${escapeHtml(event.start)}"><span class="intro__date">${escapeHtml(w.date)}</span></time>`;
 }
 
 /** "Obrigado": três linhas — data, hora e endereço (o endereço abre o mapa). Só o que existir. */
