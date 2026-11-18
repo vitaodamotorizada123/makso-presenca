@@ -338,3 +338,20 @@ Substitui o que as seções 8 e 8.1 dizem sobre o hero e as cores.
   - erro `#ff6b78` (6,3:1);
   - `theme-color` e `color-scheme: dark`.
 - **Ícones e OG** em `#24151F` com a logo/Ō em branco.
+
+## 15. Contagem de visitas (2026-11-18, pedido do Victor)
+
+- **O pedido:** saber quem acessa o site. O Victor pediu primeiro um "grabify"; recomendei não usar porque registra IP e engana o visitante. Ele escolheu a opção A: **Umami Cloud**, sem cookies e sem dado pessoal, no plano Hobby grátis, com conta entrando pelo GitHub dele e dados nos EUA.
+- **Como entra no site:**
+  - `src/js/analytics.js` injeta `https://cloud.umami.is/script.js` com `data-website-id` e `data-domains=<host do siteUrl>`;
+  - não carrega com `umamiWebsiteId` vazio, no modo demo ou fora do domínio.
+- **CSP:**
+  - `script-src` libera `https://cloud.umami.is`;
+  - `connect-src` libera `https://cloud.umami.is` e `https://api-gateway.umami.dev`.
+- **Eventos do funil (sem dado pessoal):**
+  - `clicou-confirmar-topo`, `iniciou-formulario`, `erro-validacao`;
+  - `confirmou` com `{acompanhante}`;
+  - `recusou`, `ja-respondeu`, `encerrado`;
+  - `erro-envio`, exceto quando a resposta é `invalido`.
+- **Origem:** o QR do convite aponta para `https://makso.onrender.com/?utm_source=convite` (versão 4, ECC Q), para separar o convite impresso dos links compartilhados.
+- **Privacidade:** a nota do formulário diz "Medimos as visitas de forma anônima, sem cookies."

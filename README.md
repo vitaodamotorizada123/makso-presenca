@@ -122,8 +122,10 @@ Uma conta Gmail comum envia até **100 e-mails por dia** pelo script.
 Depois que o site estiver no ar com a URL definitiva:
 
 ```bash
-python3 -I scripts/qr.py https://makso.onrender.com/ assets/qr
+python3 -I scripts/qr.py "https://makso.onrender.com/?utm_source=convite" assets/qr
 ```
+
+O `?utm_source=convite` faz o Umami separar quem chegou pelo convite impresso de quem recebeu o link por WhatsApp ou outro lugar. O site ignora esse trecho; ele serve só para a contagem.
 
 - **Arquivos:**
   - `qr-makso.svg`: vetor, o arquivo para a gráfica;
@@ -134,6 +136,26 @@ python3 -I scripts/qr.py https://makso.onrender.com/ assets/qr
   - preto sobre fundo claro;
   - sem cortar a margem branca em volta.
   - Teste uma prova impressa com iPhone e Android antes da tiragem.
+
+## Visitas (Umami)
+
+O painel fica em **cloud.umami.is** (entrar com o GitHub `vitaodamotorizada123`, plano Hobby grátis, dados nos EUA). Ele mostra:
+
+- **Visitas:** quantas pessoas abriram o site e quando, inclusive em tempo real.
+- **Aparelho:** celular, tablet ou computador; sistema (iOS, Android, Windows…) e navegador; tamanho de tela.
+- **Origem:** país, estado e cidade aproximados; de onde a pessoa veio (o `convite` do QR, links de WhatsApp, Instagram…).
+- **Funil do formulário** (aba Events):
+  - `clicou-confirmar-topo`;
+  - `iniciou-formulario`;
+  - `erro-validacao`;
+  - `confirmou` (com `acompanhante: true/false`);
+  - `recusou`, `ja-respondeu`, `encerrado`, `erro-envio`.
+
+O que **não** aparece, de propósito: nome, e-mail, WhatsApp, IP ou qualquer coisa que identifique a pessoa. O Umami não usa cookies. Quem confirmou, com nome, fica na planilha.
+
+- **Configuração:** o ID do site fica em `config.json` → `umamiWebsiteId`. Deixe vazio para desligar a contagem.
+- **Quando não conta:** no modo demonstração (`?demo=1`) e no computador local, para os testes não sujarem os números.
+- **Limite do plano grátis:** 100 mil eventos por mês e 6 meses de histórico, muito acima do que um lançamento usa.
 
 ## Lista de verificação depois de ligar o Apps Script
 
