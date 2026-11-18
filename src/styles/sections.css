@@ -5,7 +5,7 @@
   font-family: var(--font-script);
   font-weight: 400;
   font-size: clamp(20px, 5.4vw, 28px);
-  line-height: 1.85;
+  line-height: 1.45;
 }
 .thanks__headline > span { display: block; white-space: nowrap; }
 /* Data, hora e endereço: três linhas (o endereço abre o mapa). */
@@ -30,7 +30,7 @@
   font-weight: 400;
   text-underline-offset: 3px;
 }
-.thanks__logo { width: min(30vw, 150px); margin: 0 auto 72px; line-height: 0; }
+.thanks__logo { width: min(30vw, 150px); margin: 0 auto 112px; line-height: 0; }
 .rsvp__result:not(.is-confirmed) .thanks__logo { display: none; }
 .thanks__logo .logo { width: 100%; height: auto; color: var(--text); }
 .rsvp.is-done .screen__logo--small { display: none; }

@@ -47,9 +47,9 @@ function renderEmail(record, cfg) {
     '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="' + BG + '" style="background:' + BG + ';background-color:' + BG + ';"><tr><td align="center" bgcolor="' + BG + '" style="padding:48px 24px;background-color:' + BG + ';">' +
     '<table role="presentation" width="560" cellpadding="0" cellspacing="0" bgcolor="' + BG + '" style="width:100%;max-width:560px;background-color:' + BG + ';">' +
     '<tr><td align="center">' +
-    '<p style="margin:0 0 64px;font:300 34px ' + SERIF + ';letter-spacing:8px;color:' + CREAM + ';">MAKSŌ</p>' +
+    '<p style="margin:0 0 96px;font:300 34px ' + SERIF + ';letter-spacing:8px;color:' + CREAM + ';">MAKSŌ</p>' +
     '<p style="margin:0;font:17px/1.4 ' + SANS + ';color:' + CREAM + ';">Olá, ' + e(first) + '. Sua presença foi confirmada.</p>' +
-    '<p style="margin:64px 0 0;font:400 22px/1.8 ' + SCRIPT + ';color:' + CREAM + ';">Prepare-se para<br>desvendar as bolsas mais<br>icônicas que você já viu!</p>' +
+    '<p style="margin:64px 0 0;font:400 22px/1.45 ' + SCRIPT + ';color:' + CREAM + ';">Prepare-se para<br>desvendar as bolsas mais<br>icônicas que você já viu!</p>' +
     // Data, endereço e hora, nessa ordem, num bloco juntinho.
     (short || street ? '<p style="margin:64px 0 0;font:300 19px/1.35 ' + SANS + ';color:' + CREAM + ';">' +
       [short && e(short.date), street && e(street), short && e(short.time)].filter(Boolean).join('<br>') + '</p>'

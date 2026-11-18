@@ -39,7 +39,7 @@ test('tela 1: frase, botão, data e logo creme flutuando no pé, sobre #24151f',
     assert.ok(h.introHeight >= h.innerHeight - 1, `tela 1 ${h.introHeight} < ${h.innerHeight}`);
     assert.deepEqual(h.order, ['screen__logo', 'intro__lede', 'intro__cta', 'intro__when']);
     assert.equal(h.date, '12 . 12 . 2037');
-    assert.equal(h.time, undefined, 'a hora não aparece na tela 1');
+    assert.equal(h.time, '20h');
     assert.equal(h.logoAboveLede, true, 'a logo deveria ficar acima da frase');
     assert.equal(h.canvas, false, 'não deveria haver canvas');
     assert.equal(h.logoAnimation, 'makso-float');

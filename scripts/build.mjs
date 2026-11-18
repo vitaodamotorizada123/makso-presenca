@@ -75,11 +75,11 @@ function sharedContext(root) {
   return ctx;
 }
 
-/** Data do convite (tela 1): só "10 . 12 . 2026" — a hora fica no "obrigado" (pedido do cliente). */
+/** Data do convite (tela 1): "10 . 12 . 2026" e, embaixo, "19h30". */
 function renderWhen(cal, event) {
   const w = cal.formatShort(event);
   if (!w) return '<p class="intro__when intro__when--soon">Data em breve</p>';
-  return `<time class="intro__when" datetime="${escapeHtml(event.start)}"><span class="intro__date">${escapeHtml(w.date)}</span></time>`;
+  return `<time class="intro__when" datetime="${escapeHtml(event.start)}"><span class="intro__date">${escapeHtml(w.date)}</span> <span class="intro__time">${escapeHtml(w.time)}</span></time>`;
 }
 
 /** "Obrigado": data, endereço e hora (três linhas juntas) e o link "Ver no mapa". Só o que existir. */

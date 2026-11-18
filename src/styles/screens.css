@@ -37,7 +37,7 @@ html:not(.js) #confirmar:target { display: block !important; }
   font-family: var(--font-script); /* mesma cursiva da frase do "obrigado" */
   font-weight: 400;
   font-size: min(5.3vw, 30px);
-  line-height: 1.9;
+  line-height: 1.45;
 }
 .intro__lede > span { display: block; white-space: nowrap; }
 .intro > .screen__logo { grid-row: 1; --logo-w: min(30vw, 150px); --logo-h: calc(var(--logo-w) / 3.91); --float: 4px; }
