@@ -4,7 +4,7 @@
   /* Sempre 3 linhas (pedido do cliente). */
   font-family: var(--font-script);
   font-weight: 400;
-  font-size: min(5.8vw, 32px);
+  font-size: clamp(24px, 6.6vw, 34px);
   line-height: 1.85;
 }
 .thanks__headline > span { display: block; white-space: nowrap; }
