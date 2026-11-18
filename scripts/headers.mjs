@@ -7,7 +7,8 @@ export const CSP = [
   "style-src 'self' https://fonts.googleapis.com",
   'font-src https://fonts.gstatic.com',
   "img-src 'self' data:",
-  'connect-src https://script.google.com https://script.googleusercontent.com https://cloud.umami.is https://api-gateway.umami.dev',
+  // Umami Cloud: o script vem de cloud.umami.is e envia as visitas para gateway.umami.is/api/send.
+  'connect-src https://script.google.com https://script.googleusercontent.com https://gateway.umami.is',
   "frame-ancestors 'none'",
   "base-uri 'none'",
   "form-action 'none'",

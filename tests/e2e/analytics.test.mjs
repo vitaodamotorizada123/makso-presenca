@@ -10,6 +10,9 @@ const UMAMI_STUB = 'window.__events = window.__events || []; window.umami = { tr
 
 async function routes(context) {
   await context.route('https://cloud.umami.is/**', (r) => r.fulfill({ status: 200, contentType: 'text/javascript', body: UMAMI_STUB }));
+  await context.route('https://gateway.umami.is/**', (r) => r.fulfill({
+    status: 200, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' }, body: '{}',
+  }));
   // Apps Script de verdade responde com redirect para googleusercontent; aqui, JSON direto com CORS.
   await context.route('https://script.google.com/**', (r) => r.fulfill({
     status: 200, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' },
@@ -27,6 +30,16 @@ test('com o ID configurado, carrega o Umami só no domínio do site', async () =
   try {
     assert.deepEqual(await umamiTag(page), { id: WEBSITE_ID, domains: 'makso.onrender.com', defer: true });
     assert.deepEqual(page.__problems, []);
+  } finally { await close(); }
+});
+
+test('a CSP de produção deixa o Umami enviar a visita (gateway.umami.is/api/send)', async () => {
+  const { page, close } = await startBrowser({ config: 'analytics', routes });
+  try {
+    const sent = await page.evaluate(() => fetch('https://gateway.umami.is/api/send', {
+      method: 'POST', body: '{}', headers: { 'Content-Type': 'application/json' }, credentials: 'omit',
+    }).then((r) => r.ok, (e) => 'bloqueado: ' + e.message));
+    assert.equal(sent, true);
   } finally { await close(); }
 });
 

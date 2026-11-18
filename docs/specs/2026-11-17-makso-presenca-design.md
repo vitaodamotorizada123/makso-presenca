@@ -347,7 +347,7 @@ Substitui o que as seções 8 e 8.1 dizem sobre o hero e as cores.
   - não carrega com `umamiWebsiteId` vazio, no modo demo ou fora do domínio.
 - **CSP:**
   - `script-src` libera `https://cloud.umami.is`;
-  - `connect-src` libera `https://cloud.umami.is` e `https://api-gateway.umami.dev`.
+  - `connect-src` libera `https://gateway.umami.is` (para onde o script do Umami Cloud envia `/api/send`).
 - **Eventos do funil (sem dado pessoal):**
   - `clicou-confirmar-topo`, `iniciou-formulario`, `erro-validacao`;
   - `confirmou` com `{acompanhante}`;

@@ -28,6 +28,8 @@ test('toda rota tem CSP sem unsafe-inline e noindex', () => {
 test('CSP libera o Umami (script e envio) e mais nada novo', () => {
   const csp = headersFor('/')['Content-Security-Policy'];
   assert.ok(csp.includes("script-src 'self' https://cloud.umami.is"));
-  assert.match(csp, /connect-src [^;]*https:\/\/cloud\.umami\.is/);
+  // O script do Umami Cloud envia para https://gateway.umami.is/api/send (lido do script.js em produção).
+  const connect = csp.match(/connect-src ([^;]*)/)[1].split(' ');
+  assert.deepEqual(connect, ['https://script.google.com', 'https://script.googleusercontent.com', 'https://gateway.umami.is']);
   assert.ok(!csp.includes('unsafe-inline'));
 });
