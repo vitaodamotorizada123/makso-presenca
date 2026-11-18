@@ -182,9 +182,11 @@ test('fontes: Poppins no documento e Petit Formal Script na frase do obrigado', 
     const f = await page.evaluate(() => ({
       body: getComputedStyle(document.body).fontFamily,
       script: getComputedStyle(document.querySelector('.thanks__headline')).fontFamily,
+      lede: getComputedStyle(document.querySelector('.intro__lede')).fontFamily,
     }));
     assert.ok(f.body.startsWith('Poppins'), f.body);
     assert.ok(f.script.startsWith('"Petit Formal Script"'), f.script);
+    assert.ok(f.lede.startsWith('"Petit Formal Script"'), f.lede);
   } finally { await close(); }
 });
 

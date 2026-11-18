@@ -15,46 +15,43 @@ html:not(.js) #confirmar:target { display: block !important; }
 
 /* ---------- Tela 1: frase, botão, data; logo no pé ---------- */
 .intro {
+  /* Desenho do cliente: frase no terço de cima, botão no meio, data logo abaixo, logo no pé. */
   display: grid;
-  grid-template-rows: 1fr auto 1fr;
+  grid-template-rows: 1.1fr auto 1fr auto auto 0.9fr auto 0.5fr;
   justify-items: center;
   min-height: 100vh;
   min-height: 100svh;
   padding:
-    calc(env(safe-area-inset-top) + 48px)
+    calc(env(safe-area-inset-top) + 32px)
     var(--gutter-r)
-    calc(env(safe-area-inset-bottom) + 28px)
+    calc(env(safe-area-inset-bottom) + 24px)
     var(--gutter-l);
   overflow: hidden;
   text-align: center;
 }
 
-.intro__content {
-  grid-row: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  max-width: 640px;
-}
+.intro__content { display: contents; }
+.intro__lede { grid-row: 2; }
+.intro__cta { grid-row: 4; }
+.intro__when { grid-row: 5; }
+.intro > .screen__logo { grid-row: 7; }
 
 .intro__lede {
   max-width: 20ch;
-  font-family: var(--font-serif);
-  font-weight: 300;
-  font-size: clamp(22px, 6vw, 32px);
-  line-height: 1.35;
+  font-family: var(--font-script); /* mesma cursiva da frase do "obrigado" (pedido do cliente) */
+  font-weight: 400;
+  font-size: clamp(22px, 6.2vw, 32px);
+  line-height: 1.6;
   text-wrap: balance;
 }
 
-.intro__cta { margin-top: 40px; }
 
 .intro__when {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  margin-top: 36px;
+  margin-top: 28px;
   color: var(--text-muted);
   font-family: var(--font-serif);
   font-weight: 300;
@@ -76,7 +73,6 @@ html:not(.js) #confirmar:target { display: block !important; }
   user-select: none;
   -webkit-user-select: none;
 }
-.intro > .screen__logo { grid-row: 3; align-self: end; margin-top: 40px; }
 .screen__logo .logo { width: 100%; height: auto; color: var(--text); }
 .intro .screen__logo .logo {
   animation: makso-float 6s ease-in-out infinite;
