@@ -98,6 +98,17 @@ test('renderEmail escapa o nome e não tem script', async () => {
   assert.ok(m.text.includes('sábado, 12 de dezembro'));
 });
 
+test('e-mail no desenho do obrigado: frase, data, endereço, informações e sem acompanhantes', async () => {
+  const { ctx } = await setupCtx();
+  const m = ctx.renderEmail({ nome: 'Mariana Souza', email: 'm@x.com', acompanhante: false, acompanhanteNome: '' }, fullCfg);
+  for (const t of ['Sua presença foi confirmada.', 'Prepare-se para desvendar as bolsas mais icônicas que você já viu!',
+    '12 . 12 . 2037 às 20:00', 'Informações importantes', 'Acesso ao endereço', '(31) 98727-2711', '#3b2935']) {
+    assert.ok(m.html.includes(t), t);
+  }
+  assert.ok(m.text.includes('Informações importantes'));
+  assert.ok(!/acompanhante/i.test(m.html), 'convites individuais');
+});
+
 test('sem cota: pendente; com cota de volta, a fila envia', async () => {
   const { ctx, sheet, gas } = await setupCtx({ quota: 0 });
   post(ctx);
