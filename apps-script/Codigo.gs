@@ -714,7 +714,7 @@ function renderEmail(record, cfg) {
   var street = [ev.venueName, (ev.address || '').split(' – ')[0]].filter(Boolean).join(' · ');
 
   var info = EMAIL_INFO_.map(function (it) {
-    var body = e(it[1]).replace('(31) 98727-2711', '<a href="tel:+5531987272711" style="color:' + CREAM + ';">(31) 98727-2711</a>');
+    var body = e(it[1]).replace('(31) 98727-2711', '<a href="tel:+5531987272711" style="color:' + CREAM + ';white-space:nowrap;">(31) 98727-2711</a>');
     return '<p style="margin:32px 0 0;font:13px/1.4 ' + SANS + ';letter-spacing:1.5px;text-transform:uppercase;color:' + CREAM + ';">' + e(it[0]) + '</p>' +
       '<p style="margin:8px 0 0;font:15px/1.6 ' + SANS + ';color:' + MUTED + ';">' + body + '</p>';
   }).join('');
@@ -757,7 +757,10 @@ function renderEmail(record, cfg) {
         return '<a href="' + l[1] + '" style="display:inline-block;margin:0 4px 8px;padding:12px 22px;border:1px solid ' + CREAM + ';border-radius:999px;color:' + CREAM + ';font:13px ' + SANS + ';letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;">' + l[0] + '</a>';
       }).join('') +
     '</p>' +
-    '<p style="margin:40px 0 0;font:12px ' + SANS + ';color:' + MUTED + ';">Desenvolvido por DIMAK Soluções</p>' +
+    // Rodapé como o do site: linhazinha e "DIMAK Soluções" clicável.
+    '<div style="margin:48px 0 0;padding:20px 0 0;border-top:1px solid ' + LINE + ';">' +
+    '<p style="margin:0;font:12px ' + SANS + ';color:' + MUTED + ';">Desenvolvido por <a href="https://dimaksolucoes.com.br" style="color:' + CREAM + ';text-decoration:underline;">DIMAK Soluções</a></p>' +
+    '</div>' +
     '</td></tr></table></body></html>';
 
   var lines = [];
@@ -773,7 +776,7 @@ function renderEmail(record, cfg) {
     .concat(['', 'Informações importantes'])
     .concat(EMAIL_INFO_.map(function (it) { return '- ' + it[0] + ': ' + it[1]; }))
     .concat([''].concat(EMAIL_LINKS_.map(function (l) { return l[0] + ': ' + l[1]; })))
-    .concat(['', '—', 'Desenvolvido por DIMAK Soluções'])
+    .concat(['', '—', 'Desenvolvido por DIMAK Soluções — https://dimaksolucoes.com.br'])
     .join('\n');
 
   return { subject: 'Presença confirmada — lançamento maksō', html: html, text: text };

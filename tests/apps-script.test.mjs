@@ -94,7 +94,7 @@ test('renderEmail escapa o nome e não tem script', async () => {
   assert.ok(m.html.includes('&lt;b&gt;Zoë'));
   assert.ok(!m.html.includes('<b>Zoë'));
   assert.ok(!/<script/i.test(m.html));
-  assert.ok(m.html.includes('Desenvolvido por DIMAK Soluções'));
+  assert.ok(m.html.includes('Desenvolvido por <a href="https://dimaksolucoes.com.br"'));
   assert.ok(m.text.includes('12 . 12 . 2037') && m.text.includes('20h'));
 });
 
@@ -114,6 +114,13 @@ test('e-mail usa o logo oficial (imagem creme do site), não o nome digitado', a
   const m = ctx.renderEmail({ nome: 'Mariana Souza', email: 'm@x.com', acompanhante: false, acompanhanteNome: '' }, fullCfg);
   assert.match(m.html, new RegExp('<img src="' + fullCfg.siteUrl.replace(/[.]/g, '\\.') + '/email-logo\\.png" width="180" height="48" alt="maksō"'));
   assert.ok(!/>MAKSŌ</.test(m.html), 'sem o nome digitado no lugar do logo');
+});
+
+test('e-mail: rodapé com a linhazinha e "DIMAK Soluções" clicável, como no site', async () => {
+  const { ctx } = await setupCtx();
+  const m = ctx.renderEmail({ nome: 'Mariana Souza', email: 'm@x.com', acompanhante: false, acompanhanteNome: '' }, fullCfg);
+  assert.match(m.html, /border-top:1px solid [^;"]+;[^>]*>\s*<p[^>]*>Desenvolvido por <a href="https:\/\/dimaksolucoes\.com\.br"[^>]*>DIMAK Soluções<\/a><\/p>/);
+  assert.match(m.text, /Desenvolvido por DIMAK Soluções — https:\/\/dimaksolucoes\.com\.br/);
 });
 
 test('e-mail: o iPhone não sublinha data, endereço e horário como links automáticos', async () => {
