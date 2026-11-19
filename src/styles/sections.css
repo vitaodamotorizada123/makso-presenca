@@ -6,6 +6,8 @@
   font-family: var(--font-script);
   font-weight: 400;
   font-size: clamp(19px, 6.2vw, 34px);
+  /* Com a faixa dos atalhos dos dois lados: a linha mais longa (13,7em) cabe em 100vw − 2 faixas. */
+  font-size: clamp(15px, min(6.2vw, calc((100vw - 2 * var(--quick-lane)) / 13.9)), 34px);
   line-height: 1.45;
 }
 .thanks__headline > span { display: block; white-space: nowrap; }

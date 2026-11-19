@@ -109,6 +109,15 @@ test('e-mail no desenho do obrigado: frase, data, endereço, informações e sem
   assert.ok(!/acompanhante/i.test(m.html), 'convites individuais');
 });
 
+test('e-mail tem botões de WhatsApp e Instagram da maksō (html e texto)', async () => {
+  const { ctx } = await setupCtx();
+  const m = ctx.renderEmail({ nome: 'Mariana Souza', email: 'm@x.com', acompanhante: false, acompanhanteNome: '' }, fullCfg);
+  assert.match(m.html, /<a href="https:\/\/wa\.me\/5531987272711"[^>]*>[^<]*WhatsApp/);
+  assert.match(m.html, /<a href="https:\/\/www\.instagram\.com\/makso\.br\/"[^>]*>[^<]*Instagram/);
+  assert.match(m.text, /WhatsApp: https:\/\/wa\.me\/5531987272711/);
+  assert.match(m.text, /Instagram: https:\/\/www\.instagram\.com\/makso\.br\//);
+});
+
 test('sem cota: pendente; com cota de volta, a fila envia', async () => {
   const { ctx, sheet, gas } = await setupCtx({ quota: 0 });
   post(ctx);

@@ -20,6 +20,9 @@
   --section-y: 48px;
   --gutter-l: max(20px, env(safe-area-inset-left));
   --gutter-r: max(20px, env(safe-area-inset-right));
+  /* Faixa lateral reservada aos atalhos fixos (44px de toque + 4px da borda): nada da tela 3
+     entra nela, então os ícones nunca cobrem informação ao rolar. */
+  --quick-lane: 48px;
 
   /* Guia maksō: IvyOra Text Light (via kit do Adobe Fonts) e Avenir Light.
      Sem o kit: Cormorant Garamond; fora da Apple (sem Avenir): Nunito Sans. */

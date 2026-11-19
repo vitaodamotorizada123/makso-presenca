@@ -15,7 +15,7 @@ var MAKSO_CONFIG = {
   },
   "umamiWebsiteId": "d475ff6c-e0b4-446d-9691-4845d03b6c44",
   "adobeFontsKitId": "",
-  "version": "b711e840"
+  "version": "22e87205"
 };
 /* maksō — regras compartilhadas (navegador, Apps Script V8 e Node).
  * Script clássico: define o global MaksoRules. Nenhum código de topo
@@ -683,6 +683,12 @@ function escapeHtml_(s) {
 }
 
 /** Mesmas informações da tela final do site (sem acompanhantes: convites individuais). */
+// Atalhos (os mesmos do site, pedido do cliente 18/11).
+var EMAIL_LINKS_ = [
+  ['WhatsApp', 'https://wa.me/5531987272711'],
+  ['Instagram', 'https://www.instagram.com/makso.br/'],
+];
+
 var EMAIL_INFO_ = [
   ['Horário de início', 'Devido ao trânsito na região, sugerimos sair com antecedência para chegar com tranquilidade e aproveitar desde o início.'],
   ['Chuva', 'Se chover, fique tranquila. Haverá uma pessoa na entrada para recebê-la com guarda-chuva e acompanhá-la até a porta do evento.'],
@@ -740,6 +746,13 @@ function renderEmail(record, cfg) {
     '<p style="margin:0;font:13px ' + SANS + ';letter-spacing:1.5px;text-transform:uppercase;color:' + CREAM + ';">Informações importantes</p>' +
     info +
     '</td></tr></table>' +
+    // Atalhos da maksō (os mesmos do site): dois botões de contorno creme, lado a lado.
+    '<p style="margin:48px 0 0;font:12px ' + SANS + ';letter-spacing:1.5px;text-transform:uppercase;color:' + MUTED + ';">Fale com a maksō</p>' +
+    '<p style="margin:16px 0 0;">' +
+      EMAIL_LINKS_.map(function (l) {
+        return '<a href="' + l[1] + '" style="display:inline-block;margin:0 4px 8px;padding:12px 22px;border:1px solid ' + CREAM + ';border-radius:999px;color:' + CREAM + ';font:13px ' + SANS + ';letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;">' + l[0] + '</a>';
+      }).join('') +
+    '</p>' +
     '<p style="margin:40px 0 0;font:12px ' + SANS + ';color:' + MUTED + ';">Desenvolvido por DIMAK Soluções</p>' +
     '</td></tr></table></body></html>';
 
@@ -755,6 +768,7 @@ function renderEmail(record, cfg) {
     .concat(gcal ? ['', 'Adicionar à agenda: ' + gcal] : [])
     .concat(['', 'Informações importantes'])
     .concat(EMAIL_INFO_.map(function (it) { return '- ' + it[0] + ': ' + it[1]; }))
+    .concat([''].concat(EMAIL_LINKS_.map(function (l) { return l[0] + ': ' + l[1]; })))
     .concat(['', '—', 'Desenvolvido por DIMAK Soluções'])
     .join('\n');
 

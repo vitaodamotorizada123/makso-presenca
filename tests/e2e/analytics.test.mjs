@@ -90,3 +90,16 @@ test('erro de validação vira evento (sem dados)', async () => {
     assert.deepEqual(names, ['erro-validacao', 'iniciou-formulario']);
   } finally { await close(); }
 });
+
+test('atalhos de WhatsApp e Instagram viram eventos (sem abrir nada no teste)', async () => {
+  const { page, close } = await startBrowser({ config: 'analytics', routes });
+  try {
+    await page.waitForFunction(() => window.umami);
+    // não navegar para fora: só o clique e o evento
+    await page.evaluate(() => document.querySelectorAll('.quick-links a').forEach((a) => a.addEventListener('click', (e) => e.preventDefault())));
+    await page.click('.quick-links a[data-quick="whatsapp"]');
+    await page.click('.quick-links a[data-quick="instagram"]');
+    const names = await page.evaluate(() => window.__events.map((e) => e[0]));
+    assert.deepEqual(names, ['atalho-whatsapp', 'atalho-instagram']);
+  } finally { await close(); }
+});

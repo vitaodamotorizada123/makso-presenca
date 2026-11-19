@@ -34,13 +34,67 @@ html:not(.js):not(:has(#confirmar:target)) .intro {
   min-height: 0;
   padding-bottom: 12px; /* a área segura de baixo fica com o rodapé */
 }
+/* Rodapé compacto nas telas com atalhos (1 e 3): no fim da tela 3 ele fica igual ao da
+   tela 1, com a linha logo abaixo dos ícones. */
+html:has(#confirmar.is-done:not([hidden])) .site-footer,
 html.js:has(#confirmar[hidden]) .site-footer,
 html:not(.js):not(:has(#confirmar:target)) .site-footer {
-  flex: none;
-  padding-top: 4px;
+  padding-top: 14px; /* a linhazinha fica, como na tela 2 */
   padding-bottom: calc(env(safe-area-inset-bottom) + 8px);
-  border-top: 0;
 }
+html.js:has(#confirmar[hidden]) .site-footer,
+html:not(.js):not(:has(#confirmar:target)) .site-footer { flex: none; }
+
+/* ---------- Atalhos fixos: WhatsApp e Instagram (telas 1 e 3) ----------
+   Canto inferior direito, um em cima do outro, sempre no mesmo lugar e tamanho (fixos na
+   tela). Ficam logo acima da linha do rodapé da tela 1 (rodapé = 1 + 14 + 44 + 8 = 67px). */
+.quick-links {
+  position: fixed;
+  right: calc(env(safe-area-inset-right) + 4px);
+  bottom: calc(env(safe-area-inset-bottom) + 72px);
+  z-index: 10;
+  display: none;
+  flex-direction: column;
+}
+html.js:has(#confirmar[hidden]) .quick-links,
+html:not(.js):not(:has(#confirmar:target)) .quick-links,
+html:has(#confirmar.is-done:not([hidden])) .quick-links { display: flex; }
+.quick-links a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  color: var(--text);
+  -webkit-tap-highlight-color: transparent;
+}
+.quick-links__dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgb(225 218 208 / 0.45);
+  border-radius: 50%;
+  background: var(--bg);
+  transition: border-color 160ms ease, transform 160ms var(--ease-out);
+}
+.quick-links svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.quick-links a:active .quick-links__dot { transform: scale(0.94); }
+.quick-links a:focus-visible { outline: none; }
+.quick-links a:focus-visible .quick-links__dot { border-color: var(--text); box-shadow: 0 0 0 2px var(--bg), 0 0 0 3px var(--text); }
+@media (hover: hover) { .quick-links a:hover .quick-links__dot { border-color: var(--text); } }
+@media (prefers-reduced-motion: reduce) { .quick-links__dot { transition: none; } }
+
 
 /* ---------- Tela 1: frase, botão, data; logo no pé ---------- */
 .intro {

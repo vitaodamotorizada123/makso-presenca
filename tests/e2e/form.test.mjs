@@ -72,7 +72,8 @@ for (const viewport of [{ width: 440, height: 956 }, { width: 375, height: 812 }
       assert.ok(s.text <= 12, `"Enviamos os detalhes…" ${s.text}px`);
       assert.ok(s.details <= 14, `data/endereço/hora ${s.details}px`);
       assert.ok(s.map <= 13, `"Ver no mapa" ${s.map}px`);
-      assert.ok(s.headline >= 1.6 * Math.max(s.title, s.details), `frase ${s.headline}px não domina (${s.title}/${s.details})`);
+      // ≥1,4×: desde 18/11 a frase divide a largura com a faixa dos atalhos (WhatsApp/Instagram).
+      assert.ok(s.headline >= 1.4 * Math.max(s.title, s.details), `frase ${s.headline}px não domina (${s.title}/${s.details})`);
     } finally { await close(); }
   });
 }

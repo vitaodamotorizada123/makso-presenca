@@ -68,6 +68,13 @@
   // 5. Contagem de visitas anônima (Umami). Nunca no modo demonstração.
   MaksoAnalytics.load({ websiteId: cfg.umamiWebsiteId, demo: demoInfo.demo, siteUrl: cfg.siteUrl });
 
+  // 5b. Atalhos fixos (WhatsApp / Instagram): um evento por clique, sem dado pessoal.
+  document.querySelectorAll('.quick-links a[data-quick]').forEach(function (a) {
+    a.addEventListener('click', function () {
+      MaksoAnalytics.track('atalho-' + /** @type {HTMLElement} */ (a).dataset.quick);
+    });
+  });
+
   // 6. Formulário.
   MaksoForm.mount({
     root: /** @type {HTMLElement} */ (document.getElementById('confirmar')),

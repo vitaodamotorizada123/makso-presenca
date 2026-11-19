@@ -10,6 +10,12 @@
 }
 
 .rsvp__inner { max-width: 560px; margin: 0 auto; }
+/* Tela 3 (resultado): margens laterais ≥ faixa dos atalhos fixos, dos dois lados para manter
+   tudo centralizado — os ícones nunca cobrem informação ao rolar. */
+.rsvp.is-done {
+  padding-left: max(var(--gutter-l), var(--quick-lane));
+  padding-right: max(var(--gutter-r), var(--quick-lane));
+}
 
 .rsvp__back {
   display: inline-flex;
