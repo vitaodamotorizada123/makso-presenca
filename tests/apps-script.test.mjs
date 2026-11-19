@@ -109,6 +109,20 @@ test('e-mail no desenho do obrigado: frase, data, endereço, informações e sem
   assert.ok(!/acompanhante/i.test(m.html), 'convites individuais');
 });
 
+test('e-mail usa o logo oficial (imagem creme do site), não o nome digitado', async () => {
+  const { ctx } = await setupCtx();
+  const m = ctx.renderEmail({ nome: 'Mariana Souza', email: 'm@x.com', acompanhante: false, acompanhanteNome: '' }, fullCfg);
+  assert.match(m.html, new RegExp('<img src="' + fullCfg.siteUrl.replace(/[.]/g, '\\.') + '/email-logo\\.png" width="180" height="48" alt="maksō"'));
+  assert.ok(!/>MAKSŌ</.test(m.html), 'sem o nome digitado no lugar do logo');
+});
+
+test('e-mail: o iPhone não sublinha data, endereço e horário como links automáticos', async () => {
+  const { ctx } = await setupCtx();
+  const m = ctx.renderEmail({ nome: 'Mariana Souza', email: 'm@x.com', acompanhante: false, acompanhanteNome: '' }, fullCfg);
+  assert.match(m.html, /<meta name="format-detection" content="telephone=no,date=no,address=no,email=no">/);
+  assert.match(m.html, /a\[x-apple-data-detectors\]\s*\{[^}]*color:\s*inherit\s*!important[^}]*text-decoration:\s*none\s*!important/);
+});
+
 test('e-mail tem botões de WhatsApp e Instagram da maksō (html e texto)', async () => {
   const { ctx } = await setupCtx();
   const m = ctx.renderEmail({ nome: 'Mariana Souza', email: 'm@x.com', acompanhante: false, acompanhanteNome: '' }, fullCfg);

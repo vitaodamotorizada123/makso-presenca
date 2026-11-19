@@ -51,6 +51,11 @@ test('evento completo: data no HTML, evento.ics e event.json', async () => {
   assert.equal(ej.event.start, '2037-12-12T20:00:00-03:00');
   assert.equal(ej.version, res.hash);
   for (const f of ['robots.txt', 'favicon.svg', 'apple-touch-icon.png', 'og.png']) assert.ok(existsSync(path.join(outDir, f)), f);
+  // Logo do e-mail (PNG creme, fundo transparente, 3× de 180px): servido pelo site para os clientes de e-mail.
+  const logo = readFileSync(path.join(outDir, 'email-logo.png'));
+  assert.equal(logo.subarray(1, 4).toString(), 'PNG');
+  assert.equal(logo.readUInt32BE(16), 540, 'largura 540px');
+  assert.equal(logo[25], 6, 'RGBA (fundo transparente)');
 });
 
 const detailsOf = (html) => html.match(/<div class="rsvp__details">([\s\S]*?)<\/div>/)[1];

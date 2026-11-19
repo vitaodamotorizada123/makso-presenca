@@ -169,6 +169,7 @@ export async function build({ root = ROOT, configPath = path.join(root, 'config.
   copy('assets/icons/favicon.svg', 'favicon.svg');
   copy('assets/icons/apple-touch-icon.png', 'apple-touch-icon.png');
   copy('assets/og.png', 'og.png');
+  copy('assets/email/email-logo.png', 'email-logo.png'); // logo do e-mail de confirmação (PNG creme)
 
   return { files, hash, outDir: out };
 }

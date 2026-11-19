@@ -725,12 +725,16 @@ function renderEmail(record, cfg) {
     : '';
 
   // bgcolor + background em cada camada: o Gmail (inclusive no modo escuro) ignora o fundo do <body>.
-  var html = '<!doctype html><html lang="pt-BR"><head><meta name="color-scheme" content="dark"><meta name="supported-color-schemes" content="dark"></head>' +
+  var html = '<!doctype html><html lang="pt-BR"><head><meta name="color-scheme" content="dark"><meta name="supported-color-schemes" content="dark">' +
+    // O iPhone transforma data, endereço e horário em links sublinhados: desliga e, se vier, herda o estilo.
+    '<meta name="format-detection" content="telephone=no,date=no,address=no,email=no">' +
+    '<style>a[x-apple-data-detectors] { color: inherit !important; text-decoration: none !important; font-size: inherit !important; font-family: inherit !important; font-weight: inherit !important; line-height: inherit !important; }</style></head>' +
     '<body bgcolor="' + BG + '" style="margin:0;padding:0;background:' + BG + ';background-color:' + BG + ';">' +
     '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="' + BG + '" style="background:' + BG + ';background-color:' + BG + ';"><tr><td align="center" bgcolor="' + BG + '" style="padding:48px 24px;background-color:' + BG + ';">' +
     '<table role="presentation" width="560" cellpadding="0" cellspacing="0" bgcolor="' + BG + '" style="width:100%;max-width:560px;background-color:' + BG + ';">' +
     '<tr><td align="center">' +
-    '<p style="margin:0 0 96px;font:300 34px ' + SERIF + ';letter-spacing:8px;color:' + CREAM + ';">MAKSŌ</p>' +
+    // Logo oficial (PNG creme do site; SVG não funciona no Gmail). alt mantém o nome se a imagem não carregar.
+    '<img src="' + e(String(cfg.siteUrl || '').replace(/\/$/, '')) + '/email-logo.png" width="180" height="48" alt="maksō" style="display:block;margin:0 auto 96px;width:180px;height:48px;border:0;outline:none;text-decoration:none;color:' + CREAM + ';font:300 28px ' + SERIF + ';letter-spacing:6px;">' +
     '<p style="margin:0;font:17px/1.4 ' + SANS + ';color:' + CREAM + ';">Olá, ' + e(first) + '. Sua presença foi confirmada.</p>' +
     '<p style="margin:64px 0 0;font:400 22px/1.45 ' + SCRIPT + ';color:' + CREAM + ';">Prepare-se para<br>desvendar as bolsas mais<br>icônicas que você já viu!</p>' +
     // Data, endereço e hora, nessa ordem, num bloco juntinho.
